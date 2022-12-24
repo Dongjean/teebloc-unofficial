@@ -12,7 +12,7 @@ function App() {
 	return (
     	<div>
         	<GuestNavBar /> {/* NavBar for Guests who arent logged in */}
-
+			
         	<Routes>
 				<Route path='/' exact element={<HomePage />}/>
 				<Route path='/Login' exact element={<LoginPage />} />
