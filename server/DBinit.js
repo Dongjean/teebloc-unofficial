@@ -9,3 +9,10 @@ CREATE TABLE IF NOT EXISTS Users(
     LastName TEXT NOT NULL,
     Type TEXT NOT NULL
 )`)
+
+//create Categories table if it doesnt yet exist
+pool.query(`
+CREATE TABLE IF NOT EXISTS Categories(
+    CategoryID INTEGER PRIMARY KEY NOT NULL,
+    Category TEXT NOT NULL
+)`)

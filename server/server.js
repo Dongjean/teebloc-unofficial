@@ -13,7 +13,9 @@ dotenv.config();
 const PORT = process.env.PORT || 3001
 
 const AccountRoutes = require('./Controllers/Routes/AccountRoutes.js');
+const CategoryRoutes = require("./Controllers/Routes/CategoryRoutes.js");
 
 app.use(AccountRoutes)
+app.use(CategoryRoutes)
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}!`))
