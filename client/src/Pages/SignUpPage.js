@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 
 //import the API
 import API from '../utils/API.js';
@@ -48,8 +48,10 @@ function SignUpPage() {
     async function GetEmailValidity(Email) {
         //call the API to check if Email already exists
         try {
-            const Response = await API.get('/SignUp/CheckEmail/' + Email)
-            return Response.data
+            const response = await API.get('/SignUp/CheckEmail/' + Email)
+            //response.data is whether or not the Email exists
+            //Email entered is valid if it doesnt already exists, thus return opposite of response.data
+            return !response.data
         } catch(err) {
             console.log(err)
         }

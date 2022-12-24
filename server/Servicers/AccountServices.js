@@ -3,14 +3,14 @@ const pool = require('../DB.js');
 const dotenv = require("dotenv");
 dotenv.config();
 
-async function GetEmailValidity(Email) {
-    //get the Emails on the DB to check if the requested Email already exists
+async function CheckEmailExists(Email) {
+    //get the Emails on the DB to check if the requested Email exists
     try {
         const result = await pool.query(`SELECT * FROM Users WHERE Email=$1`, [Email])
         if (result.rows.length == 0) {
-            return true //if the Email doesnt yet exist, this Email passes this validity check
+            return false //if the Email doesnt yet exist, return false
         } else {
-            return false //if the Email already exists, this Email is invalid
+            return true //if the Email exists, return true
         }
     } catch(err) {
         console.log(err)
@@ -26,4 +26,18 @@ async function CreateAccount(Data) {
     }
 }
 
-module.exports = {GetEmailValidity, CreateAccount};
+async function CheckPWCorrect(Data) {
+    //check if the PW is correct
+    try {
+        const result = await pool.query(`SELECT Password FROM Users WHERE Email=$1`, [Data.Email])
+        if (result.rows[0].password == Data.PW) {
+            return true //if the PW is correct, return true
+        } else {
+            return false //if PW is wrong, return false
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect};
