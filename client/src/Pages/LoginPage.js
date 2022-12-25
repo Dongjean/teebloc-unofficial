@@ -1,7 +1,9 @@
 import {useState} from 'react';
 import API from '../utils/API.js';
 
-function LoginPage() {
+import Cookies from '../utils/Cookies.js';
+
+function LoginPage(props) {
     const [Email, setEmail] = useState('');
     const [PW, setPW] = useState('');
 
@@ -20,7 +22,17 @@ function LoginPage() {
                 //proceed to check if PW is correct
                 const response2 = await API.get('/Login/CheckPW/' + Email + '/' + PW)
                 if (response2.data) { //if PW is correct, 
-                    console.log('correct!')
+                    const response3 = await API.get('/Login/GetLoginInfo/' + Email)
+                    const Data = response3.data
+                    SetLoginCookies(Data) //save the login details in the cookies
+
+                    const LoginData = {
+                        Email: Data.email,
+                        FirstName: Data.firstname,
+                        LastName: Data.lastname,
+                        AccType: Data.type
+                    }
+                    props.Login(LoginData)
                 } else { //if PW is wrong,  
                     setValid(false)
                 }
@@ -28,6 +40,13 @@ function LoginPage() {
         } catch(err) {
             console.log(err)
         }
+    }
+
+    function SetLoginCookies(Data) {
+        Cookies.set('LoginEmail', Data.email)
+        Cookies.set('LoginFirstName', Data.firstname)
+        Cookies.set('LoginLastName', Data.lastname)
+        Cookies.set('LoginType', Data.type)
     }
 
     return(

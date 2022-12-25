@@ -40,4 +40,13 @@ async function CheckPWCorrect(Data) {
     }
 }
 
-module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect};
+async function GetLoginInfo(Email) {
+    try {
+        const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
+        return result.rows[0]
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo};
