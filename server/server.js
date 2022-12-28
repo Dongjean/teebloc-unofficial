@@ -5,10 +5,10 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(express.json());
 app.use(express.urlencoded());
-app.use(cookieParser('secret123'));
+app.use(cookieParser());
 app.use(session({secret: 'secret123', saveUninitialized: true, resave: false}))
 
 const dotenv = require("dotenv");
