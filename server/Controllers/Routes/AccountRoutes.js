@@ -23,7 +23,7 @@ router.get('/Login/CheckPW/:Email/:PW', (req, res) => {
     CheckPWCorrect(Data).then(response => res.json(response))
 })
 
-router.get('/Login/GetLoginInfo/:Email', (req, res) => {
+router.get('/Login/GetLoginInfo/:Email', (req, res) => { //called if login is successful, create JWT here
     const Email = req.params.Email
     GetLoginInfo(Email).then(response => res.json(response))
 })

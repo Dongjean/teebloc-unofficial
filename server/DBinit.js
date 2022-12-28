@@ -66,3 +66,5 @@ CREATE TABLE IF NOT EXISTS QuestionCategories(
     FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 )`)
+
+//school name, subject, topic, qn paper,

@@ -47,6 +47,7 @@ function LoginPage(props) {
         Cookies.set('LoginFirstName', Data.firstname)
         Cookies.set('LoginLastName', Data.lastname)
         Cookies.set('LoginType', Data.type)
+        Cookies.set('JWT', Data.token, {httpOnly: true})
     }
 
     return(

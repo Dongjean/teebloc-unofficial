@@ -1,5 +1,6 @@
 const pool = require('../DB.js');
 
+const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -43,7 +44,17 @@ async function CheckPWCorrect(Data) {
 async function GetLoginInfo(Email) {
     try {
         const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
-        return result.rows[0]
+        const user = result.rows[0]
+
+        const payload = {
+            email: user.email
+        }
+
+        const token = await jwt.sign(payload, process.env.TokenSecret) //sign JWT token
+
+        var Info = user
+        Info.token = token //add token to response
+        return Info
     } catch(err) {
         console.log(err)
     }

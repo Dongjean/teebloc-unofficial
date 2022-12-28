@@ -1,11 +1,15 @@
 const express = require("express");
 const cors = require("cors");
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded())
+app.use(express.urlencoded());
+app.use(cookieParser('secret123'));
+app.use(session({secret: 'secret123', saveUninitialized: true, resave: false}))
 
 const dotenv = require("dotenv");
 dotenv.config();
