@@ -1,18 +1,22 @@
 import {useState} from 'react';
 
+//component imports
+import QuestionIMGUploader from './QuestionIMGUploader.js';
+
 function PostQuestion(props) {
     const [QNImages, setQNImages] = useState([])
-    
+
     function AddImage(event) {
         var temp = [...QNImages]
-        temp.push(event.target.files[0])
+        temp.push({File: event.target.files[0], OriginalIMGData: URL.createObjectURL(event.target.files[0])})
+        event.target.value = null //set the value of the file upload input field to none so duplicate files can be uplaoded        setQNImages(temp)
         setQNImages(temp)
         props.onQuestionIMGChange(temp)
     }
 
-    function ChangeImage(event, index) {
+    function onQuestionIMGChange(QNImage, index) {
         var temp = [...QNImages]
-        temp[index] = event.target.files[0]
+        temp[index] = QNImage
         setQNImages(temp)
         props.onQuestionIMGChange(temp)
     }
@@ -20,15 +24,12 @@ function PostQuestion(props) {
     return (
         <div>
             {QNImages.length == 0 ?
+                //first file upload is required
                 <input type='file' required onChange={AddImage} />
             :
             <div>
                 {QNImages.map((QNImage, index) =>
-                    <div key={index}>
-                        {QNImage.name}<br />
-                        <input type='file' onChange={(event) => {ChangeImage(event, index)}}/><br /><br />
-                    </div>
-                    
+                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} />
                 )}
                 <input type='file' onChange={AddImage} /><br />
             </div>
