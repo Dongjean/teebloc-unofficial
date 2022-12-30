@@ -25,7 +25,7 @@ function PostQuestion(props) {
         <div>
             {QNImages.length == 0 ?
                 //first file upload is required
-                <input type='file' required onChange={AddImage} />
+                <input type='file' onChange={AddImage} />
             :
             <div>
                 {QNImages.map((QNImage, index) =>

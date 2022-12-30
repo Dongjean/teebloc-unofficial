@@ -1,6 +1,6 @@
 import {useState, useRef} from 'react';
 import Cropper from 'react-cropper';
-import '../CSS/Cropperjs/Cropper.css';
+import '../../CSS/Cropperjs/Cropper.css';
 
 function QuestionIMGUploader(props) {
     const [isCropping, setisCropping] = useState(true) //initially image is in crop mode
@@ -30,10 +30,6 @@ function QuestionIMGUploader(props) {
         setisCropping(true)
     }
 
-    function KeepAspectRatio() {
-        console.log(cropperRef.current)
-    }
-
     return (
         <div>
             {QNImage.File.name}<br />
@@ -50,7 +46,6 @@ function QuestionIMGUploader(props) {
                         cropBoxMovable={false}
                         guides={false}
                         ref={cropperRef}
-                        crop={KeepAspectRatio}
                         background={false}
                         responsive={false}
                     />
