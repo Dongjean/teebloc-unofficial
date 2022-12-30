@@ -30,6 +30,10 @@ function QuestionIMGUploader(props) {
         setisCropping(true)
     }
 
+    function KeepAspectRatio() {
+        console.log(cropperRef.current)
+    }
+
     return (
         <div>
             {QNImage.File.name}<br />
@@ -39,9 +43,14 @@ function QuestionIMGUploader(props) {
                         src={QNImage.OriginalIMGData} 
                         style={{ height: 400, width: "100%" }}
                         // Cropper.js options
-                        initialAspectRatio={16 / 9}
-                        guides={true}
+                        aspectRatio={210/297} //image aspect ratio to decide later
+                        scalable={false}
+                        dragMode='move'
+                        cropBoxResizable={false}
+                        cropBoxMovable={false}
+                        guides={false}
                         ref={cropperRef}
+                        crop={KeepAspectRatio}
                         background={false}
                         responsive={false}
                     />
@@ -49,7 +58,7 @@ function QuestionIMGUploader(props) {
                 </div>
                 :
                 <div>
-                    <img src={QNImage.CroppedIMGData} />
+                    <img src={QNImage.CroppedIMGData} style={{width: 500}} />
                     <button type='button' onClick={StartCrop}>Re-Crop</button>
                 </div>
             }
