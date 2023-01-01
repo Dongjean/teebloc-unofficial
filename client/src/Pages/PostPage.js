@@ -7,29 +7,31 @@ import PostAnswer from "../Components/AnswerUpload/PostAnswer.js";
 import API from '../utils/API.js';
 
 function PostPage() {
-    const [AllCats, setAllCats] = useState([])
-    const [Subject, setSubject] = useState('')
+    const [AllSubjects, setAllSubjects] = useState([])
+    const [SubjectSelection, setSubjectSelection] = useState('')
     const [QNImages, setQNImages] = useState([])
     const [ANSImages, setANSImages] = useState([])
+
     const [QuestionsDisplay, setQuestionsDisplay] = useState('inline') //by default start with Question Uploading
     const [AnswersDispay, setAnswersDisplay] = useState('none') //by default start with Answer Upload component hidden
+    
     //runs only once on mount
     useEffect(() => {
-        getAllCats()
+        getAllSubjects()
     }, [])
 
-    async function getAllCats() { //get all categories initially to display
+    async function getAllSubjects() { //get all Subjects initially to display
         try {
-            const result = await API.get('/Categories/GetAll')
-            setAllCats(result.data)
-            setSubject(result.data[0].category)
+            const result = await API.get('/Categories/Subjects/GetAll')
+            setAllSubjects(result.data)
+            setSubjectSelection(result.data[0].subject)
         } catch(err) {
             console.log(err)
         }
     }
 
     function onChange(event) {
-        setSubject(event.target.value)
+        setSubjectSelection(event.target.value)
     }
 
     function SubmitPost(event) {
@@ -55,7 +57,7 @@ function PostPage() {
         
         console.log(QNImages)
         console.log(ANSImages)
-        console.log(Subject)
+        console.log(SubjectSelection)
         console.log("submitted!") //will change this later to API call to submit the post
     }
 
@@ -78,12 +80,12 @@ function PostPage() {
     }
 
     return (
-        AllCats.length !== 0 ?
+        AllSubjects.length !== 0 ?
         <div>
             <form onSubmit={SubmitPost}>
                 Post Subject: 
-                <select defaultValue={AllCats[0].category} onChange={onChange} >
-                    {AllCats.map(Cat => <option key={Cat.categoryid} value={Cat.category}>{Cat.category}</option>)}
+                <select defaultValue={AllSubjects[0].subject} onChange={onChange} >
+                    {AllSubjects.map(Subject => <option key={Subject.subjectid} value={Subject.subject}>{Subject.subject}</option>)}
                 </select>
                 <br />
                 <a onClick={UploadQuestion}>Upload Question</a> /

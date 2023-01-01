@@ -1,12 +1,12 @@
 const pool = require("../DB");
 
-async function GetAll() {
+async function GetAllSubjects() {
     try {
-        const result = await pool.query(`SELECT * FROM Categories ORDER BY Category ASC`) //get all categories ordered in alphabetical order
+        const result = await pool.query(`SELECT * FROM Subjects ORDER BY Subject ASC`) //get all categories ordered in alphabetical order
         return result.rows
     } catch(err) {
         console.log(err)
     }
 }
 
-module.exports = {GetAll};
+module.exports = {GetAllSubjects};
