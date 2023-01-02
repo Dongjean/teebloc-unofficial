@@ -44,7 +44,6 @@ async function DBCategoriesINIT() {
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Topics(
         TopicID INTEGER PRIMARY KEY NOT NULL,
-        TopicNumber INTEGER NOT NULL,
         TopicName TEXT NOT NULL,
         SubjectID INTEGER NOT NULL,
     
