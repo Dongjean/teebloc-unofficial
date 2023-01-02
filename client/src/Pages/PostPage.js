@@ -8,7 +8,18 @@ import API from '../utils/API.js';
 
 function PostPage() {
     const [AllSubjects, setAllSubjects] = useState([])
-    const [SubjectSelection, setSubjectSelection] = useState('')
+    const [AllLevels, setAllLevels] = useState([])
+    const [AllAssessments, setAllAssessments] = useState([])
+    const [AllTopics, setAllTopics] = useState([])
+    const [AllPapers, setAllPapers] = useState([])
+
+    //0 is the null value for all category IDs
+    const [SubjectSelection, setSubjectSelection] = useState(0)
+    const [LevelSelection, setLevelSelection] = useState(0)
+    const [AssessmentSelection, setAssessmentSelection] = useState(0)
+    const [TopicSelection, setTopicSelection] = useState(0)
+    const [PaperSelection, setPaperSelection] = useState(0)
+
     const [QNImages, setQNImages] = useState([])
     const [ANSImages, setANSImages] = useState([])
 
@@ -24,14 +35,72 @@ function PostPage() {
         try {
             const result = await API.get('/Categories/Subjects/GetAll')
             setAllSubjects(result.data)
-            setSubjectSelection(result.data[0].subject)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function onChange(event) {
+    //get the Levels that offer this subject
+    async function getLevels(Subject) {
+        try {
+            const result = await API.get('/Categories/Levels/Get/' + Subject)
+            setAllLevels(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    //get the Assessments that exists at this level
+    async function getAssessments(Level) {
+        try {
+            const result = await API.get('/Categories/Assessments/Get/' + Level)
+            setAllAssessments(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    //get the Topics that are tested at this Assessment
+    async function getTopics(Subject) {
+        try {
+            const result = await API.get('/Categories/Topics/Get/' + Subject)
+            setAllTopics(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function getPapers(Subject) {
+        try {
+            const result = await API.get('/Categories/Papers/Get/' + Subject)
+            setAllPapers(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    function onSubjectSelected(event) {
         setSubjectSelection(event.target.value)
+        getLevels(event.target.value) //get the levels that offer this subject if a subject was selected
+        getTopics(event.target.value) //get the Topics tested in this Subject
+        getPapers(event.target.value) //get the Papers that exist for this Subject
+    }
+    
+    function onLevelSelected(event) {
+        setLevelSelection(event.target.value)
+        getAssessments(event.target.value) //get the Assessments that occurs at this level
+    }
+
+    function onAssessmentSelected(event) {
+        setAssessmentSelection(event.target.value)
+    }
+
+    function onTopicSelected(event) {
+        setTopicSelection(event.target.value)
+    }
+
+    function onPaperSelected(event) {
+        setPaperSelection(event.target.value)
     }
 
     function SubmitPost(event) {
@@ -58,6 +127,10 @@ function PostPage() {
         console.log(QNImages)
         console.log(ANSImages)
         console.log(SubjectSelection)
+        console.log(LevelSelection)
+        console.log(AssessmentSelection)
+        console.log(TopicSelection)
+        console.log(PaperSelection)
         console.log("submitted!") //will change this later to API call to submit the post
     }
 
@@ -84,9 +157,35 @@ function PostPage() {
         <div>
             <form onSubmit={SubmitPost}>
                 Post Subject: 
-                <select defaultValue={AllSubjects[0].subject} onChange={onChange} >
-                    {AllSubjects.map(Subject => <option key={Subject.subjectid} value={Subject.subject}>{Subject.subject}</option>)}
+                <select defaultValue={0} onChange={onSubjectSelected} >
+                    <option value={0}>Please Select a Subject</option>
+                    {AllSubjects.map(Subject => <option key={Subject.subjectid} value={Subject.subjectid}>{Subject.subject}</option>)}
                 </select>
+
+                Level:
+                <select defaultValue={0} onChange={onLevelSelected}>
+                    <option value={0}>Please Select a Level</option>
+                    {AllLevels.map(Level => <option key={Level.levelid} value={Level.levelid}>{Level.level}</option>)}
+                </select>
+
+                Assessment:
+                <select defaultValue={0} onChange={onAssessmentSelected}>
+                    <option value={0}>Please Select an Assessment</option>
+                    {AllAssessments.map(Assessment => <option key={Assessment.assessmentid} value={Assessment.assessmentid}>{Assessment.assessmentname}</option>)}
+                </select>
+
+                Topics:
+                <select defaultValue={0} onChange={onTopicSelected}>
+                    <option value={0}>Please Select a Topic</option>
+                    {AllTopics.map(Topic => <option key={Topic.topicid} value={Topic.topicid}>{Topic.topicname}</option>)}
+                </select>
+
+                Paper Number:
+                <select defaultValue={0} onChange={onPaperSelected}>
+                    <option value={0}>Please Select a Paper Number</option>
+                    {AllPapers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
+                </select>
+
                 <br />
                 <a onClick={UploadQuestion}>Upload Question</a> /
                 <a onClick={UploadAnswer}> Upload Answer</a>
