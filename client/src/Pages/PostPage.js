@@ -79,6 +79,38 @@ function PostPage() {
         }
     }
 
+    async function Post() {
+        try {
+            var FDQNImages = [];
+            for (var i=0; i<QNImages.length; i++) {
+                FDQNImages.push({
+                    name: QNImages[i].File.name,
+                    IMGData: QNImages[i].CroppedIMGData
+                })
+            }
+
+            var FDANSImages = [];
+            for (var i=0; i<ANSImages.length; i++) {
+                FDANSImages.push({
+                    name: ANSImages[i].File.name,
+                    IMGData: ANSImages[i].CroppedIMGData
+                })
+            }
+            const FD = new FormData()
+            FD.append('QNImages', JSON.stringify(FDQNImages))
+            FD.append('ANSImages', JSON.stringify(FDANSImages))
+            FD.append('SubjectID', SubjectSelection)
+            FD.append('LevelID', LevelSelection)
+            FD.append('AssessmentID', AssessmentSelection)
+            FD.append('TopicID', TopicSelection)
+            FD.append('PaperID', PaperSelection)
+            
+            await API.post('/Questions/PostQuestion', FD)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     function onSubjectSelected(event) {
         setSubjectSelection(event.target.value)
         getLevels(event.target.value) //get the levels that offer this subject if a subject was selected
@@ -123,6 +155,15 @@ function PostPage() {
                 return
             }
         }
+
+        if (SubjectSelection == 0 ||
+            LevelSelection == 0 ||
+            AssessmentSelection == 0 ||
+            TopicSelection == 0 ||
+            PaperSelection == 0) {
+            console.log('Please select all of the categories about the question!')
+            return
+        }
         
         console.log(QNImages)
         console.log(ANSImages)
@@ -132,6 +173,7 @@ function PostPage() {
         console.log(TopicSelection)
         console.log(PaperSelection)
         console.log("submitted!") //will change this later to API call to submit the post
+        Post()
     }
 
     function onQuestionIMGChange(QNImages) {
