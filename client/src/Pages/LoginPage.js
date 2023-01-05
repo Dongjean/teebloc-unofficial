@@ -1,8 +1,6 @@
 import {useState} from 'react';
 import API from '../utils/API.js';
 
-import Cookies from '../utils/Cookies.js';
-
 function LoginPage(props) {
     const [Email, setEmail] = useState('');
     const [PW, setPW] = useState('');
@@ -21,18 +19,10 @@ function LoginPage(props) {
             } else { //if Email exists,
                 //proceed to check if PW is correct
                 const response2 = await API.get('/Login/CheckPW/' + Email + '/' + PW)
-                if (response2.data) { //if PW is correct, 
-                    const response3 = await API.get('/Login/GetLoginInfo/' + Email)
-                    const Data = response3.data
-                    SetLoginCookies(Data) //save the login details in the cookies
-
-                    const LoginData = {
-                        Email: Data.email,
-                        FirstName: Data.firstname,
-                        LastName: Data.lastname,
-                        AccType: Data.type
-                    }
-                    props.Login(LoginData)
+                if (response2.data) { //if PW is correct,
+                    await API.get('/Login/GetLoginInfo/' + Email) //get the LoginInfo as cookies with the JWT
+                    
+                    props.Login()
                 } else { //if PW is wrong,  
                     setValid(false)
                 }
@@ -40,14 +30,6 @@ function LoginPage(props) {
         } catch(err) {
             console.log(err)
         }
-    }
-
-    function SetLoginCookies(Data) {
-        Cookies.set('LoginEmail', Data.email)
-        Cookies.set('LoginFirstName', Data.firstname)
-        Cookies.set('LoginLastName', Data.lastname)
-        Cookies.set('LoginType', Data.type)
-        Cookies.set('JWT', Data.token, {httpOnly: true})
     }
 
     return(

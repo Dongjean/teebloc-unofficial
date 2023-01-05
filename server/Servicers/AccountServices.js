@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 dotenv.config();
 
+const {CreateJWT} = require('../utils/CreateJWT.js');
+
 async function CheckEmailExists(Email) {
     //get the Emails on the DB to check if the requested Email exists
     try {
@@ -46,14 +48,11 @@ async function GetLoginInfo(Email) {
         const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
         const user = result.rows[0]
 
-        const payload = {
-            email: user.email
-        }
-
-        const token = await jwt.sign(payload, process.env.TokenSecret) //sign JWT token
+        const Token = CreateJWT(user.email, user.Type) //get JWT Token
 
         var Info = user
-        Info.token = token //add token to response
+        Info.token = Token //add token to response
+        console.log(Info)
         return Info
     } catch(err) {
         console.log(err)

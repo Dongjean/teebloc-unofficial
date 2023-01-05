@@ -12,6 +12,7 @@ import PostPage from './Pages/PostPage.js';
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
 import Cookies from './utils/Cookies.js';
+import API from './utils/API.js';
 
 function App() {
 	const navigate = useNavigate();
@@ -23,26 +24,22 @@ function App() {
 		AccType: Cookies.get('LoginType')
 	}
 
-	const NullLoginDataJSON = {
-		Email: undefined,
-		FirstName: undefined,
-		LastName: undefined,
-		AccType: undefined
-	}
-
 	const [LoginData, setLoginData] = useState(LoginDataJSON)
 
-	function Login(LoginDataJSON) {
+	function Login() {
+		const LoginDataJSON = {
+			Email: Cookies.get('LoginEmail'),
+			FirstName: Cookies.get('LoginFirstName'),
+			LastName: Cookies.get('LoginLastName'),
+			AccType: Cookies.get('LoginType')
+		}
 		setLoginData(LoginDataJSON)
 		navigate('/')
 	}
 
-	function Logout() {
+	async function Logout() {
 		//remove login info from cookies
-		Cookies.remove('LoginEmail')
-		Cookies.remove('LoginFirstName')
-		Cookies.remove('LoginLastName')
-		Cookies.remove('LoginType')
+		await API.get('/Login/Logout')
 
 		//set the LoginData state to the new empty login info cookies
 		setLoginData({
@@ -56,6 +53,7 @@ function App() {
 
 	return (
     	<div>
+			{console.log(LoginData.Email)}
 			{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
 			{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
 			{LoginData.AccType == 'Creator' ? <CreatorNavBar Logout={Logout} /> : null /* NavBar for Creators who can post questions */}

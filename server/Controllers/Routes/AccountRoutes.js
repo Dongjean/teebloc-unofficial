@@ -25,7 +25,27 @@ router.get('/Login/CheckPW/:Email/:PW', (req, res) => {
 
 router.get('/Login/GetLoginInfo/:Email', (req, res) => { //called if login is successful, create JWT here
     const Email = req.params.Email
-    GetLoginInfo(Email).then(response => res.json(response))
+    GetLoginInfo(Email).then(response => 
+        res
+            .cookie('Token', response.token, {httpOnly: true})
+            .cookie('LoginEmail', response.email)
+            .cookie('LoginFirstName', response.firstname)
+            .cookie('LoginLastName', response.lastname)
+            .cookie('LoginType', response.type)
+            .json('Cookies set successfully!')
+        //set all the cookies in the response
+    )
+})
+
+router.get('/Login/Logout', (req, res) => {
+    res
+        .clearCookie('Token')
+        .clearCookie('LoginEmail')
+        .clearCookie('LoginFirstName')
+        .clearCookie('LoginLastName')
+        .clearCookie('LoginType')
+        .json('Cookies removed successfully!')
+    //set all the cookies to empty
 })
 
 module.exports = router;
