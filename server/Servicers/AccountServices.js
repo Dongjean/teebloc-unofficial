@@ -48,7 +48,7 @@ async function GetLoginInfo(Email) {
         const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
         const user = result.rows[0]
 
-        const Token = CreateJWT(user.email, user.Type) //get JWT Token
+        const Token = CreateJWT(user.email, user.type) //get JWT Token
 
         var Info = user
         Info.token = Token //add token to response
