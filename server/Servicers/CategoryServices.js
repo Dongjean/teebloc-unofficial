@@ -37,6 +37,20 @@ async function GetAssessments(Level) {
     }
 }
 
+async function GetAssessmentsFromLevels(Levels) {
+    try {
+        const result = await pool.query(`
+        SELECT DISTINCT Assessments.AssessmentID, Assessments.AssessmentName
+        FROM Assessments JOIN Assessment_Level
+        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
+        WHERE Assessment_Level.LevelID = ANY($1::int[])
+        `, [Levels])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 async function GetTopics(Subject) {
     try {
         const result = await pool.query(`
@@ -64,4 +78,5 @@ async function GetPapers(Subject) {
         console.log(err)
     }
 }
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetTopics, GetPapers};
+
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers};

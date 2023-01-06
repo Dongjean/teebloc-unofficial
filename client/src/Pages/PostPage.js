@@ -8,10 +8,10 @@ import API from '../utils/API.js';
 
 function PostPage() {
     const [AllSubjects, setAllSubjects] = useState([])
-    const [AllLevels, setAllLevels] = useState([])
-    const [AllAssessments, setAllAssessments] = useState([])
-    const [AllTopics, setAllTopics] = useState([])
-    const [AllPapers, setAllPapers] = useState([])
+    const [Levels, setLevels] = useState([])
+    const [Assessments, setAssessments] = useState([])
+    const [Topics, setTopics] = useState([])
+    const [Papers, setPapers] = useState([])
 
     //0 is the null value for all category IDs
     const [SubjectSelection, setSubjectSelection] = useState(0)
@@ -44,7 +44,7 @@ function PostPage() {
     async function getLevels(Subject) {
         try {
             const result = await API.get('/Categories/Levels/Get/' + Subject)
-            setAllLevels(result.data)
+            setLevels(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -54,7 +54,7 @@ function PostPage() {
     async function getAssessments(Level) {
         try {
             const result = await API.get('/Categories/Assessments/Get/' + Level)
-            setAllAssessments(result.data)
+            setAssessments(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -64,7 +64,7 @@ function PostPage() {
     async function getTopics(Subject) {
         try {
             const result = await API.get('/Categories/Topics/Get/' + Subject)
-            setAllTopics(result.data)
+            setTopics(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -73,7 +73,7 @@ function PostPage() {
     async function getPapers(Subject) {
         try {
             const result = await API.get('/Categories/Papers/Get/' + Subject)
-            setAllPapers(result.data)
+            setPapers(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -207,25 +207,25 @@ function PostPage() {
                 Level:
                 <select defaultValue={0} onChange={onLevelSelected}>
                     <option value={0}>Please Select a Level</option>
-                    {AllLevels.map(Level => <option key={Level.levelid} value={Level.levelid}>{Level.level}</option>)}
+                    {Levels.map(Level => <option key={Level.levelid} value={Level.levelid}>{Level.level}</option>)}
                 </select>
 
                 Assessment:
                 <select defaultValue={0} onChange={onAssessmentSelected}>
                     <option value={0}>Please Select an Assessment</option>
-                    {AllAssessments.map(Assessment => <option key={Assessment.assessmentid} value={Assessment.assessmentid}>{Assessment.assessmentname}</option>)}
+                    {Assessments.map(Assessment => <option key={Assessment.assessmentid} value={Assessment.assessmentid}>{Assessment.assessmentname}</option>)}
                 </select>
 
                 Topics:
                 <select defaultValue={0} onChange={onTopicSelected}>
                     <option value={0}>Please Select a Topic</option>
-                    {AllTopics.map(Topic => <option key={Topic.topicid} value={Topic.topicid}>{Topic.topicname}</option>)}
+                    {Topics.map(Topic => <option key={Topic.topicid} value={Topic.topicid}>{Topic.topicname}</option>)}
                 </select>
 
                 Paper Number:
                 <select defaultValue={0} onChange={onPaperSelected}>
                     <option value={0}>Please Select a Paper Number</option>
-                    {AllPapers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
+                    {Papers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
                 </select>
 
                 <br />

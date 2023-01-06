@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {GetAllSubjects, GetLevels, GetAssessments, GetTopics, GetPapers} = require('../../Servicers/CategoryServices.js');
+const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers} = require('../../Servicers/CategoryServices.js');
 
 router.get('/Categories/Subjects/GetAll', (req, res) => {
     GetAllSubjects().then(response => res.json(response))
@@ -15,6 +15,11 @@ router.get('/Categories/Levels/Get/:Subject', (req, res) => {
 router.get('/Categories/Assessments/Get/:Level', (req, res) => {
     const Level = req.params.Level
     GetAssessments(Level).then(response => res.json(response))
+})
+
+router.get('/Categories/Assessments/GetFromLevels/:Levels', (req, res) => {
+    const Levels = JSON.parse(req.params.Levels)
+    GetAssessmentsFromLevels(Levels).then(response => res.json(response))
 })
 
 router.get('/Categories/Topics/Get/:Subject', (req, res) => {
