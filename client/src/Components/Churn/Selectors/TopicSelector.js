@@ -3,7 +3,7 @@ import API from '../../../utils/API.js';
 import {useState, useEffect} from 'react';
 
 //component imports
-import Topic from '../Topic.js';
+import Topic from '../Categories/Topic.js';
 
 function TopicSelector(props) {
     const [Topics, setTopics] = useState([])
@@ -18,22 +18,24 @@ function TopicSelector(props) {
         try {
             const result = await API.get('/Categories/Topics/Get/' + Subject)
             setTopics(result.data)
-            setTopicsSelection(result.data)
-            props.TopicChanged(result.data)
+
+            const TopicIDs = result.data.map(Topic => Topic.topicid)
+            setTopicsSelection(TopicIDs)
+            props.TopicChanged(TopicIDs)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function TopicSelected(Topic) {
+    function TopicSelected(TopicID) {
         var temp = [...TopicsSelection]
-        temp.push(Topic)
+        temp.push(TopicID)
         setTopicsSelection(temp)
         props.TopicChanged(temp)
     }
 
-    function TopicDeselected(Topic) {
-        const temp = TopicsSelection.filter(topic => topic.topicid !== Topic.topicid)
+    function TopicDeselected(TopicID) {
+        const temp = TopicsSelection.filter(topicid => topicid !== TopicID)
         setTopicsSelection(temp)
         props.TopicChanged(temp)
     }

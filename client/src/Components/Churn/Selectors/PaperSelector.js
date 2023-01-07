@@ -3,7 +3,7 @@ import API from '../../../utils/API.js';
 import {useState, useEffect} from 'react';
 
 //component imports
-import Paper from '../Paper.js';
+import Paper from '../Categories/Paper.js';
 
 function PaperSelector(props) {
     const [Papers, setPapers] = useState([])
@@ -18,22 +18,24 @@ function PaperSelector(props) {
         try {
             const result = await API.get('/Categories/Papers/Get/' + Subject)
             setPapers(result.data)
-            setPapersSelection(result.data)
-            props.PaperChanged(result.data)
+
+            const PaperIDs = result.data.map(Paper => Paper.paperid)
+            setPapersSelection(PaperIDs)
+            props.PaperChanged(PaperIDs)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function PaperSelected(Paper) {
+    function PaperSelected(PaperID) {
         var temp = [...PapersSelection]
-        temp.push(Paper)
+        temp.push(PaperID)
         setPapersSelection(temp)
         props.PaperChanged(temp)
     }
 
-    function PaperDeselected(Paper) {
-        const temp = PapersSelection.filter(paper => paper.paperid !== Paper.paperid)
+    function PaperDeselected(PaperID) {
+        const temp = PapersSelection.filter(paperid => paperid !== PaperID)
         setPapersSelection(temp)
         props.PaperChanged(temp)
     }

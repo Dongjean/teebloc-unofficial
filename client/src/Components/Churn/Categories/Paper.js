@@ -1,23 +1,23 @@
 import {useState} from 'react';
 
-function Level(props) {
+function Paper(props) {
     const [isChecked, setisChecked] = useState(true)
 
     function onClick() {
         setisChecked(!isChecked)
 
         if (!isChecked == true) {
-            props.LevelSelected(props.Level)
+            props.PaperSelected(props.Paper.paperid)
         } else {
-            props.LevelDeselected(props.Level)
+            props.PaperDeselected(props.Paper.paperid)
         }
     }
 
     return (
         <div>
-            {props.Level.level} <input type='checkbox' checked={isChecked} onClick={onClick} readOnly={true} />
+            {props.Paper.paper} <input type='checkbox' checked={isChecked} onClick={onClick} readOnly={true} />
         </div>
     )
 }
 
-export default Level;
+export default Paper;

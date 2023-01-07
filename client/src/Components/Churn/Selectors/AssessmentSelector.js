@@ -3,7 +3,7 @@ import API from '../../../utils/API.js';
 import {useState, useEffect} from 'react';
 
 //component imports
-import Assessment from '../Assessment.js';
+import Assessment from '../Categories/Assessment.js';
 
 function AssessmentSelector(props) {
     const [Assessments, setAssessments] = useState([])
@@ -14,27 +14,29 @@ function AssessmentSelector(props) {
         getAssessments(props.LevelsSelection)
     }, [props.LevelsSelection])
 
-    async function getAssessments(Levels) { //get Assessments to display
+    async function getAssessments(LevelIDs) { //get Assessments to display
         try {
-            Levels = JSON.stringify(Levels.map(Level => Level.levelid))
-            const result = await API.get('/Categories/Assessments/GetFromLevels/' + Levels)
+            LevelIDs = JSON.stringify(LevelIDs)
+            const result = await API.get('/Categories/Assessments/GetFromLevels/' + LevelIDs)
             setAssessments(result.data)
-            setAssessmentsSelection(result.data)
-            props.AssessmentChanged(result.data)
+            
+            const AssessmentIDs = result.data.map(Assessment => Assessment.assessmentid)
+            setAssessmentsSelection(AssessmentIDs)
+            props.AssessmentChanged(AssessmentIDs)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function AssessmentSelected(Assessment) {
+    function AssessmentSelected(AssessmentID) {
         var temp = [...AssessmentsSelection]
-        temp.push(Assessment)
+        temp.push(AssessmentID)
         setAssessmentsSelection(temp)
         props.AssessmentChanged(temp)
     }
 
-    function AssessmentDeselected(Assessment) {
-        const temp = AssessmentsSelection.filter(assessment => assessment.assessmentid !== Assessment.assessmentid)
+    function AssessmentDeselected(AssessmentID) {
+        const temp = AssessmentsSelection.filter(assessmentid => assessmentid !== AssessmentID)
         setAssessmentsSelection(temp)
         props.AssessmentChanged(temp)
     }

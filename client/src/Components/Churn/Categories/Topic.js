@@ -7,9 +7,9 @@ function Topic(props) {
         setisChecked(!isChecked)
 
         if (!isChecked == true) {
-            props.TopicSelected(props.Topic)
+            props.TopicSelected(props.Topic.topicid)
         } else {
-            props.TopicDeselected(props.Topic)
+            props.TopicDeselected(props.Topic.topicid)
         }
     }
 

@@ -3,7 +3,7 @@ import API from '../../../utils/API.js';
 import {useState, useEffect} from 'react';
 
 //component imports
-import Level from '../Level.js';
+import Level from '../Categories/Level.js';
 
 function LevelSelector(props) {
     const [Levels, setLevels] = useState([])
@@ -18,22 +18,24 @@ function LevelSelector(props) {
         try {
             const result = await API.get('/Categories/Levels/Get/' + Subject)
             setLevels(result.data)
-            setLevelsSelection(result.data)
-            props.LevelChanged(result.data)
+
+            const LevelIDs = result.data.map(Level => Level.levelid)
+            setLevelsSelection(LevelIDs)
+            props.LevelChanged(LevelIDs)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function LevelSelected(Level) {
+    function LevelSelected(LevelID) {
         var temp = [...LevelsSelection]
-        temp.push(Level)
+        temp.push(LevelID)
         setLevelsSelection(temp)
         props.LevelChanged(temp)
     }
 
-    function LevelDeselected(Level) {
-        const temp = LevelsSelection.filter(level => level.levelid !== Level.levelid)
+    function LevelDeselected(LevelID) {
+        const temp = LevelsSelection.filter(levelid => levelid !== LevelID)
         setLevelsSelection(temp)
         props.LevelChanged(temp)
     }
