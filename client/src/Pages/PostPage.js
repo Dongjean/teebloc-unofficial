@@ -6,7 +6,7 @@ import PostAnswer from "../Components/AnswerUpload/PostAnswer.js";
 
 import API from '../utils/API.js';
 
-function PostPage() {
+function PostPage(props) {
     const [AllSubjects, setAllSubjects] = useState([])
     const [Levels, setLevels] = useState([])
     const [Assessments, setAssessments] = useState([])
@@ -104,6 +104,7 @@ function PostPage() {
             FD.append('AssessmentID', AssessmentSelection)
             FD.append('TopicID', TopicSelection)
             FD.append('PaperID', PaperSelection)
+            FD.append('Email', props.UserEmail)
             
             await API.post('/Questions/PostQuestion', FD)
         } catch(err) {

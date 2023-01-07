@@ -61,7 +61,7 @@ function App() {
 				<Route path='/' exact element={<HomePage />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
-				<Route path='/Post' exact element={<PostPage />} />
+				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />
 			</Routes>
     	</div>
   	);

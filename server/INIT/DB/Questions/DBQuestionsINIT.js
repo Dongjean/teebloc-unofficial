@@ -9,11 +9,13 @@ async function DBQuestionsINIT() {
         LevelID INTEGER NOT NULL,
         AssessmentID INTEGER NOT NULL,
         SchoolName TEXT,
+        Email TEXT NOT NULL,
     
         FOREIGN KEY (TopicID) REFERENCES Topics(TopicID),
         FOREIGN KEY (PaperID) REFERENCES Papers(PaperID),
         FOREIGN KEY (LevelID) REFERENCES Levels(LevelID),
-        FOREIGN KEY (AssessmentID) REFERENCES Assessments(AssessmentID)
+        FOREIGN KEY (AssessmentID) REFERENCES Assessments(AssessmentID),
+        FOREIGN KEY (Email) REFERENCES Users(Email)
     )`)
     
     await pool.query(`

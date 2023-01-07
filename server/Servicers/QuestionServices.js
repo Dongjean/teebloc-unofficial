@@ -1,9 +1,9 @@
 const pool = require('../DB.js');
 const fs = require('fs');
 
-async function Churn(Cats) {
+async function Churn(Categories) {
     try {
-        CatIDs = Cats.map(Cat => Cat.categoryid) //Gets an array of CategoryIDs from Cats
+        const CatIDs = Categories.map(Category => Category.categoryid) //Gets an array of CategoryIDs from Cats
         const result = await pool.query(`
         SELECT DISTINCT Z.QuestionID, Z.Question, Z.QuestionIMGID, Z.AnswerID, W.Answer, W.AnswerIMGID
         FROM
@@ -29,16 +29,16 @@ async function PostQuestion(FormData) {
         //Save Images
         const QNIMGDIRs = await SaveImages(QNImages, 'QN')
         const ANSIMGDIRs = await SaveImages(ANSImages, 'ANS')
-
+        
         //Save Data in DB
 
         //for now have no schoolname
         //Save Data in Questions table and get the new unique QuestionID
         const result = await pool.query(`
-        INSERT INTO Questions(TopicID, PaperID, LevelID, AssessmentID)
-        VALUES($1, $2, $3, $4)
+        INSERT INTO Questions(TopicID, PaperID, LevelID, AssessmentID, Email)
+        VALUES($1, $2, $3, $4, $5)
         RETURNING QuestionID
-        `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID])
+        `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID, FormData.Email])
 
         const QuestionID = result.rows[0].questionid
 
