@@ -1,12 +1,12 @@
 //Components imports
-// import ChurnedQuestions from "../Components/ChurnedQuestions.js";
+import ChurnedQuestions from "../Components/Churn/ChurnedQuestions.js";
 import TopicSelector from "../Components/Churn/Selectors/TopicSelector.js";
 import SubjectSelector from "../Components/Churn/Selectors/SubjectSelector.js";
 import LevelSelector from "../Components/Churn/Selectors/LevelSelector.js";
 import PaperSelector from "../Components/Churn/Selectors/PaperSelector.js";
 import AssessmentSelector from "../Components/Churn/Selectors/AssessmentSelector.js";
 
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 
 function HomePage() {
     const [TopicsDisplay, setTopicsDisplay] = useState('none')
@@ -19,6 +19,13 @@ function HomePage() {
     const [LevelsSelection, setLevelsSelection] = useState([])
     const [PapersSelection, setPapersSelection] = useState([])
     const [AssessmentsSelection, setAssessmentsSelection] = useState([])
+
+    const isChurnedRef = useRef(false) //initially questions are not churned
+
+    const [Update, setUpdate] = useState(true) //state to help re-render components
+    function ForceUpdate() {
+        setUpdate(!Update) //re-renders the components as the Update state has changed
+    }
     
     console.log(SubjectSelection)
     console.log(TopicsSelection)
@@ -26,13 +33,9 @@ function HomePage() {
     console.log(PapersSelection)
     console.log(AssessmentsSelection)
 
-    function onSubjectSelected(Subject) {
-        setSubjectSelection(Subject)
-    }
-
     return(
         <div>
-            <SubjectSelector onSubjectSelected={onSubjectSelected} />
+            <SubjectSelector onSubjectSelected={(Subject) => setSubjectSelection(Subject)} />
 
             {/* For Displaying Topics */}
             {TopicsDisplay == 'none' ?
@@ -85,8 +88,21 @@ function HomePage() {
             <span style={{display: AssessmentsDisplay}}>
                 <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} />
             </span>
-            
-            {/* <ChurnedQuestions Selected={Selected} /> */}
+
+            <button onClick={() => {isChurnedRef.current=true; ForceUpdate()}}>Churn</button> {/* Button to Churn Questions */}
+
+            {isChurnedRef.current ?
+                <ChurnedQuestions
+                    TopicsSelection={TopicsSelection}
+                    LevelsSelection={LevelsSelection}
+                    PapersSelection={PapersSelection}
+                    AssessmentsSelection={AssessmentsSelection}
+                    Update={Update}
+                />
+            :
+                null
+            }
+
         </div>
     )
 }

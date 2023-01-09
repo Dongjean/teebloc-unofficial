@@ -1,23 +1,28 @@
-import API from '../utils/API.js';
+import API from '../../utils/API.js';
 
-//Component imports
-import Question from './Question.js';
-import Answer from './Answer.js';
-
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 function ChurnedQuestions(props) {
-    const [Churned, setChurned] = useState([])
-    const [isAnswerOpen, setAnswerOpen] = useState(false)
+    const isLoadingRef = useRef(true) //loading at first
+    const [Churned, setChurned] = useState({})
 
-    //gets a new set of churned questions everytime the selected categories change
+    //gets a new set of churned questions on mount/when ForceUpdate is used in HomePage.js and Update state changes
     useEffect(() => {
-        GetChurnedQuestions(props.Selected)
-    }, [props.Selected])
+        console.log("hi")
+        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+    }, [props.Update])
 
-    async function GetChurnedQuestions(Selected) {
+    async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection) {
         try {
-            const result = await API.get(`/Questions/Churn/` + JSON.stringify(Selected))
+            const Queries =
+                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
+                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
+                'Papers=' + JSON.stringify(PapersSelection) + '&' +
+                'Assessments=' + JSON.stringify(AssessmentsSelection)
+            
+            const result = await API.get(`/Questions/Churn?` + Queries)
+            console.log(result.data)
+            isLoadingRef.current = false
             setChurned(result.data)
         } catch(err) {
             console.log(err)
@@ -26,16 +31,16 @@ function ChurnedQuestions(props) {
 
     return (
         <div>
-            {Churned.map(Qn =>
-                <div key={Qn.questionid}>
-                    <Question Question={Qn} />
-                    {isAnswerOpen ?
-                    <div>
-                        <Answer Question={Qn} />
-                        <button onClick={() => setAnswerOpen(!isAnswerOpen)}>Hide Answer</button>
-                    </div>:
-                    <button onClick={() => setAnswerOpen(!isAnswerOpen)}>Open Answer</button>}
-                </div>)}
+            {!isLoadingRef.current ?
+                Churned.Questions.map(Question =>
+                    <div key={Question.questionid}>
+                        School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
+                        Uploader: {Question.firstname + Question.lastname} <br />
+                        <br />
+                    </div>)
+            :
+                null
+            }
         </div>
     )
 }
