@@ -4,7 +4,7 @@ const fs = require('fs');
 async function Churn(Categories) {
     try {
         const result = await pool.query(`
-        SELECT DISTINCT Questions.QuestionID, Questions.SchoolName, Users.Email, Users.FirstName, Users.LastName
+        SELECT Questions.QuestionID, Questions.SchoolName, Users.Email, Users.FirstName, Users.LastName
         FROM Questions JOIN Users
         ON Questions.Email = Users.Email
         WHERE
@@ -15,6 +15,7 @@ async function Churn(Categories) {
 
             NOT Questions.QuestionID=ANY($5::bigint[])
         
+        ORDER BY RANDOM()
         LIMIT 2
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.ChurnedQNIDs]) //Get all Questions for the Categories queried
         const Questions = result.rows
