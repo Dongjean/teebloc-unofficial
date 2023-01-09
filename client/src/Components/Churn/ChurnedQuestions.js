@@ -46,15 +46,20 @@ function ChurnedQuestions(props) {
     return (
         <div>
             {!isLoadingRef.current ?
-                Churned.Questions.map(Question =>
-                    <div key={Question.questionid}>
-                        <button>
-                            School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
-                            Uploader: {Question.firstname + ' ' + Question.lastname} <br />
+                Churned.Questions.length == 0 ?
+                    <div>
+                        No more Questions to Churn
+                    </div>
+                    :
+                    Churned.Questions.map(Question =>
+                        <div key={Question.questionid}>
+                            <button>
+                                School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
+                                Uploader: {Question.firstname + ' ' + Question.lastname} <br />
+                                <br />
+                            </button>
                             <br />
-                        </button>
-                        <br />
-                    </div>)
+                        </div>)
             :
                 null
             }

@@ -26,12 +26,21 @@ function HomePage() {
     function ForceUpdate() {
         setUpdate(!Update) //re-renders the components as the Update state has changed
     }
-    
-    console.log(SubjectSelection)
-    console.log(TopicsSelection)
-    console.log(LevelsSelection)
-    console.log(PapersSelection)
-    console.log(AssessmentsSelection)
+
+    function Churn() {
+        if (
+            SubjectSelection !== 0 &&
+            TopicsSelection.length !== 0 &&
+            LevelsSelection.length !== 0 &&
+            PapersSelection.length !== 0 &&
+            AssessmentsSelection.length !== 0
+        ) {
+            isChurnedRef.current = true
+            ForceUpdate()
+        } else {
+            console.log('Please Select All Categories')
+        }
+    }
 
     return(
         <div>
@@ -89,7 +98,7 @@ function HomePage() {
                 <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} />
             </span>
 
-            <button onClick={() => {isChurnedRef.current=true; ForceUpdate()}}>Churn</button> {/* Button to Churn Questions */}
+            <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
 
             {isChurnedRef.current ?
                 <ChurnedQuestions
