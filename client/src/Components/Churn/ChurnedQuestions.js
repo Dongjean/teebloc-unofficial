@@ -1,6 +1,7 @@
 import API from '../../utils/API.js';
 
 import {useState, useEffect, useRef} from 'react';
+import Cookies from '../../utils/Cookies.js';
 
 function ChurnedQuestions(props) {
     const isLoadingRef = useRef(true) //loading at first
@@ -8,20 +9,33 @@ function ChurnedQuestions(props) {
 
     //gets a new set of churned questions on mount/when ForceUpdate is used in HomePage.js and Update state changes
     useEffect(() => {
-        console.log("hi")
         GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
     }, [props.Update])
 
     async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection) {
         try {
+            var ChurnedQNIDs = Cookies.get('ChurnedQNIDs')
+            if (!ChurnedQNIDs) {
+                ChurnedQNIDs = [] //if the cookies dont exist, ChurnedQNIDs is an empty array
+            }
+            console.log(ChurnedQNIDs)
             const Queries =
                 'Topics=' + JSON.stringify(TopicsSelection) + '&' +
                 'Levels=' + JSON.stringify(LevelsSelection) + '&' +
                 'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection)
+                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+                'ChurnedQNIDs=' + JSON.stringify(ChurnedQNIDs)
             
             const result = await API.get(`/Questions/Churn?` + Queries)
-            console.log(result.data)
+
+            //push the newly churned QuestionIDs into ChurnedQNIDs
+            const Questions = result.data.Questions
+            for (var i=0; i<Questions.length; i++) {
+                ChurnedQNIDs.push(Questions[i].questionid)
+            }
+
+            //set this new ChurnedQNIDs to a cookie so that new churns will not include these QNIDs
+            Cookies.set('ChurnedQNIDs', ChurnedQNIDs)
             isLoadingRef.current = false
             setChurned(result.data)
         } catch(err) {

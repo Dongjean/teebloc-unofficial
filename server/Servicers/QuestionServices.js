@@ -11,9 +11,14 @@ async function Churn(Categories) {
             Questions.TopicID=ANY($1::int[]) AND
             Questions.PaperID=ANY($2::int[]) AND
             Questions.LevelID=ANY($3::int[]) AND
-            Questions.AssessmentID=ANY($4::int[])
-        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments]) //Get all Questions for the Categories queried
+            Questions.AssessmentID=ANY($4::int[]) AND
+
+            NOT Questions.QuestionID=ANY($5::bigint[])
+        
+        LIMIT 2
+        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.ChurnedQNIDs]) //Get all Questions for the Categories queried
         const Questions = result.rows
+        console.log(Questions)
 
         for (var i=0; i<Questions.length; i++) {
             const Question = Questions[i]
