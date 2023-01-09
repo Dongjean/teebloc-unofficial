@@ -35,7 +35,7 @@ function ChurnedQuestions(props) {
                 Churned.Questions.map(Question =>
                     <div key={Question.questionid}>
                         School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
-                        Uploader: {Question.firstname + Question.lastname} <br />
+                        Uploader: {Question.firstname + ' ' + Question.lastname} <br />
                         <br />
                     </div>)
             :

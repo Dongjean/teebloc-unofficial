@@ -4,13 +4,14 @@ const fs = require('fs');
 async function Churn(Categories) {
     try {
         const result = await pool.query(`
-        SELECT DISTINCT QuestionID, SchoolName, Email
-        FROM Questions
+        SELECT DISTINCT Questions.QuestionID, Questions.SchoolName, Users.Email, Users.FirstName, Users.LastName
+        FROM Questions JOIN Users
+        ON Questions.Email = Users.Email
         WHERE
-            TopicID=ANY($1::int[]) AND
-            PaperID=ANY($2::int[]) AND
-            LevelID=ANY($3::int[]) AND
-            AssessmentID=ANY($4::int[])
+            Questions.TopicID=ANY($1::int[]) AND
+            Questions.PaperID=ANY($2::int[]) AND
+            Questions.LevelID=ANY($3::int[]) AND
+            Questions.AssessmentID=ANY($4::int[])
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments]) //Get all Questions for the Categories queried
         const Questions = result.rows
 
