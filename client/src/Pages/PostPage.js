@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 
 //Component imports
 import PostQuestion from "../Components/QuestionUpload/PostQuestion.js";
@@ -19,6 +19,7 @@ function PostPage(props) {
     const [AssessmentSelection, setAssessmentSelection] = useState(0)
     const [TopicSelection, setTopicSelection] = useState(0)
     const [PaperSelection, setPaperSelection] = useState(0)
+    const SchoolNameRef = useRef(null)
 
     const [QNImages, setQNImages] = useState([])
     const [ANSImages, setANSImages] = useState([])
@@ -105,6 +106,7 @@ function PostPage(props) {
             FD.append('TopicID', TopicSelection)
             FD.append('PaperID', PaperSelection)
             FD.append('Email', props.UserEmail)
+            FD.append('SchoolName', SchoolNameRef.current.value)
             
             await API.post('/Questions/PostQuestion', FD)
         } catch(err) {
@@ -229,6 +231,8 @@ function PostPage(props) {
                     {Papers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
                 </select>
 
+                <br />
+                School Name: <input type='text' ref={SchoolNameRef} />
                 <br />
                 <a onClick={UploadQuestion}>Upload Question</a> /
                 <a onClick={UploadAnswer}> Upload Answer</a>
