@@ -116,19 +116,21 @@ async function PostQuestion(FormData) {
 
 //helper function to save all the images
 async function SaveImages(Images, ImageType) {
-    IMGDIRs = []
+    var IMGDIRs = []
     for (var i=0; i<Images.length; i++) {
         const filenames = await fs.promises.readdir('./Images/' + ImageType) //read all file names in the QN or ANS Images directory
-        var NewFilename = 1;
         const Imageextension = Images[i].name.split('.').slice(-1)[0] //get the extension
 
-        filenames.forEach(function(filename) { //iterate through these file names to get a unqiue file name
-            //file names in Images directory are all integer.extension
+        //gets an array of all filenames in the folder with the same extension as the uploaded file
+        const sameEXTfilenames = filenames.map(filename => {
             const filenamedata = filename.split('.')
             if (Imageextension == filenamedata[1]) {
-                NewFilename = parseInt(filenamedata[0]) + 1
+                return parseInt(filenamedata[0])
             }
-        })
+        }).filter(filename => filename)
+
+        //get the largest number and adds one to it to get a unique filename
+        const NewFilename = Math.max(...sameEXTfilenames) + 1
         
         //NewFilename + extension is a unique filename
 
