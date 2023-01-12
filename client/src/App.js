@@ -51,6 +51,10 @@ function App() {
 		navigate('/')
 	}
 
+	function OpenQuestion(QuestionID) {
+		console.log(QuestionID)
+	}
+
 	return (
     	<div>
 			{console.log(LoginData.Email)}
@@ -58,7 +62,7 @@ function App() {
 			{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
 			{LoginData.AccType == 'Creator' ? <CreatorNavBar Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
         	<Routes>
-				<Route path='/' exact element={<HomePage />}/>
+				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
 				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />

@@ -8,7 +8,7 @@ import AssessmentSelector from "../Components/Churn/Selectors/AssessmentSelector
 
 import {useState, useRef} from 'react';
 
-function HomePage() {
+function HomePage(props) {
     const [TopicsDisplay, setTopicsDisplay] = useState('none')
     const [LevelsDisplay, setLevelsDisplay] = useState('none')
     const [PapersDisplay, setPapersDisplay] = useState('none')
@@ -107,6 +107,7 @@ function HomePage() {
                     PapersSelection={PapersSelection}
                     AssessmentsSelection={AssessmentsSelection}
                     Update={Update}
+                    OpenQuestion={(QuestionID) => props.OpenQuestion(QuestionID)}
                 />
             :
                 null

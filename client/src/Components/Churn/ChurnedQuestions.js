@@ -28,6 +28,8 @@ function ChurnedQuestions(props) {
             
             const result = await API.get(`/Questions/Churn?` + Queries)
 
+            console.log(result.data)
+
             //push the newly churned QuestionIDs into ChurnedQNIDs
             const Questions = result.data.Questions
             for (var i=0; i<Questions.length; i++) {
@@ -53,7 +55,7 @@ function ChurnedQuestions(props) {
                     :
                     Churned.Questions.map(Question =>
                         <div key={Question.questionid}>
-                            <button>
+                            <button onClick={() => props.OpenQuestion(Question.questionid)}>
                                 School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
                                 Uploader: {Question.firstname + ' ' + Question.lastname} <br />
                                 <br />

@@ -136,7 +136,13 @@ async function SaveImages(Images, ImageType) {
         }).filter(filename => filename)
 
         //get the largest number and adds one to it to get a unique filename
-        const NewFilename = Math.max(...sameEXTfilenames) + 1
+        var NewFilename;
+        if (sameEXTfilenames.length == 0) {
+            NewFilename = 1
+        } else {
+            NewFilename = Math.max(...sameEXTfilenames) + 1
+        }
+        console.log(NewFilename)
         
         //NewFilename + extension is a unique filename
 
