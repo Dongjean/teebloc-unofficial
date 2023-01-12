@@ -16,11 +16,12 @@ async function Churn(Categories) {
             NOT Questions.QuestionID=ANY($5::bigint[])
         
         ORDER BY RANDOM()
-        LIMIT 2
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.ChurnedQNIDs]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
 
+        var QuestionImages = [];
+        var AnswerImages = [];
         for (var i=0; i<Questions.length; i++) {
             const Question = Questions[i]
 
@@ -30,9 +31,9 @@ async function Churn(Categories) {
             FROM QuestionIMGs
             WHERE QuestionID=$1
             `, [Question.questionid])
+            console.log(QNresult.rows)
 
             //get Image Data from the Image Directory for all Images for this Question
-            var QuestionImages = [];
             for (var j=0; j<QNresult.rows.length; j++) {
                 const QNIMGData = (await fs.promises.readFile(QNresult.rows[j].questionimgdir)).toString('base64')
                 QuestionImages.push({
@@ -51,7 +52,6 @@ async function Churn(Categories) {
             `, [Question.questionid])
 
             //get Image Data from the Image Directory for all Images for this Question
-            var AnswerImages = [];
             for (var j=0; j<ANSresult.rows.length; j++) {
                 const ANSIMGData = (await fs.promises.readFile(ANSresult.rows[j].answerimgdir)).toString('base64')
                 AnswerImages.push({

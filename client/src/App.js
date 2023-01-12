@@ -8,6 +8,7 @@ import HomePage from './Pages/HomePage.js';
 import LoginPage from './Pages/LoginPage.js';
 import SignUpPage from './Pages/SignUpPage.js';
 import PostPage from './Pages/PostPage.js';
+import OpenedQuestionPage from './Pages/OpenedQuestionPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
@@ -51,8 +52,8 @@ function App() {
 		navigate('/')
 	}
 
-	function OpenQuestion(QuestionID) {
-		console.log(QuestionID)
+	function OpenQuestion(QuestionID, Churned) {
+		navigate('/OpenedQuestion?QuestionID=' + QuestionID)
 	}
 
 	return (
@@ -66,6 +67,8 @@ function App() {
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
 				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />
+
+				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage />} />
 			</Routes>
     	</div>
   	);
