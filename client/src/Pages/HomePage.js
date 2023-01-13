@@ -6,19 +6,71 @@ import LevelSelector from "../Components/Churn/Selectors/LevelSelector.js";
 import PaperSelector from "../Components/Churn/Selectors/PaperSelector.js";
 import AssessmentSelector from "../Components/Churn/Selectors/AssessmentSelector.js";
 
-import {useState, useRef} from 'react';
+import {useMemo, useState, useRef, useEffect} from 'react';
+import {useLocation, useNavigate} from "react-router-dom";
 
-function HomePage(props) {    
+function useQuery() {
+    const { search } = useLocation();
+
+    return useMemo(() => new URLSearchParams(search), [search]);
+}
+
+function HomePage(props) {
+    const query = useQuery()
+    const navigate = useNavigate()
+
     const [TopicsDisplay, setTopicsDisplay] = useState('none')
     const [LevelsDisplay, setLevelsDisplay] = useState('none')
     const [PapersDisplay, setPapersDisplay] = useState('none')
     const [AssessmentsDisplay, setAssessmentsDisplay] = useState('none')
 
-    const [SubjectSelection, setSubjectSelection] = useState(0)
-    const [TopicsSelection, setTopicsSelection] = useState([])
-    const [LevelsSelection, setLevelsSelection] = useState([])
-    const [PapersSelection, setPapersSelection] = useState([])
-    const [AssessmentsSelection, setAssessmentsSelection] = useState([])
+    //getting URL query data if it exists, if not set the category selections to an empty selection
+    var Subject = 0;
+    const SubjectQuery = query.get('Subject')
+    if (SubjectQuery) {
+        Subject = SubjectQuery
+    }
+    const [SubjectSelection, setSubjectSelection] = useState(Subject)
+
+    var Topics = [];
+    const TopicsQuery = query.get('Topics')
+    if (TopicsQuery) {
+        console.log('hi')
+        Topics = JSON.parse(TopicsQuery)
+    }
+    const [TopicsSelection, setTopicsSelection] = useState(Topics)
+
+    var Levels = [];
+    const LevelsQuery = query.get('Levels')
+    if (LevelsQuery) {
+        Levels = JSON.parse(LevelsQuery)
+    }
+    const [LevelsSelection, setLevelsSelection] = useState(Levels)
+
+    var Papers = [];
+    const PapersQuery = query.get('Papers')
+    if (PapersQuery) {
+        Papers = JSON.parse(PapersQuery)
+    }
+    const [PapersSelection, setPapersSelection] = useState(Papers)
+
+    var Assessments = [];
+    const AssessmentsQuery = query.get('Assessments')
+    if (AssessmentsQuery) {
+        Assessments = JSON.parse(AssessmentsQuery)
+    }
+    const [AssessmentsSelection, setAssessmentsSelection] = useState(Assessments)
+
+    //updates the URL query parameters to include the selections everytime selections are made
+    useEffect(() => {
+        navigate(
+            '/?Subject=' + SubjectSelection + '&' +
+            'Topics=' + JSON.stringify(TopicsSelection) + '&' +
+            'Levels=' + JSON.stringify(LevelsSelection) + '&' +
+            'Papers=' + JSON.stringify(PapersSelection) + '&' +
+            'Assessments=' + JSON.stringify(AssessmentsSelection)
+        )
+    }, [SubjectSelection, TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection])
 
     const isChurnedRef = useRef(false) //initially questions are not churned
 
