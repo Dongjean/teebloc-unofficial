@@ -4,8 +4,8 @@ import {useState, useEffect} from 'react';
 
 function SubjectSelector(props) {
     const [AllSubjects, setAllSubjects] = useState([])
-    const [SubjectSelection, setSubjectSelection] = useState(0)
-
+    const [SubjectSelection, setSubjectSelection] = useState(props.SubjectSelection)
+    
     //calls only on mount
     useEffect(() => {
         getAllSubjects()
@@ -28,7 +28,7 @@ function SubjectSelector(props) {
     return (
         <div>
             Subject:
-            <select defaultValue={0} onChange={onSubjectSelected}>
+            <select value={SubjectSelection} onChange={onSubjectSelected}>
                 <option value={0}>Please select a Subject</option>
                 {AllSubjects.map(Subject =>
                     <option key={Subject.subjectid} value={Subject.subjectid}>{Subject.subject}</option>

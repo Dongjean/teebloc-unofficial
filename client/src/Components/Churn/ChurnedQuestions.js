@@ -15,7 +15,6 @@ function ChurnedQuestions(props) {
     const query = useQuery()
 
     const [Page, setPage] = useState(query.get('Page')) //set the initial page value to the queried value
-    console.log(Page)
     const isLoadingRef = useRef(true) //loading at first
     const [Churned, setChurned] = useState({})
 
@@ -77,9 +76,9 @@ function ChurnedQuestions(props) {
             //set this new ChurnedQNIDs to a cookie so that new churns will not include these QNIDs
             Cookies.set('ChurnedQNIDs', ChurnedQNIDs)
             isLoadingRef.current = false
-            
+
             setPage(1)
-            navigate('/?Page=' + 1)
+            props.setPage(1)
             setChurned(temp)
         } catch(err) {
             console.log(err)
@@ -108,8 +107,8 @@ function ChurnedQuestions(props) {
                         )}
 
                         {/* Page Buttons */}
-                        <button onClick={() => {setPage(Page - 1); navigate('/?Page=' + (Page - 1).toString())}}>Previous Page</button>
-                        <button onClick={() => {setPage(Page + 1); navigate('/?Page=' + (Page + 1).toString())}}>Next Page</button>
+                        <button onClick={() => {setPage(Page - 1); props.DecrementPage();}}>Previous Page</button>
+                        <button onClick={() => {setPage(Page + 1); props.IncrementPage();}}>Next Page</button>
                     </div>
             :
                 null

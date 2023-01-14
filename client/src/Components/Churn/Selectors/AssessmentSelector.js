@@ -7,7 +7,7 @@ import Assessment from '../Categories/Assessment.js';
 
 function AssessmentSelector(props) {
     const [Assessments, setAssessments] = useState([])
-    const [AssessmentsSelection, setAssessmentsSelection] = useState([])
+    const [AssessmentsSelection, setAssessmentsSelection] = useState(props.AssessmentsSelection)
 
     //calls everytime new Levels are selected
     useEffect(() => {
@@ -20,9 +20,15 @@ function AssessmentSelector(props) {
             const result = await API.get('/Categories/Assessments/GetFromLevels/' + LevelIDs)
             setAssessments(result.data)
             
+            var temp = AssessmentsSelection;
             const AssessmentIDs = result.data.map(Assessment => Assessment.assessmentid)
-            setAssessmentsSelection(AssessmentIDs)
-            props.AssessmentChanged(AssessmentIDs)
+            for (var i=0; i<AssessmentsSelection.length; i++) {
+                if (!AssessmentIDs.includes(AssessmentsSelection[i])) {
+                    temp = temp.filter(AssessmentID => AssessmentID !== AssessmentsSelection[i])
+                }
+            }
+            setAssessmentsSelection(temp)
+            props.AssessmentChanged(temp)
         } catch(err) {
             console.log(err)
         }
@@ -44,7 +50,7 @@ function AssessmentSelector(props) {
     return (
         <div>
             {Assessments.map(assessment =>
-                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} />
+                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} isAssessmentSelected={AssessmentsSelection.includes(assessment.assessmentid)} />
             )}          
         </div>
     )

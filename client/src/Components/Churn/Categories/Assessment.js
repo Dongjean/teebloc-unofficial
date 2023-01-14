@@ -1,15 +1,15 @@
 import {useState} from 'react';
 
 function Assessment(props) {
-    const [isChecked, setisChecked] = useState(true)
+    const [isChecked, setisChecked] = useState(props.isAssessmentSelected)
 
     function onClick() {
         setisChecked(!isChecked)
 
         if (!isChecked == true) {
-            props.AssessmentSelected(props.Assessment)
+            props.AssessmentSelected(props.Assessment.assessmentid)
         } else {
-            props.AssessmentDeselected(props.Assessment)
+            props.AssessmentDeselected(props.Assessment.assessmentid)
         }
     }
 

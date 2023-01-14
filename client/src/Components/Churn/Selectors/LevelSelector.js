@@ -7,7 +7,7 @@ import Level from '../Categories/Level.js';
 
 function LevelSelector(props) {
     const [Levels, setLevels] = useState([])
-    const [LevelsSelection, setLevelsSelection] = useState([])
+    const [LevelsSelection, setLevelsSelection] = useState(props.LevelsSelection)
 
     //calls everytime a new subject is selected
     useEffect(() => {
@@ -19,9 +19,15 @@ function LevelSelector(props) {
             const result = await API.get('/Categories/Levels/Get/' + Subject)
             setLevels(result.data)
 
-            const LevelIDs = result.data.map(Level => Level.levelid)
-            setLevelsSelection(LevelIDs)
-            props.LevelChanged(LevelIDs)
+            var temp = LevelsSelection;
+            const LevelIDs = result.data.map(level => level.levelid)
+            for (var i=0; i<LevelsSelection.length; i++) {
+                if (!LevelIDs.includes(LevelsSelection[i])) {
+                    temp = temp.filter(LevelID => LevelID !== LevelsSelection[i])
+                }
+            }
+            setLevelsSelection(temp)
+            props.LevelChanged(temp)
         } catch(err) {
             console.log(err)
         }
@@ -43,7 +49,7 @@ function LevelSelector(props) {
     return (
         <div>
             {Levels.map(level =>
-                <Level key={level.levelid} Level={level} LevelSelected={LevelSelected} LevelDeselected={LevelDeselected} />
+                <Level key={level.levelid} Level={level} LevelSelected={LevelSelected} LevelDeselected={LevelDeselected} isLevelSelected={LevelsSelection.includes(level.levelid)} />
             )}
         </div>
     )

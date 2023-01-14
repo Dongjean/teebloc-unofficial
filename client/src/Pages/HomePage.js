@@ -35,7 +35,6 @@ function HomePage(props) {
     var Topics = [];
     const TopicsQuery = query.get('Topics')
     if (TopicsQuery) {
-        console.log('hi')
         Topics = JSON.parse(TopicsQuery)
     }
     const [TopicsSelection, setTopicsSelection] = useState(Topics)
@@ -61,16 +60,7 @@ function HomePage(props) {
     }
     const [AssessmentsSelection, setAssessmentsSelection] = useState(Assessments)
 
-    //updates the URL query parameters to include the selections everytime selections are made
-    useEffect(() => {
-        navigate(
-            '/?Subject=' + SubjectSelection + '&' +
-            'Topics=' + JSON.stringify(TopicsSelection) + '&' +
-            'Levels=' + JSON.stringify(LevelsSelection) + '&' +
-            'Papers=' + JSON.stringify(PapersSelection) + '&' +
-            'Assessments=' + JSON.stringify(AssessmentsSelection)
-        )
-    }, [SubjectSelection, TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection])
+    const [Page, setPage] = useState(null)
 
     const isChurnedRef = useRef(false) //initially questions are not churned
 
@@ -78,6 +68,32 @@ function HomePage(props) {
     function ForceUpdate() {
         setUpdate(!Update) //re-renders the components as the Update state has changed
     }
+
+    //updates the URL query parameters to include the selections everytime selections are made
+    useEffect(() => {
+        console.log(isChurnedRef.current)
+        if (!isChurnedRef.current) {
+            navigate(
+                '/?Subject=' + SubjectSelection + '&' +
+                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
+                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
+                'Papers=' + JSON.stringify(PapersSelection) + '&' +
+                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+                'isChurned=' + isChurnedRef.current
+            )
+        } else {
+            console.log('hello')
+            navigate(
+                '/?Subject=' + SubjectSelection + '&' +
+                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
+                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
+                'Papers=' + JSON.stringify(PapersSelection) + '&' +
+                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+                'isChurned=' + isChurnedRef.current + '&' +
+                'Page=' + Page
+            )
+        }
+    }, [SubjectSelection, TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection, Page])
 
     function Churn() {
         if (
@@ -96,7 +112,7 @@ function HomePage(props) {
 
     return(
         <div>
-            <SubjectSelector onSubjectSelected={(Subject) => setSubjectSelection(Subject)} />
+            <SubjectSelector onSubjectSelected={(Subject) => setSubjectSelection(Subject)} SubjectSelection={SubjectSelection} />
 
             {/* For Displaying Topics */}
             {TopicsDisplay == 'none' ?
@@ -108,7 +124,7 @@ function HomePage(props) {
                 <a onClick={() => setTopicsDisplay('none')}>▲ Topics:</a>
             }
             <span style={{display: TopicsDisplay}}>
-                <TopicSelector SubjectSelection={SubjectSelection} TopicChanged={(Topics) => setTopicsSelection(Topics)} />
+                <TopicSelector SubjectSelection={SubjectSelection} TopicChanged={(Topics) => setTopicsSelection(Topics)} TopicsSelection={TopicsSelection} />
             </span>
 
             {/* For Displaying Levels */}
@@ -121,7 +137,7 @@ function HomePage(props) {
                 <a onClick={() => setLevelsDisplay('none')}>▲ Levels:</a>
             }
             <span style={{display: LevelsDisplay}}>
-                <LevelSelector SubjectSelection={SubjectSelection} LevelChanged={(Levels) => setLevelsSelection(Levels)} />
+                <LevelSelector SubjectSelection={SubjectSelection} LevelChanged={(Levels) => setLevelsSelection(Levels)} LevelsSelection={LevelsSelection} />
             </span>
 
             {/* For Displaying Papers */}
@@ -134,7 +150,7 @@ function HomePage(props) {
                 <a onClick={() => setPapersDisplay('none')}>▲ Papers:</a>
             }
             <span style={{display: PapersDisplay}}>
-                <PaperSelector SubjectSelection={SubjectSelection} PaperChanged={(Papers) => setPapersSelection(Papers)} />
+                <PaperSelector SubjectSelection={SubjectSelection} PaperChanged={(Papers) => setPapersSelection(Papers)} PapersSelection={PapersSelection} />
             </span>
 
             {/* For Displaying Assessments */}
@@ -147,7 +163,7 @@ function HomePage(props) {
                 <a onClick={() => setAssessmentsDisplay('none')}>▲ Assessments:</a>
             }
             <span style={{display: AssessmentsDisplay}}>
-                <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} />
+                <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} AssessmentsSelection={AssessmentsSelection} />
             </span>
 
             <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
@@ -160,6 +176,9 @@ function HomePage(props) {
                     AssessmentsSelection={AssessmentsSelection}
                     Update={Update}
                     OpenQuestion={(QuestionID, Churned) => props.OpenQuestion(QuestionID, Churned)}
+                    IncrementPage={() => setPage(Page + 1)}
+                    DecrementPage={() => setPage(Page - 1)}
+                    setPage={Page => {setPage(Page);console.log(Page)}}
                 />
             :
                 null

@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
 function Level(props) {
-    const [isChecked, setisChecked] = useState(true)
+    const [isChecked, setisChecked] = useState(props.isLevelSelected)
 
     function onClick() {
         setisChecked(!isChecked)

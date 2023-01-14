@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
 function Paper(props) {
-    const [isChecked, setisChecked] = useState(true)
+    const [isChecked, setisChecked] = useState(props.isPaperSelected)
 
     function onClick() {
         setisChecked(!isChecked)

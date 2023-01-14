@@ -7,7 +7,7 @@ import Paper from '../Categories/Paper.js';
 
 function PaperSelector(props) {
     const [Papers, setPapers] = useState([])
-    const [PapersSelection, setPapersSelection] = useState([])
+    const [PapersSelection, setPapersSelection] = useState(props.PapersSelection)
 
     //calls everytime a new subject is selected
     useEffect(() => {
@@ -19,9 +19,15 @@ function PaperSelector(props) {
             const result = await API.get('/Categories/Papers/Get/' + Subject)
             setPapers(result.data)
 
-            const PaperIDs = result.data.map(Paper => Paper.paperid)
-            setPapersSelection(PaperIDs)
-            props.PaperChanged(PaperIDs)
+            var temp = PapersSelection;
+            const PaperIDs = result.data.map(paper => paper.paperid)
+            for (var i=0; i<PapersSelection.length; i++) {
+                if (!PaperIDs.includes(PapersSelection[i])) {
+                    temp = temp.filter(PaperID => PaperID !== PapersSelection[i])
+                }
+            }
+            setPapersSelection(temp)
+            props.PaperChanged(temp)
         } catch(err) {
             console.log(err)
         }
@@ -43,7 +49,7 @@ function PaperSelector(props) {
     return (
         <div>
             {Papers.map(paper =>
-                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} />
+                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} isPaperSelected={PapersSelection.includes(paper.paperid)} />
             )}
         </div>
     )

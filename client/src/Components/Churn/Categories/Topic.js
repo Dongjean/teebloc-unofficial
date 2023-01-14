@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
 function Topic(props) {
-    const [isChecked, setisChecked] = useState(true)
+    const [isChecked, setisChecked] = useState(props.isTopicSelected)
 
     function onClick() {
         setisChecked(!isChecked)
