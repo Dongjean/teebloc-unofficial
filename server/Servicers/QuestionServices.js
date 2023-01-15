@@ -4,19 +4,31 @@ const fs = require('fs');
 async function Churn(Categories) {
     try {
         const result = await pool.query(`
-        SELECT Questions.QuestionID, Questions.SchoolName, Users.Email, Users.FirstName, Users.LastName
+        SELECT
+            Questions.QuestionID, Questions.SchoolName,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName
         FROM Questions JOIN Users
-        ON Questions.Email = Users.Email
+            ON Questions.Email = Users.Email
+        JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        JOIN Papers
+            ON Papers.PaperID = Questions.PaperID
+        JOIN Levels
+            ON Levels.LevelID = Questions.LevelID
+        JOIN Assessments
+            ON Assessments.AssessmentID = Questions.AssessmentID
         WHERE
             Questions.TopicID=ANY($1::int[]) AND
             Questions.PaperID=ANY($2::int[]) AND
             Questions.LevelID=ANY($3::int[]) AND
-            Questions.AssessmentID=ANY($4::int[]) AND
-
-            NOT Questions.QuestionID=ANY($5::bigint[])
+            Questions.AssessmentID=ANY($4::int[])
         
         ORDER BY RANDOM()
-        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.ChurnedQNIDs]) //Get all Questions for the Categories queried
+        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
 

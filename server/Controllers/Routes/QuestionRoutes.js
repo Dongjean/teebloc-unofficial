@@ -12,8 +12,7 @@ router.get('/Questions/Churn', (req, res) => {
         Topics: JSON.parse(req.query.Topics),
         Levels: JSON.parse(req.query.Levels),
         Papers: JSON.parse(req.query.Papers),
-        Assessments: JSON.parse(req.query.Assessments),
-        ChurnedQNIDs: JSON.parse(req.query.ChurnedQNIDs)
+        Assessments: JSON.parse(req.query.Assessments)
     }
     Churn(Categories).then(response => res.json(response))
 })

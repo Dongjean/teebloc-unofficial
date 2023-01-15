@@ -4,6 +4,9 @@ import {useMemo, useState, useEffect, useRef} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import Cookies from '../../utils/Cookies.js';
 
+//component imports
+import Question from './Question.js';
+
 function useQuery() {
     const { search } = useLocation();
 
@@ -16,70 +19,49 @@ function ChurnedQuestions(props) {
 
     const [Page, setPage] = useState(query.get('Page')) //set the initial page value to the queried value
     const isLoadingRef = useRef(true) //loading at first
-    const [Churned, setChurned] = useState({})
+    
+    const LocalChurned = JSON.parse(localStorage.getItem('Churned'))
+    var ChurnedINIT = {}
+    if (!LocalChurned) {
+        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+    } else {
+        ChurnedINIT = LocalChurned
+        isLoadingRef.current = false
+    }
+    const [Churned, setChurned] = useState(ChurnedINIT)
 
+    const isFirstRenderRef = useRef(true)
     //gets a new set of churned questions on mount/when ForceUpdate is used in HomePage.js and Update state changes
     useEffect(() => {
-        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+        if (isFirstRenderRef.current) {
+            //dont do anything on first mount
+            isFirstRenderRef.current = false
+        } else {
+            GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+        }
     }, [props.Update])
 
     async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection) {
         try {
-            var ChurnedQNIDs = Cookies.get('ChurnedQNIDs')
-            if (!ChurnedQNIDs) {
-                ChurnedQNIDs = [] //if the cookies dont exist, ChurnedQNIDs is an empty array
-            }
-            console.log(ChurnedQNIDs)
             const Queries =
                 'Topics=' + JSON.stringify(TopicsSelection) + '&' +
                 'Levels=' + JSON.stringify(LevelsSelection) + '&' +
                 'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
-                'ChurnedQNIDs=' + JSON.stringify(ChurnedQNIDs)
+                'Assessments=' + JSON.stringify(AssessmentsSelection)
             
             const result = await API.get(`/Questions/Churn?` + Queries)
+
             console.log(result.data)
 
-            const ChurnedQuestions = localStorage.getItem('Churned')
-            var temp = {
-                haveChurned: false
-            };
+            localStorage.setItem('Churned', JSON.stringify(result.data))
 
-            if (ChurnedQuestions == null) {
-                //if there is no churned questions saved in localstorage yet,
-                localStorage.setItem('Churned', JSON.stringify(result.data))
-                console.log(JSON.stringify(result.data))
-            } else {
-                //if there is already some churned questions saved in localstorage,
-                temp = JSON.parse(ChurnedQuestions)
-                for (var i=0; i<result.data.Questions.length; i++) {
-                    temp.Questions.push(result.data.Questions[i])
-                }
-
-                for (var i=0; i<result.data.QuestionImages.length; i++) {
-                    temp.QuestionImages.push(result.data.QuestionImages[i])
-                }
-
-                for (var i=0; i<result.data.AnswerImages.length; i++) {
-                    temp.AnswerImages.push(result.data.AnswerImages[i])
-                }
-
-                localStorage.setItem('Churned', JSON.stringify(temp))
-            }
-
-            //push the newly churned QuestionIDs into ChurnedQNIDs
-            const Questions = result.data.Questions
-            for (var i=0; i<Questions.length; i++) {
-                ChurnedQNIDs.push(Questions[i].questionid)
-            }
-
-            //set this new ChurnedQNIDs to a cookie so that new churns will not include these QNIDs
-            Cookies.set('ChurnedQNIDs', ChurnedQNIDs)
             isLoadingRef.current = false
 
-            setPage(1)
-            props.setPage(1)
-            setChurned(temp)
+            if (!Page) {
+                setPage(1)
+                props.setPage(1)
+            }
+            setChurned(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -88,18 +70,11 @@ function ChurnedQuestions(props) {
     return (
         <div>
             {!isLoadingRef.current ?
-                Churned.haveChurned == false ?
                     <div>
-                        No more Questions to Churn
-                    </div>
-                    :
-                    <div>
-                        {console.log(Churned.Questions.slice(2 * (Page-1), 2 * (Page-1) + 2))}
-                        {Churned.Questions.slice(2 * (Page-1), 2 * (Page-1) + 2).map(Question =>
-                            <div key={Question.questionid}>
-                                <button onClick={() => props.OpenQuestion(Question.questionid, Churned)}>
-                                    School: {Question.schoolname ? Question.schoolname : <span>NA</span>} <br />
-                                    Uploader: {Question.firstname + ' ' + Question.lastname} <br />
+                        {Churned.Questions.slice(props.QNsperPage * (Page-1), props.QNsperPage * (Page-1) + props.QNsperPage).map(question =>
+                            <div key={question.questionid}>
+                                <button onClick={() => props.OpenQuestion(question.questionid, Churned)}>
+                                    <Question Question={question} FirstQuestionIMG={Churned.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == question.questionid)[0]}/>
                                     <br />
                                 </button>
                                 <br />

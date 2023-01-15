@@ -60,9 +60,32 @@ function HomePage(props) {
     }
     const [AssessmentsSelection, setAssessmentsSelection] = useState(Assessments)
 
-    const [Page, setPage] = useState(null)
+    var QNsperPage = 5; //by default have 5 qns per page
+    const QNsperPageQuery = query.get('QNsperPage')
+    if (QNsperPageQuery) {
+        QNsperPage = QNsperPageQuery
+    }
+    const QNsperPageRef = useRef(QNsperPage)
 
-    const isChurnedRef = useRef(false) //initially questions are not churned
+    var isChurned = false;
+    const isChurnedQuery = query.get('isChurned')
+    if (isChurnedQuery) {
+        isChurned = (isChurnedQuery =='true')
+    }
+    const isChurnedRef = useRef(isChurned)
+
+    var ChurnedDisplay = 'none';
+    if (isChurned) {
+        ChurnedDisplay = 'inline'
+    }
+    const ChurnedQNsDisplay = useRef(ChurnedDisplay) //initially questions are not churned unless otherwise stated by URL Query Params
+
+    var Pageno = null;
+    const PageQuery = query.get('Page')
+    if (isChurnedRef.current && PageQuery) { //Page number can only exist when there are questions churned to have pages for
+        Pageno = PageQuery
+    }
+    const [Page, setPage] = useState(Pageno)
 
     const [Update, setUpdate] = useState(true) //state to help re-render components
     function ForceUpdate() {
@@ -71,29 +94,17 @@ function HomePage(props) {
 
     //updates the URL query parameters to include the selections everytime selections are made
     useEffect(() => {
-        console.log(isChurnedRef.current)
-        if (!isChurnedRef.current) {
-            navigate(
-                '/?Subject=' + SubjectSelection + '&' +
-                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
-                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
-                'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
-                'isChurned=' + isChurnedRef.current
-            )
-        } else {
-            console.log('hello')
-            navigate(
-                '/?Subject=' + SubjectSelection + '&' +
-                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
-                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
-                'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
-                'isChurned=' + isChurnedRef.current + '&' +
-                'Page=' + Page
-            )
-        }
-    }, [SubjectSelection, TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection, Page])
+        navigate(
+            '/?Subject=' + SubjectSelection + '&' +
+            'Topics=' + JSON.stringify(TopicsSelection) + '&' +
+            'Levels=' + JSON.stringify(LevelsSelection) + '&' +
+            'Papers=' + JSON.stringify(PapersSelection) + '&' +
+            'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+            'QNsperPage=' + QNsperPage + '&' +
+            'isChurned=' + isChurnedRef.current + '&' +
+            'Page=' + Page
+        )
+    }, [Update, Page])
 
     function Churn() {
         if (
@@ -103,6 +114,7 @@ function HomePage(props) {
             PapersSelection.length !== 0 &&
             AssessmentsSelection.length !== 0
         ) {
+            ChurnedQNsDisplay.current = 'inline'
             isChurnedRef.current = true
             ForceUpdate()
         } else {
@@ -116,7 +128,7 @@ function HomePage(props) {
 
             {/* For Displaying Topics */}
             {TopicsDisplay == 'none' ?
-                <div>
+                <div> 
                     <a onClick={() => setTopicsDisplay('inline')}>▼ Topics:</a>
                     <br />
                 </div>
@@ -166,23 +178,24 @@ function HomePage(props) {
                 <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} AssessmentsSelection={AssessmentsSelection} />
             </span>
 
-            <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
+            <input type='text' onChange={event => QNsperPageRef.current = event.target.value} />
 
-            {isChurnedRef.current ?
+            <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
+            {console.log(QNsperPageRef.current.value)}
+            <div style={{display: ChurnedQNsDisplay.current}}>
                 <ChurnedQuestions
                     TopicsSelection={TopicsSelection}
                     LevelsSelection={LevelsSelection}
                     PapersSelection={PapersSelection}
                     AssessmentsSelection={AssessmentsSelection}
+                    QNsperPage={parseInt(QNsperPageRef.current)}
                     Update={Update}
                     OpenQuestion={(QuestionID, Churned) => props.OpenQuestion(QuestionID, Churned)}
                     IncrementPage={() => setPage(Page + 1)}
                     DecrementPage={() => setPage(Page - 1)}
                     setPage={Page => {setPage(Page);console.log(Page)}}
                 />
-            :
-                null
-            }
+            </div>
         </div>
     )
 }
