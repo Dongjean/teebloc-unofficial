@@ -66,6 +66,23 @@ async function DBCategoriesINIT() {
         FOREIGN KEY (SubjectID) REFERENCES Subjects(SubjectID),
         FOREIGN KEY (PaperID) REFERENCES Papers(PaperID)
     )`)
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS Schools(
+        SchoolID INTEGER PRIMARY KEY NOT NULL,
+        SchoolName TEXT NOT NULL
+    )`)
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS School_Subject(
+        SchoolID INTEGER NOT NULL,
+        SubjectID INTEGER NOT NULL,
+
+        PRIMARY KEY (SchoolID, SubjectID),
+
+        FOREIGN KEY (SchoolID) REFERENCES Schools(SchoolID),
+        FOREIGN KEY (SubjectID) REFERENCES Subjects(SubjectID)
+    )`)
 }
 
 module.exports = {DBCategoriesINIT}

@@ -8,13 +8,14 @@ async function DBQuestionsINIT() {
         PaperID INTEGER NOT NULL,
         LevelID INTEGER NOT NULL,
         AssessmentID INTEGER NOT NULL,
-        SchoolName TEXT,
+        SchoolID INTEGER NOT NULL,
         Email TEXT NOT NULL,
     
         FOREIGN KEY (TopicID) REFERENCES Topics(TopicID),
         FOREIGN KEY (PaperID) REFERENCES Papers(PaperID),
         FOREIGN KEY (LevelID) REFERENCES Levels(LevelID),
         FOREIGN KEY (AssessmentID) REFERENCES Assessments(AssessmentID),
+        FOREIGN KEY (SchoolID) REFERENCES Schools(SchoolID),
         FOREIGN KEY (Email) REFERENCES Users(Email)
     )`)
     
