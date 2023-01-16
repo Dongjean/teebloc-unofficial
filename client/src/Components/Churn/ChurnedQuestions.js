@@ -23,7 +23,7 @@ function ChurnedQuestions(props) {
     const LocalChurned = JSON.parse(localStorage.getItem('Churned'))
     var ChurnedINIT = {}
     if (!LocalChurned) {
-        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection, props.SchoolsSelection)
     } else {
         ChurnedINIT = LocalChurned
         isLoadingRef.current = false
@@ -37,17 +37,24 @@ function ChurnedQuestions(props) {
             //dont do anything on first mount
             isFirstRenderRef.current = false
         } else {
-            GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection)
+            GetChurnedQuestions(
+                props.TopicsSelection,
+                props.LevelsSelection,
+                props.PapersSelection,
+                props.AssessmentsSelection,
+                props.SchoolsSelection
+            )
         }
     }, [props.Update])
 
-    async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection) {
+    async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection, SchoolsSelection) {
         try {
             const Queries =
                 'Topics=' + JSON.stringify(TopicsSelection) + '&' +
                 'Levels=' + JSON.stringify(LevelsSelection) + '&' +
                 'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection)
+                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+                'Schools=' + JSON.stringify(SchoolsSelection)
             
             const result = await API.get(`/Questions/Churn?` + Queries)
 

@@ -212,13 +212,13 @@ function HomePage(props) {
             </select>
 
             <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
-
             <div style={{display: ChurnedQNsDisplay.current}}>
                 <ChurnedQuestions
                     TopicsSelection={TopicsSelection}
                     LevelsSelection={LevelsSelection}
                     PapersSelection={PapersSelection}
                     AssessmentsSelection={AssessmentsSelection}
+                    SchoolsSelection={SchoolsSelection}
                     QNsperPage={parseInt(QNsperPageRef.current)}
                     Update={Update}
                     OpenQuestion={(QuestionID, Churned) => props.OpenQuestion(QuestionID, Churned)}

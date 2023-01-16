@@ -9,7 +9,8 @@ function Question(props) {
             Topic: {Question.topicname} <br />
             Level: {Question.level} <br />
             Paper: {Question.paper} <br />
-            Assessment: {Question.assessmentname}
+            Assessment: {Question.assessmentname} <br />
+            School: {Question.schoolname}
         </div>
     )
 }

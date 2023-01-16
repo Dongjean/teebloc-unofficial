@@ -5,12 +5,14 @@ async function Churn(Categories) {
     try {
         const result = await pool.query(`
         SELECT
-            Questions.QuestionID, Questions.SchoolName,
+            Questions.QuestionID,
             Users.FirstName, Users.LastName,
             Topics.TopicID, Topics.TopicName,
             Papers.PaperID, Papers.Paper,
             Levels.LevelID, Levels.Level,
-            Assessments.AssessmentID, Assessments.AssessmentName
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+
         FROM Questions JOIN Users
             ON Questions.Email = Users.Email
         JOIN Topics
@@ -21,14 +23,18 @@ async function Churn(Categories) {
             ON Levels.LevelID = Questions.LevelID
         JOIN Assessments
             ON Assessments.AssessmentID = Questions.AssessmentID
+        JOIN Schools
+            ON Schools.SchoolID = Questions.SchoolID
+
         WHERE
             Questions.TopicID=ANY($1::int[]) AND
             Questions.PaperID=ANY($2::int[]) AND
             Questions.LevelID=ANY($3::int[]) AND
-            Questions.AssessmentID=ANY($4::int[])
+            Questions.AssessmentID=ANY($4::int[]) AND
+            Questions.SchoolID=ANY($5::int[])
         
         ORDER BY RANDOM()
-        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments]) //Get all Questions for the Categories queried
+        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
 
