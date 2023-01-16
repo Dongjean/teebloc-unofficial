@@ -14,6 +14,7 @@ import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
 import Cookies from './utils/Cookies.js';
 import API from './utils/API.js';
+import './CSS/index.css';
 
 function App() {
 	const navigate = useNavigate();
@@ -58,10 +59,11 @@ function App() {
 
 	return (
     	<div>
-			{console.log(LoginData.Email)}
-			{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
-			{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
-			{LoginData.AccType == 'Creator' ? <CreatorNavBar Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
+			<div className='NavBar'>
+				{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
+				{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
+				{LoginData.AccType == 'Creator' ? <CreatorNavBar Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
+			</div>
         	<Routes>
 				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
