@@ -178,10 +178,17 @@ function HomePage(props) {
                 <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} AssessmentsSelection={AssessmentsSelection} />
             </span>
 
-            <input type='text' onChange={event => QNsperPageRef.current = event.target.value} />
+            {/* by default have 5 Questions per page if not specified by URL query params */}
+            <select defaultValue={parseInt(QNsperPageRef.current)} onChange={event => QNsperPageRef.current = event.target.value}>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+                <option value={5}>5</option>
+            </select>
 
             <button onClick={Churn}>Churn</button> {/* Button to Churn Questions */}
-            {console.log(QNsperPageRef.current.value)}
+
             <div style={{display: ChurnedQNsDisplay.current}}>
                 <ChurnedQuestions
                     TopicsSelection={TopicsSelection}
