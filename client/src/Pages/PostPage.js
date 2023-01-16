@@ -12,6 +12,7 @@ function PostPage(props) {
     const [Assessments, setAssessments] = useState([])
     const [Topics, setTopics] = useState([])
     const [Papers, setPapers] = useState([])
+    const [Schools, setSchools] = useState([])
 
     //0 is the null value for all category IDs
     const [SubjectSelection, setSubjectSelection] = useState(0)
@@ -19,7 +20,7 @@ function PostPage(props) {
     const [AssessmentSelection, setAssessmentSelection] = useState(0)
     const [TopicSelection, setTopicSelection] = useState(0)
     const [PaperSelection, setPaperSelection] = useState(0)
-    const SchoolNameRef = useRef(null)
+    const [SchoolSelection, setSchoolSelection] = useState(0)
 
     const [QNImages, setQNImages] = useState([])
     const [ANSImages, setANSImages] = useState([])
@@ -71,10 +72,21 @@ function PostPage(props) {
         }
     }
 
+    //get the Papers that exist for this Subject
     async function getPapers(Subject) {
         try {
             const result = await API.get('/Categories/Papers/Get/' + Subject)
             setPapers(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    //get the Schools that offer this Subject
+    async function getSchools(Subject) {
+        try {
+            const result = await API.get('/Categories/Schools/Get/' + Subject)
+            setSchools(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -105,8 +117,8 @@ function PostPage(props) {
             FD.append('AssessmentID', AssessmentSelection)
             FD.append('TopicID', TopicSelection)
             FD.append('PaperID', PaperSelection)
+            FD.append('SchoolID', SchoolSelection)
             FD.append('Email', props.UserEmail)
-            FD.append('SchoolName', SchoolNameRef.current.value)
             
             await API.post('/Questions/PostQuestion', FD)
         } catch(err) {
@@ -119,6 +131,7 @@ function PostPage(props) {
         getLevels(event.target.value) //get the levels that offer this subject if a subject was selected
         getTopics(event.target.value) //get the Topics tested in this Subject
         getPapers(event.target.value) //get the Papers that exist for this Subject
+        getSchools(event.target.value) //get the Schools that offer this Subject
     }
     
     function onLevelSelected(event) {
@@ -136,6 +149,10 @@ function PostPage(props) {
 
     function onPaperSelected(event) {
         setPaperSelection(event.target.value)
+    }
+
+    function onSchoolSelected(event) {
+        setSchoolSelection(event.target.value)
     }
 
     function SubmitPost(event) {
@@ -175,6 +192,7 @@ function PostPage(props) {
         console.log(AssessmentSelection)
         console.log(TopicSelection)
         console.log(PaperSelection)
+        console.log(SchoolSelection)
         console.log("submitted!") //will change this later to API call to submit the post
         Post()
     }
@@ -231,8 +249,12 @@ function PostPage(props) {
                     {Papers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
                 </select>
 
-                <br />
-                School Name: <input type='text' ref={SchoolNameRef} />
+                School Name:
+                <select defaultValue={0} onChange={onSchoolSelected}>
+                    <option value={0}>Please Select a School</option>
+                    {Schools.map(School => <option key={School.schoolid} value={School.schoolid}>{School.schoolname}</option>)}
+                </select>
+
                 <br />
                 <a onClick={UploadQuestion}>Upload Question</a> /
                 <a onClick={UploadAnswer}> Upload Answer</a>

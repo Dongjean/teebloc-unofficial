@@ -106,10 +106,10 @@ async function PostQuestion(FormData) {
 
         //Save Data in Questions table and get the new unique QuestionID
         const result = await pool.query(`
-        INSERT INTO Questions(TopicID, PaperID, LevelID, AssessmentID, SchoolName, Email)
+        INSERT INTO Questions(TopicID, PaperID, LevelID, AssessmentID, SchoolID, Email)
         VALUES($1, $2, $3, $4, $5, $6)
         RETURNING QuestionID
-        `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID, FormData.SchoolName, FormData.Email])
+        `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID, FormData.SchoolID, FormData.Email])
 
         const QuestionID = result.rows[0].questionid
 

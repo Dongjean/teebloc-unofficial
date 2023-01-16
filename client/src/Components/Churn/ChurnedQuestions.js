@@ -63,8 +63,8 @@ function ChurnedQuestions(props) {
             localStorage.setItem('Churned', JSON.stringify(result.data))
 
             isLoadingRef.current = false
-
-            if (!Page) {
+            console.log(typeof(Page))
+            if (!Page || Page == 'null') {
                 setPage(1)
                 props.setPage(1)
             }
