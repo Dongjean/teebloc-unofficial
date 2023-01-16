@@ -5,6 +5,7 @@ import SubjectSelector from "../Components/Churn/Selectors/SubjectSelector.js";
 import LevelSelector from "../Components/Churn/Selectors/LevelSelector.js";
 import PaperSelector from "../Components/Churn/Selectors/PaperSelector.js";
 import AssessmentSelector from "../Components/Churn/Selectors/AssessmentSelector.js";
+import SchoolSelector from "../Components/Churn/Selectors/SchoolSelector.js";
 
 import {useMemo, useState, useRef, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
@@ -23,6 +24,7 @@ function HomePage(props) {
     const [LevelsDisplay, setLevelsDisplay] = useState('none')
     const [PapersDisplay, setPapersDisplay] = useState('none')
     const [AssessmentsDisplay, setAssessmentsDisplay] = useState('none')
+    const [SchoolsDiplay, setSchoolsDiplay] = useState('none')
 
     //getting URL query data if it exists, if not set the category selections to an empty selection
     var Subject = 0;
@@ -59,6 +61,13 @@ function HomePage(props) {
         Assessments = JSON.parse(AssessmentsQuery)
     }
     const [AssessmentsSelection, setAssessmentsSelection] = useState(Assessments)
+
+    var Schools = [];
+    const SchoolsQuery = query.get('Schools')
+    if (SchoolsQuery) {
+        Schools = JSON.parse(SchoolsQuery)
+    }
+    const [SchoolsSelection, setSchoolsSelection] = useState(Schools)
 
     var QNsperPage = 5; //by default have 5 qns per page
     const QNsperPageQuery = query.get('QNsperPage')
@@ -100,6 +109,7 @@ function HomePage(props) {
             'Levels=' + JSON.stringify(LevelsSelection) + '&' +
             'Papers=' + JSON.stringify(PapersSelection) + '&' +
             'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
+            'Schools=' + JSON.stringify(SchoolsSelection) + '&' +
             'QNsperPage=' + QNsperPage + '&' +
             'isChurned=' + isChurnedRef.current + '&' +
             'Page=' + Page
@@ -112,7 +122,8 @@ function HomePage(props) {
             TopicsSelection.length !== 0 &&
             LevelsSelection.length !== 0 &&
             PapersSelection.length !== 0 &&
-            AssessmentsSelection.length !== 0
+            AssessmentsSelection.length !== 0 &&
+            SchoolsSelection.length !== 0
         ) {
             ChurnedQNsDisplay.current = 'inline'
             isChurnedRef.current = true
@@ -176,6 +187,19 @@ function HomePage(props) {
             }
             <span style={{display: AssessmentsDisplay}}>
                 <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} AssessmentsSelection={AssessmentsSelection} />
+            </span>
+
+            {/* For Displaying Schools */}
+            {SchoolsDiplay == 'none' ?
+                <div>
+                    <a onClick={() => setSchoolsDiplay('inline')}>▼ Schools</a>
+                    <br />
+                </div>
+            :
+                <a onClick={() => setSchoolsDiplay('none')}>▲ Schools</a>
+            }
+            <span style={{display: SchoolsDiplay}}>
+                <SchoolSelector SubjectSelection={SubjectSelection} SchoolChanged={(Schools) => setSchoolsSelection(Schools)} SchoolsSelection={SchoolsSelection} />
             </span>
 
             {/* by default have 5 Questions per page if not specified by URL query params */}

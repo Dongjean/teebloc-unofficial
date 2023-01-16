@@ -79,4 +79,18 @@ async function GetPapers(Subject) {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers};
+async function GetSchools(Subject) {
+    try {
+        const result = await pool.query(`
+        SELECT Schools.SchoolID, Schools.SchoolName
+        FROM Schools JOIN School_Subject
+        ON Schools.SchoolID = School_Subject.SchoolID
+        WHERE School_Subject.SubjectID = $1
+        `, [Subject])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools};
