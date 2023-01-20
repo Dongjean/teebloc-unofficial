@@ -39,10 +39,8 @@ function AnswerIMGUploader(props) {
                         src={ANSImage.OriginalIMGData} 
                         style={{ height: 400, width: "100%" }}
                         // Cropper.js options
-                        aspectRatio={210/297} //image aspect ratio to decide later
-                        scalable={false}
+                        initialAspectRatio={210/297} //image aspect ratio to decide later
                         dragMode='move'
-                        cropBoxResizable={false}
                         cropBoxMovable={false}
                         guides={false}
                         ref={cropperRef}
