@@ -14,7 +14,7 @@ function CreatorNavBar(props) {
             </span>
             <span className='Right'>
                 <Link to='/Post' className='Link'>Post</Link>
-                <Link to='/Account' className='Link'>{props.LoginData.FirstName + ' ' + props.LoginData.LastName}</Link>
+                <Link to={'/Account/' + props.LoginData.Email} className='Link'>{props.LoginData.FirstName + ' ' + props.LoginData.LastName}</Link>
                 <span className='button' onClick={Logout}>Logout</span>
             </span>
         </div>

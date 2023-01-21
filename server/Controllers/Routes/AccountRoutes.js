@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo} = require('../../Servicers/AccountServices.js');
+const {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo} = require('../../Servicers/AccountServices.js');
 
 router.get('/SignUp/CheckEmail/:Email', (req, res) => {
     const Email = req.params.Email
@@ -46,6 +46,12 @@ router.get('/Login/Logout', (req, res) => {
         .clearCookie('LoginType')
         .json('Cookies removed successfully!')
     //set all the cookies to empty
+})
+
+router.get('/Accounts/GetInfo/:Email', (req, res) => {
+    const Email = req.params.Email
+    console.log(Email)
+    GetAccInfo(Email).then(response => res.json(response))
 })
 
 module.exports = router;

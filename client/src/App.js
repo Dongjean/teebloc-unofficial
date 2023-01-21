@@ -71,7 +71,7 @@ function App() {
 				<Route path='/SignUp' exact element={<SignUpPage />} />
 				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />
 
-				<Route path='/Account' exact element={<AccountDetailsPage LoginData={LoginData} />} />
+				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} />} />
 
 				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage />} />
 			</Routes>

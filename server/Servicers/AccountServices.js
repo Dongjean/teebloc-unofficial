@@ -52,11 +52,21 @@ async function GetLoginInfo(Email) {
 
         var Info = user
         Info.token = Token //add token to response
-        console.log(Info)
         return Info
     } catch(err) {
         console.log(err)
     }
 }
 
-module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo};
+async function GetAccInfo(Email) {
+    try {
+        console.log(Email, 'hi')
+        const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
+        console.log(result.rows[0])
+        return result.rows[0]
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo};
