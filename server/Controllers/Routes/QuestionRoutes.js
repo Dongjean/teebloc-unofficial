@@ -3,8 +3,9 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, PostQuestion} = require('../../Servicers/QuestionServices.js');
+const {Churn, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
+const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
 router.get('/Questions/Churn', (req, res) => {
     console.log(req.query.Schools)
@@ -23,6 +24,24 @@ router.post('/Questions/PostQuestion', fileUpload({createParentPath: true}), aut
     const FormData = req.body
     PostQuestion(FormData).then(response => res.json(response))
 
+})
+
+router.post('/Questions/Save/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    SaveQuestion(QuestionID, Email).then(response => res.json(response))
+})
+
+router.post('/Questions/Unsave/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    unSaveQuestion(QuestionID, Email).then(response => res.json(response))
+})
+
+router.get('/Questions/CheckSaved/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    CheckSavedQuestion(QuestionID, Email).then(response => res.json(response))
 })
 
 module.exports = router;

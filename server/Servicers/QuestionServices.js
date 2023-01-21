@@ -176,4 +176,35 @@ async function SaveImages(Images, ImageType) {
     return IMGDIRs //returns the array of image directories to be saved in the database
 }
 
-module.exports = {Churn, PostQuestion};
+async function SaveQuestion(QuestionID, Email) {
+    try {
+        await pool.query(`
+        INSERT INTO SavedQuestions VALUES($1, $2)
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function unSaveQuestion(QuestionID, Email) {
+    try {
+        await pool.query(`
+        DELETE FROM SavedQuestions WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    } 
+}
+
+async function CheckSavedQuestion(QuestionID, Email) {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM SavedQuestions WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+        return result.rows.length !== 0
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion};

@@ -225,6 +225,7 @@ function HomePage(props) {
                     IncrementPage={() => setPage(Page + 1)}
                     DecrementPage={() => setPage(Page - 1)}
                     setPage={Page => {setPage(Page);console.log(Page)}}
+                    LoginData={props.LoginData}
                 />
             </div>
         </div>

@@ -66,7 +66,7 @@ function App() {
 				{LoginData.AccType == 'Creator' ? <CreatorNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
 			</div>
         	<Routes>
-				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} />}/>
+				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} LoginData={LoginData} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
 				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />

@@ -81,7 +81,7 @@ function ChurnedQuestions(props) {
                         {Churned.Questions.slice(props.QNsperPage * (Page-1), props.QNsperPage * (Page-1) + props.QNsperPage).map(question =>
                             <div key={question.questionid}>
                                 <button onClick={() => props.OpenQuestion(question.questionid, Churned)}>
-                                    <Question Question={question} FirstQuestionIMG={Churned.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == question.questionid)[0]}/>
+                                    <Question Question={question} FirstQuestionIMG={Churned.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == question.questionid)[0]} LoginData={props.LoginData} />
                                     <br />
                                 </button>
                                 <br />
