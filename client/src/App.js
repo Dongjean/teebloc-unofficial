@@ -8,6 +8,7 @@ import HomePage from './Pages/HomePage.js';
 import LoginPage from './Pages/LoginPage.js';
 import SignUpPage from './Pages/SignUpPage.js';
 import PostPage from './Pages/PostPage.js';
+import AccountDetailsPage from './Pages/AccountDetailsPage.js';
 import OpenedQuestionPage from './Pages/OpenedQuestionPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
@@ -62,13 +63,15 @@ function App() {
 			<div className='NavBar'>
 				{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
 				{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
-				{LoginData.AccType == 'Creator' ? <CreatorNavBar Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
+				{LoginData.AccType == 'Creator' ? <CreatorNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
 			</div>
         	<Routes>
 				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
 				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />
+
+				<Route path='/Account' exact element={<AccountDetailsPage LoginData={LoginData} />} />
 
 				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage />} />
 			</Routes>

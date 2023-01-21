@@ -14,7 +14,7 @@ function CreatorNavBar(props) {
             </span>
             <span className='Right'>
                 <Link to='/Post' className='Link'>Post</Link>
-                {Cookies.get('LoginFirstName') + ' ' + Cookies.get('LoginLastName')}
+                <Link to='/Account' className='Link'>{props.LoginData.FirstName + ' ' + props.LoginData.LastName}</Link>
                 <span className='button' onClick={Logout}>Logout</span>
             </span>
         </div>
