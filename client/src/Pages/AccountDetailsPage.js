@@ -10,6 +10,7 @@ function AccountDetailsPage(props) {
     useEffect(() => {
         getUserInfo(Email)
     }, [])
+
     //get the user's account information
     async function getUserInfo(Email) {
         try {
@@ -19,6 +20,10 @@ function AccountDetailsPage(props) {
         } catch(err) {
             console.log(err)
         }
+    }
+
+    async function OpenSaved(Email) {
+        props.OpenSaved(Email)
     }
     return (
         <div>
@@ -33,7 +38,7 @@ function AccountDetailsPage(props) {
                     {/* Only show these if you are the requested user */}
                     {UserInfo.email == props.LoginData.Email ?
                         <div>
-                            <button>Saved</button> <br />
+                            <button onClick={() => OpenSaved(UserInfo.email)}>Saved</button> <br />
                             <button>Completed</button> <br />
                             {/* for cretor accounts, have posts section */}
                             {props.LoginData.AccType == 'Creator' ?

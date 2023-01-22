@@ -221,7 +221,7 @@ function HomePage(props) {
                     SchoolsSelection={SchoolsSelection}
                     QNsperPage={parseInt(QNsperPageRef.current)}
                     Update={Update}
-                    OpenQuestion={(QuestionID, Churned) => props.OpenQuestion(QuestionID, Churned)}
+                    OpenQuestion={(QuestionID) => props.OpenQuestion(QuestionID)}
                     IncrementPage={() => setPage(Page + 1)}
                     DecrementPage={() => setPage(Page - 1)}
                     setPage={Page => {setPage(Page);console.log(Page)}}
