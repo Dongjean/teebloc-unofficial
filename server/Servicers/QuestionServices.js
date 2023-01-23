@@ -37,52 +37,29 @@ async function Churn(Categories) {
         console.log(Questions)
 
         var QuestionImages = [];
-        var AnswerImages = [];
         for (var i=0; i<Questions.length; i++) {
             const Question = Questions[i]
 
-            //get all Question Images related to this Question from DB
-            const QNresult = await pool.query(`
+             //get the first Question Image only related to this Question from DB
+            const QNresult = (await pool.query(`
             SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
-            `, [Question.questionid])
-            console.log(QNresult.rows)
+            `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for all Images for this Question
-            for (var j=0; j<QNresult.rows.length; j++) {
-                const QNIMGData = (await fs.promises.readFile(QNresult.rows[j].questionimgdir)).toString('base64')
-                QuestionImages.push({
-                    QuestionIMGID: QNresult.rows[j].questionimgid,
-                    QuestionIMGName: QNresult.rows[j].questionimgname,
-                    QuestionIMGData: QNIMGData,
-                    QuestionID: QNresult.rows[j].questionid
-                })
-            }
-
-            //get all Answer Images related to this Question from DB
-            const ANSresult = await pool.query(`
-            SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR, QuestionID
-            FROM AnswerIMGs
-            WHERE QuestionID=$1
-            `, [Question.questionid])
-
-            //get Image Data from the Image Directory for all Images for this Question
-            for (var j=0; j<ANSresult.rows.length; j++) {
-                const ANSIMGData = (await fs.promises.readFile(ANSresult.rows[j].answerimgdir)).toString('base64')
-                AnswerImages.push({
-                    AnswerIMGID: ANSresult.rows[j].answerimgid,
-                    AnswerIMGName: ANSresult.rows[j].answerimgname,
-                    AnswerIMGData: ANSIMGData,
-                    QuestionID: ANSresult.rows[j].questionid
-                })
-            }
+            //get Image Data from the Image Directory for the first Image for this Question
+            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.questionid
+            })
         }
 
         const Data = {
             Questions: Questions,
-            QuestionImages: QuestionImages,
-            AnswerImages: AnswerImages
+            QuestionImages: QuestionImages
         }
         return Data
     } catch(err) {
@@ -425,52 +402,29 @@ async function GetQuestionsByAuthor(Email) {
         console.log(Questions)
 
         var QuestionImages = [];
-        var AnswerImages = [];
         for (var i=0; i<Questions.length; i++) {
             const Question = Questions[i]
 
-            //get all Question Images related to this Question from DB
-            const QNresult = await pool.query(`
+            //get the first Question Image only related to this Question from DB
+            const QNresult = (await pool.query(`
             SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
-            `, [Question.questionid])
-            console.log(QNresult.rows)
+            `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for all Images for this Question
-            for (var j=0; j<QNresult.rows.length; j++) {
-                const QNIMGData = (await fs.promises.readFile(QNresult.rows[j].questionimgdir)).toString('base64')
-                QuestionImages.push({
-                    QuestionIMGID: QNresult.rows[j].questionimgid,
-                    QuestionIMGName: QNresult.rows[j].questionimgname,
-                    QuestionIMGData: QNIMGData,
-                    QuestionID: QNresult.rows[j].questionid
-                })
-            }
-
-            //get all Answer Images related to this Question from DB
-            const ANSresult = await pool.query(`
-            SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR, QuestionID
-            FROM AnswerIMGs
-            WHERE QuestionID=$1
-            `, [Question.questionid])
-
-            //get Image Data from the Image Directory for all Images for this Question
-            for (var j=0; j<ANSresult.rows.length; j++) {
-                const ANSIMGData = (await fs.promises.readFile(ANSresult.rows[j].answerimgdir)).toString('base64')
-                AnswerImages.push({
-                    AnswerIMGID: ANSresult.rows[j].answerimgid,
-                    AnswerIMGName: ANSresult.rows[j].answerimgname,
-                    AnswerIMGData: ANSIMGData,
-                    QuestionID: ANSresult.rows[j].questionid
-                })
-            }
+            //get Image Data from the Image Directory for the first Image for this Question
+            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.questionid
+            })
         }
 
         const Data = {
             Questions: Questions,
-            QuestionImages: QuestionImages,
-            AnswerImages: AnswerImages
+            QuestionImages: QuestionImages
         }
         return Data
 
