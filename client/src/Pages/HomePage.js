@@ -110,7 +110,7 @@ function HomePage(props) {
             'Papers=' + JSON.stringify(PapersSelection) + '&' +
             'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
             'Schools=' + JSON.stringify(SchoolsSelection) + '&' +
-            'QNsperPage=' + QNsperPage + '&' +
+            'QNsperPage=' + QNsperPageRef.current + '&' +
             'isChurned=' + isChurnedRef.current + '&' +
             'Page=' + Page
         )
