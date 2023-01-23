@@ -43,6 +43,7 @@ function Question(props) {
             console.log(err)
         }
     }
+    
     return (
         <div>
             <img src={'data:image/png;base64,' + FirstQuestionIMG.QuestionIMGData} alt={FirstQuestionIMG.QuestionIMGName} style={{width:100, float:'left'}} />

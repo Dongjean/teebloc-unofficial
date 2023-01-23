@@ -1,5 +1,6 @@
 import {useMemo, useState, useEffect}  from 'react';
 import {useLocation} from 'react-router-dom';
+import API from "../utils/API";
 
 function useQuery() {
     const { search } = useLocation();
@@ -7,7 +8,7 @@ function useQuery() {
     return useMemo(() => new URLSearchParams(search), [search]);
 }
 
-function OpenedQuestionPage() {
+function OpenedQuestionPage(props) {
     const query = useQuery()
     const QuestionID = query.get('QuestionID')
     if (!QuestionID) {
@@ -18,6 +19,8 @@ function OpenedQuestionPage() {
     const [isLoading, setisLoading] = useState(true) //initially page is loading
     const [ShowAnswer, setShowAnswer] = useState(false) //do not initially show the answer
     const [Question, setQuestion] = useState({})
+
+    const [isSaved, setisSaved] = useState(false)
 
     //runs only on mount
     useEffect(() => {
@@ -42,6 +45,43 @@ function OpenedQuestionPage() {
             }
         }
     }, [])
+
+    useEffect(() => {
+        if (Question.Question !== undefined) {
+            CheckSaved(Question.Question[0].questionid, props.LoginData.Email)
+        }
+    }, [Question])
+
+    async function CheckSaved(QuestionID, Email) {
+        try {
+            console.log(QuestionID, Email)
+            const result = await API.get('/Questions/CheckSaved/' + QuestionID + '/' + Email)
+            console.log(result.data)
+            setisSaved(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function SaveQuestion(event, QuestionID, Email) {
+        try {
+            console.log(QuestionID)
+            await API.post('/Questions/Save/' + QuestionID + '/' + Email)
+            setisSaved(true)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UnsaveQuestion(event, QuestionID, Email) {
+        try {
+            console.log(Email)
+            await API.post('/Questions/Unsave/' + QuestionID + '/' + Email)
+            setisSaved(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
     
     //gets the Question info if it isnt already in localstorage *incomplete
     async function GetQuestion(QuestionID) {
@@ -70,6 +110,19 @@ function OpenedQuestionPage() {
                             <button onClick={() => setShowAnswer(true)}>Show Answer</button>
                         </div>
                     }
+
+
+                    {/* only show option to save question if logged in */}
+                    {props.LoginData.Email ?
+                        isSaved ?
+                            <button onClick={event => UnsaveQuestion(event, Question.Question[0].questionid, props.LoginData.Email)}>UnSave</button>
+                        :
+                            <button onClick={event => SaveQuestion(event, Question.Question[0].questionid, props.LoginData.Email)}>Save</button>
+
+                    :
+                        null
+                    }
+                    
                 </div>
             }
         </div>
