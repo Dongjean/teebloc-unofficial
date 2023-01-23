@@ -97,12 +97,12 @@ function OpenedQuestionPage(props) {
                     {console.log(Question)}
                     Author: {Question.Question[0].firstname + Question.Question[0].lastname} <br />
                     Question: <br />
-                    {Question.QuestionImages.map(QuestionImage => <img key={QuestionImage.QuestionIMGID} src={'data:image/png;base64,' + QuestionImage.QuestionIMGData} alt={QuestionImage.QuestionIMGName} style={{width: 500}} />)}
+                    {Question.QuestionImages.map(QuestionImage => <div key={QuestionImage.QuestionIMGID}><img src={'data:image/png;base64,' + QuestionImage.QuestionIMGData} alt={QuestionImage.QuestionIMGName} style={{width: 500}} /> <br /></div>)}
 
                     {ShowAnswer ?
                         <div>
                             Answers: <br />
-                            {Question.AnswerImages.map(AnswerImage => <img key={AnswerImage.AnswerIMGID} src={'data:image/png;base64,' + AnswerImage.AnswerIMGData} alt={AnswerImage.AnswerIMGName} style={{width: 500}} />)}
+                            {Question.AnswerImages.map(AnswerImage => <div key={AnswerImage.AnswerIMGID}><img src={'data:image/png;base64,' + AnswerImage.AnswerIMGData} alt={AnswerImage.AnswerIMGName} style={{width: 500}} /> <br /></div>)}
                             <button onClick={() => setShowAnswer(false)}>Hide Answer</button>
                         </div>
                     :

@@ -79,7 +79,8 @@ function App() {
 				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} />} />
 				<Route path='/Account/:Email/Saved' exact element={<SavedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 
-				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage LoginData={LoginData} />} />			</Routes>
+				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage LoginData={LoginData} />} />
+			</Routes>
     	</div>
   	);
 }
