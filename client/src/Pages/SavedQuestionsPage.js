@@ -24,7 +24,7 @@ function SavedQuestionsPage(props) {
             console.log(err)
         }
     }
-    console.log(SavedQuestions)
+    console.log(SavedQuestions, 'hi')
     return (
         <div>
             {isLoading ?

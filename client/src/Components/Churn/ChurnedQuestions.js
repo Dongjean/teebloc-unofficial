@@ -19,32 +19,18 @@ function ChurnedQuestions(props) {
 
     const [Page, setPage] = useState(query.get('Page')) //set the initial page value to the queried value
     const isLoadingRef = useRef(true) //loading at first
-    
-    const LocalChurned = JSON.parse(localStorage.getItem('Churned'))
-    var ChurnedINIT = {}
-    if (!LocalChurned) {
-        GetChurnedQuestions(props.TopicsSelection, props.LevelsSelection, props.PapersSelection, props.AssessmentsSelection, props.SchoolsSelection)
-    } else {
-        ChurnedINIT = LocalChurned
-        isLoadingRef.current = false
-    }
-    const [Churned, setChurned] = useState(ChurnedINIT)
 
-    const isFirstRenderRef = useRef(true)
+    const [Churned, setChurned] = useState()
+
     //gets a new set of churned questions on mount/when ForceUpdate is used in HomePage.js and Update state changes
     useEffect(() => {
-        if (isFirstRenderRef.current) {
-            //dont do anything on first mount
-            isFirstRenderRef.current = false
-        } else {
-            GetChurnedQuestions(
-                props.TopicsSelection,
-                props.LevelsSelection,
-                props.PapersSelection,
-                props.AssessmentsSelection,
-                props.SchoolsSelection
-            )
-        }
+        GetChurnedQuestions(
+            props.TopicsSelection,
+            props.LevelsSelection,
+            props.PapersSelection,
+            props.AssessmentsSelection,
+            props.SchoolsSelection
+        )
     }, [props.Update])
 
     async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection, SchoolsSelection) {
@@ -60,10 +46,8 @@ function ChurnedQuestions(props) {
 
             console.log(result.data)
 
-            localStorage.setItem('Churned', JSON.stringify(result.data))
-
             isLoadingRef.current = false
-            console.log(typeof(Page))
+
             if (!Page || Page == 'null') {
                 setPage(1)
                 props.setPage(1)

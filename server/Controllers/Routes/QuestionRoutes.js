@@ -3,12 +3,11 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
 router.get('/Questions/Churn', (req, res) => {
-    console.log(req.query.Schools)
     //parses through the Categories query string
     const Categories = {
         Topics: JSON.parse(req.query.Topics),
@@ -18,6 +17,11 @@ router.get('/Questions/Churn', (req, res) => {
         Schools: JSON.parse(req.query.Schools)
     }
     Churn(Categories).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/:QuestionID', (req, res) => {
+    const QuestionID = req.params.QuestionID
+    GetQuestionsByID(QuestionID).then(response => res.json(response))
 })
 
 router.post('/Questions/PostQuestion', fileUpload({createParentPath: true}), authCreatorJWT, (req, res) => {

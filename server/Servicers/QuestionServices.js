@@ -92,6 +92,87 @@ async function Churn(Categories) {
     }
 }
 
+async function GetQuestionsByID(QuestionID) {
+    try {
+        const result = await pool.query(`
+        SELECT
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+
+        FROM Questions JOIN Users
+            ON Questions.Email = Users.Email
+        JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        JOIN Papers
+            ON Papers.PaperID = Questions.PaperID
+        JOIN Levels
+            ON Levels.LevelID = Questions.LevelID
+        JOIN Assessments
+            ON Assessments.AssessmentID = Questions.AssessmentID
+        JOIN Schools
+            ON Schools.SchoolID = Questions.SchoolID
+
+        WHERE
+            Questions.QuestionID=$1
+        `, [QuestionID]) //Get all Questions for the Categories queried
+        const Question = result.rows[0]
+        console.log(Question)
+
+        var QuestionImages = [];
+        var AnswerImages = [];
+
+        //get all Question Images related to this Question from DB
+        const QNresult = await pool.query(`
+        SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+        FROM QuestionIMGs
+        WHERE QuestionID=$1
+        `, [QuestionID])
+
+        //get Image Data from the Image Directory for all Images for this Question
+        for (var j=0; j<QNresult.rows.length; j++) {
+            const QNIMGData = (await fs.promises.readFile(QNresult.rows[j].questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.rows[j].questionimgid,
+                QuestionIMGName: QNresult.rows[j].questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.rows[j].questionid
+            })
+        }
+
+        //get all Answer Images related to this Question from DB
+        const ANSresult = await pool.query(`
+        SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR, QuestionID
+        FROM AnswerIMGs
+        WHERE QuestionID=$1
+        `, [QuestionID])
+
+        //get Image Data from the Image Directory for all Images for this Question
+        for (var j=0; j<ANSresult.rows.length; j++) {
+            const ANSIMGData = (await fs.promises.readFile(ANSresult.rows[j].answerimgdir)).toString('base64')
+            AnswerImages.push({
+                AnswerIMGID: ANSresult.rows[j].answerimgid,
+                AnswerIMGName: ANSresult.rows[j].answerimgname,
+                AnswerIMGData: ANSIMGData,
+                QuestionID: ANSresult.rows[j].questionid
+            })
+        }
+
+        const Data = {
+            Question: Question,
+            QuestionImages: QuestionImages,
+            AnswerImages: AnswerImages
+        }
+        return Data
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 async function PostQuestion(FormData) {
     try {
         //get Data about Images
@@ -295,4 +376,4 @@ async function GetSavedQuestions(Email) {
     }
 }
 
-module.exports = {Churn, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions};
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions};

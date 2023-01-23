@@ -14,7 +14,6 @@ function OpenedQuestionPage(props) {
     if (!QuestionID) {
         console.log('Invalid Question')
     }
-    console.log(QuestionID)
 
     const [isLoading, setisLoading] = useState(true) //initially page is loading
     const [ShowAnswer, setShowAnswer] = useState(false) //do not initially show the answer
@@ -24,33 +23,20 @@ function OpenedQuestionPage(props) {
 
     //runs only on mount
     useEffect(() => {
-        const tempChurned = localStorage.getItem('Churned')
-        if (!tempChurned) {
-            GetQuestion(QuestionID)
-        } else {
-            const Churned = JSON.parse(tempChurned)
-            const Question = Churned.Questions.filter(Question => Question.questionid == QuestionID)
-            const QuestionImages = Churned.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == QuestionID)
-            const AnswerImages = Churned.AnswerImages.filter(AnswerImage => AnswerImage.QuestionID == QuestionID)
-
-            if (Question.length == 0) {
-                GetQuestion(QuestionID)
-            } else {
-                setQuestion({
-                    Question: Question,
-                    QuestionImages: QuestionImages,
-                    AnswerImages: AnswerImages
-                })
-                setisLoading(false)
-            }
-        }
+        GetQuestion(QuestionID)
     }, [])
 
-    useEffect(() => {
-        if (Question.Question !== undefined) {
-            CheckSaved(Question.Question[0].questionid, props.LoginData.Email)
+    //gets the Question info
+    async function GetQuestion(QuestionID) {
+        try {
+            const result = await API.get('/Questions/Get/' + QuestionID)
+            setQuestion(result.data)
+            CheckSaved(result.data.Question.questionid, props.LoginData.Email)
+            setisLoading(false)
+        } catch(err) {
+            console.log(err)
         }
-    }, [Question])
+    }
 
     async function CheckSaved(QuestionID, Email) {
         try {
@@ -63,7 +49,7 @@ function OpenedQuestionPage(props) {
         }
     }
 
-    async function SaveQuestion(event, QuestionID, Email) {
+    async function SaveQuestion(QuestionID, Email) {
         try {
             console.log(QuestionID)
             await API.post('/Questions/Save/' + QuestionID + '/' + Email)
@@ -73,7 +59,7 @@ function OpenedQuestionPage(props) {
         }
     }
 
-    async function UnsaveQuestion(event, QuestionID, Email) {
+    async function UnsaveQuestion(QuestionID, Email) {
         try {
             console.log(Email)
             await API.post('/Questions/Unsave/' + QuestionID + '/' + Email)
@@ -82,20 +68,14 @@ function OpenedQuestionPage(props) {
             console.log(err)
         }
     }
-    
-    //gets the Question info if it isnt already in localstorage *incomplete
-    async function GetQuestion(QuestionID) {
-        console.log(QuestionID)
-    }
 
     return (
         <div>
             {isLoading ?
-                <div>Loading...</div>
+                null
             :
                 <div>
-                    {console.log(Question)}
-                    Author: {Question.Question[0].firstname + Question.Question[0].lastname} <br />
+                    Author: {Question.Question.firstname + Question.Question.lastname} <br />
                     Question: <br />
                     {Question.QuestionImages.map(QuestionImage => <div key={QuestionImage.QuestionIMGID}><img src={'data:image/png;base64,' + QuestionImage.QuestionIMGData} alt={QuestionImage.QuestionIMGName} style={{width: 500}} /> <br /></div>)}
 
@@ -115,9 +95,9 @@ function OpenedQuestionPage(props) {
                     {/* only show option to save question if logged in */}
                     {props.LoginData.Email ?
                         isSaved ?
-                            <button onClick={event => UnsaveQuestion(event, Question.Question[0].questionid, props.LoginData.Email)}>UnSave</button>
+                            <button onClick={() => UnsaveQuestion(Question.Question.questionid, props.LoginData.Email)}>UnSave</button>
                         :
-                            <button onClick={event => SaveQuestion(event, Question.Question[0].questionid, props.LoginData.Email)}>Save</button>
+                            <button onClick={() => SaveQuestion(Question.Question.questionid, props.LoginData.Email)}>Save</button>
 
                     :
                         null
