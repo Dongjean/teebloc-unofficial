@@ -32,8 +32,6 @@ async function Churn(Categories) {
             Questions.LevelID=ANY($3::int[]) AND
             Questions.AssessmentID=ANY($4::int[]) AND
             Questions.SchoolID=ANY($5::int[])
-        
-        ORDER BY RANDOM()
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
