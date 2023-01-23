@@ -45,6 +45,7 @@ async function Churn(Categories) {
             SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
+            LIMIT 1
             `, [Question.questionid])).rows[0]
 
             //get Image Data from the Image Directory for the first Image for this Question
@@ -305,6 +306,7 @@ async function GetSavedQuestions(Email) {
             SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
+            LIMIT 1
             `, [Question.questionid])).rows[0]
             console.log(QNresult.rows)
 
@@ -388,6 +390,7 @@ async function GetQuestionsByAuthor(Email) {
             SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
+            LIMIT 1
             `, [Question.questionid])).rows[0]
 
             //get Image Data from the Image Directory for the first Image for this Question
