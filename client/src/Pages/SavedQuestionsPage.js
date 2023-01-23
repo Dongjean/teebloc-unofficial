@@ -17,7 +17,7 @@ function SavedQuestionsPage(props) {
 
     async function GetSavedQuestions(Email) {
         try {
-            const result = await API.get('/Questions/GetSaved/' + Email)
+            const result = await API.get('/Questions/Get/Saved/' + Email)
             setSavedQuestions(result.data)
             setisLoading(false)
         } catch(err) {

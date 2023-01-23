@@ -6,10 +6,9 @@ async function authCreatorJWT(req, res, next) {
     try {
         const result = await jwt.verify(Token, process.env.TokenSecret)
         if (result.AccType == 'Creator' || result.AccType == 'Admin') {
-            console.log('Posted!')
             next()
         } else {
-            console.log('Invalid JWT: You are not authorised to Post Questions!')
+            console.log('Invalid JWT: You are not authorised as a Creator!')
         }
     } catch(err) {
         console.log(err)

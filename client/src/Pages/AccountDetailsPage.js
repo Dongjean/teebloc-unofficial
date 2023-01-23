@@ -22,9 +22,6 @@ function AccountDetailsPage(props) {
         }
     }
 
-    async function OpenSaved(Email) {
-        props.OpenSaved(Email)
-    }
     return (
         <div>
             {isLoading ?
@@ -38,11 +35,11 @@ function AccountDetailsPage(props) {
                     {/* Only show these if you are the requested user */}
                     {UserInfo.email == props.LoginData.Email ?
                         <div>
-                            <button onClick={() => OpenSaved(UserInfo.email)}>Saved</button> <br />
+                            <button onClick={() => props.OpenSaved(UserInfo.email)}>Saved</button> <br />
                             <button>Completed</button> <br />
                             {/* for cretor accounts, have posts section */}
                             {props.LoginData.AccType == 'Creator' ?
-                                <button>Posts</button>
+                                <button onClick={() => props.OpenPosts(UserInfo.email)}>Posts</button>
                             :
                                 null
                             }
