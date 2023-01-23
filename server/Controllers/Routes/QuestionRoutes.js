@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
@@ -51,6 +51,11 @@ router.get('/Questions/CheckSaved/:QuestionID/:Email', authGeneralJWT, (req, res
 router.get('/Questions/GetSaved/:Email', authGeneralJWT, (req, res) => {
     const Email = req.params.Email
     GetSavedQuestions(Email).then(response => res.json(response))
+})
+
+router.post('/Questions/Delete/:QuestionID', authCreatorJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    DeleteQuestion(QuestionID).then(response => res.json(response))
 })
 
 module.exports = router;

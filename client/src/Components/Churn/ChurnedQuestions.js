@@ -14,7 +14,6 @@ function useQuery() {
 }
 
 function ChurnedQuestions(props) {
-    const navigate = useNavigate()
     const query = useQuery()
 
     const [Page, setPage] = useState(query.get('Page')) //set the initial page value to the queried value

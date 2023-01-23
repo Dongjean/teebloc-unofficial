@@ -95,7 +95,7 @@ async function GetQuestionsByID(QuestionID) {
         const result = await pool.query(`
         SELECT
             Questions.QuestionID,
-            Users.FirstName, Users.LastName,
+            Users.FirstName, Users.LastName, Users.Email,
             Topics.TopicID, Topics.TopicName,
             Papers.PaperID, Papers.Paper,
             Levels.LevelID, Levels.Level,
@@ -374,4 +374,23 @@ async function GetSavedQuestions(Email) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions};
+async function DeleteQuestion(QuestionID) {
+    try {
+        await pool.query(`
+        DELETE FROM QuestionIMGs WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
+        DELETE FROM AnswerIMGs WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
+        DELETE FROM SavedQuestions WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
+        DELETE FROM Questions WHERE QuestionID=$1
+        `, [QuestionID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion};

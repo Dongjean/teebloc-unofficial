@@ -1,5 +1,5 @@
 import {useMemo, useState, useEffect}  from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import API from "../utils/API";
 
 function useQuery() {
@@ -14,6 +14,7 @@ function OpenedQuestionPage(props) {
     if (!QuestionID) {
         console.log('Invalid Question')
     }
+    const navigate = useNavigate()
 
     const [isLoading, setisLoading] = useState(true) //initially page is loading
     const [ShowAnswer, setShowAnswer] = useState(false) //do not initially show the answer
@@ -69,6 +70,18 @@ function OpenedQuestionPage(props) {
         }
     }
 
+    async function DeleteQuestion(QuestionID) {
+        try {
+            //delete the question
+            await API.post('/Questions/Delete/' + QuestionID)
+
+            //navigate back to home page
+            navigate('/')
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             {isLoading ?
@@ -98,11 +111,17 @@ function OpenedQuestionPage(props) {
                             <button onClick={() => UnsaveQuestion(Question.Question.questionid, props.LoginData.Email)}>UnSave</button>
                         :
                             <button onClick={() => SaveQuestion(Question.Question.questionid, props.LoginData.Email)}>Save</button>
+                        
+                    :
+                        null
+                    }    
 
+                    {/* only show option to delete question if logged in user is the author */}
+                    {props.LoginData.Email == Question.Question.email ?
+                        <button onClick={() => DeleteQuestion(Question.Question.questionid)}>Delete</button>
                     :
                         null
                     }
-                    
                 </div>
             }
         </div>
