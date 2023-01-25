@@ -77,7 +77,7 @@ function App() {
     	<div>
 			<div className='NavBar'>
 				{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
-				{LoginData.AccType == 'User' ? <UserNavBar Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
+				{LoginData.AccType == 'User' ? <UserNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
 				{LoginData.AccType == 'Creator' ? <CreatorNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
 			</div>
         	<Routes>
