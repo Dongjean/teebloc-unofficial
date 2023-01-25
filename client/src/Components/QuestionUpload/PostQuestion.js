@@ -2,14 +2,17 @@ import {useState} from 'react';
 
 //component imports
 import QuestionIMGUploader from './QuestionIMGUploader.js';
+import UploadModal from '../Upload/UploadModal.js';
 
 function PostQuestion(props) {
     const [QNImages, setQNImages] = useState([])
 
-    function AddImage(event) {
+    const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
+
+    function AddImage(file) {
+        console.log(file)
         var temp = [...QNImages]
-        temp.push({File: event.target.files[0], OriginalIMGData: URL.createObjectURL(event.target.files[0])})
-        event.target.value = null //set the value of the file upload input field to none so duplicate files can be uplaoded        setQNImages(temp)
+        temp.push({File: file, OriginalIMGData: URL.createObjectURL(file)})
         setQNImages(temp)
         props.onQuestionIMGChange(temp)
     }
@@ -21,17 +24,39 @@ function PostQuestion(props) {
         props.onQuestionIMGChange(temp)
     }
 
+    function OpenUploadModal() {
+        setisUploadModalOpen(true)
+    }
+
+    function CloseUploadModal() {
+        setisUploadModalOpen(false)
+    }
+
     return (
         <div>
             {QNImages.length == 0 ?
                 //first file upload is required
-                <input type='file' onChange={AddImage} />
+                <div>
+                    <button type='button' onClick={OpenUploadModal}>Upload A File</button>
+                    {isUploadModalOpen ?
+                        <UploadModal CloseUploadModal={CloseUploadModal} OnUploadImage={file => AddImage(file)} />
+                    :
+                        null
+                    }
+                </div>
             :
             <div>
                 {QNImages.map((QNImage, index) =>
-                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} />
+                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} />
                 )}
-                <input type='file' onChange={AddImage} /><br />
+
+                <button type='button' onClick={OpenUploadModal}>Upload a New File</button>
+                {isUploadModalOpen ?
+                    <UploadModal CloseUploadModal={CloseUploadModal} OnUploadImage={file => AddImage(file)} />
+                :
+                    null
+                }
+                <br />
             </div>
             }
         </div>

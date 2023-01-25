@@ -2,16 +2,20 @@ import {useState, useRef} from 'react';
 import Cropper from 'react-cropper';
 import '../../CSS/Cropperjs/Cropper.css';
 
+//component imports
+import UploadModal from '../Upload/UploadModal.js';
+
 function QuestionIMGUploader(props) {
     const [isCropping, setisCropping] = useState(true) //initially image is in crop mode
     const [QNImage, setQNImage] = useState(props.QNImage)
+
+    const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
     const cropperRef = useRef(null)
 
-    function ChangeImage(event, index) {
-        const temp = {File: event.target.files[0], OriginalIMGData: URL.createObjectURL(event.target.files[0])}
+    function ChangeImage(file, index) {
+        const temp = {File: file, OriginalIMGData: URL.createObjectURL(file)}
         setisCropping(true)
         setQNImage(temp)
-        event.target.value = null //set the value of the file upload input field to none so duplicate files can be uplaoded
         props.onQuestionIMGChange(temp, index)
     }
 
@@ -28,6 +32,14 @@ function QuestionIMGUploader(props) {
 
     function StartCrop() {
         setisCropping(true)
+    }
+
+    function OpenUploadModal() {
+        setisUploadModalOpen(true)
+    }
+
+    function CloseUploadModal() {
+        setisUploadModalOpen(false)
     }
 
     return (
@@ -56,7 +68,13 @@ function QuestionIMGUploader(props) {
                 </div>
             }
 
-            <input type='file' onChange={(event) => {ChangeImage(event, props.index)}} /><br /><br />
+            <button type='button' onClick={OpenUploadModal}>Change File</button>
+            {isUploadModalOpen ?
+                <UploadModal CloseUploadModal={CloseUploadModal} OnUploadImage={file => ChangeImage(file, props.index)} />
+            :
+                null
+            }
+            <br /><br />
         </div>
     )
 }
