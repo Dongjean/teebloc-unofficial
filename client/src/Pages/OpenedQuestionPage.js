@@ -21,6 +21,7 @@ function OpenedQuestionPage(props) {
     const [Question, setQuestion] = useState({})
 
     const [isSaved, setisSaved] = useState(false)
+    const [isCompleted, setisCompleted] = useState(false)
 
     //runs only on mount
     useEffect(() => {
@@ -33,6 +34,7 @@ function OpenedQuestionPage(props) {
             const result = await API.get('/Questions/Get/' + QuestionID)
             setQuestion(result.data)
             CheckSaved(result.data.Question.questionid, props.LoginData.Email)
+            CheckCompleted(result.data.Question.questionid, props.LoginData.Email)
             setisLoading(false)
         } catch(err) {
             console.log(err)
@@ -41,9 +43,7 @@ function OpenedQuestionPage(props) {
 
     async function CheckSaved(QuestionID, Email) {
         try {
-            console.log(QuestionID, Email)
             const result = await API.get('/Questions/CheckSaved/' + QuestionID + '/' + Email)
-            console.log(result.data)
             setisSaved(result.data)
         } catch(err) {
             console.log(err)
@@ -52,7 +52,6 @@ function OpenedQuestionPage(props) {
 
     async function SaveQuestion(QuestionID, Email) {
         try {
-            console.log(QuestionID)
             await API.post('/Questions/Save/' + QuestionID + '/' + Email)
             setisSaved(true)
         } catch(err) {
@@ -62,9 +61,35 @@ function OpenedQuestionPage(props) {
 
     async function UnsaveQuestion(QuestionID, Email) {
         try {
-            console.log(Email)
             await API.post('/Questions/Unsave/' + QuestionID + '/' + Email)
             setisSaved(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function CheckCompleted(QuestionID, Email) {
+        try {
+            const result = await API.get('/Questions/CheckCompleted/' + QuestionID + '/' + Email)
+            setisCompleted(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function CompleteQuestion(QuestionID, Email) {
+        try {
+            await API.post('/Questions/Complete/' + QuestionID + '/' + Email)
+            setisCompleted(true)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UncompleteQuestion(QuestionID, Email) {
+        try {
+            await API.post('/Questions/Uncomplete/' + QuestionID + '/' + Email)
+            setisCompleted(false)
         } catch(err) {
             console.log(err)
         }
@@ -114,7 +139,18 @@ function OpenedQuestionPage(props) {
                         
                     :
                         null
-                    }    
+                    }
+
+                    {/* only show option to complete question if logged in */}
+                    {props.LoginData.Email ?
+                        isCompleted ?
+                            <button onClick={() => UncompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Uncomplete</button>
+                        :
+                            <button onClick={() => CompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Complete</button>
+                        
+                    :
+                        null
+                    }
 
                     {/* only show option to delete question if logged in user is the author */}
                     {props.LoginData.Email == Question.Question.email ?

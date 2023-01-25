@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
@@ -61,6 +61,24 @@ router.post('/Questions/Delete/:QuestionID', authCreatorJWT, (req, res) => {
 router.get('/Questions/Get/ByAuthor/:Email', authCreatorJWT, (req, res) => {
     const Email = req.params.Email
     GetQuestionsByAuthor(Email).then(response => res.json(response))
+})
+
+router.post('/Questions/Complete/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    CompleteQuestion(QuestionID, Email).then(response => res.json(response))
+})
+
+router.post('/Questions/Uncomplete/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    UncompleteQuestion(QuestionID, Email).then(response => res.json(response))
+})
+
+router.get('/Questions/CheckCompleted/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+    CheckCompletedQuestion(QuestionID, Email).then(response => res.json(response))
 })
 
 module.exports = router;

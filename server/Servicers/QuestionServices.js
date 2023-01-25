@@ -250,7 +250,7 @@ async function unSaveQuestion(QuestionID, Email) {
         `, [QuestionID, Email])
     } catch(err) {
         console.log(err)
-    } 
+    }
 }
 
 async function CheckSavedQuestion(QuestionID, Email) {
@@ -414,4 +414,35 @@ async function GetQuestionsByAuthor(Email) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor};
+async function CompleteQuestion(QuestionID, Email) {
+    try {
+        await pool.query(`
+        INSERT INTO CompletedQuestions VALUES($1, $2)
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function UncompleteQuestion(QuestionID, Email) {
+    try {
+        await pool.query(`
+        DELETE FROM CompletedQuestions WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function CheckCompletedQuestion(QuestionID, Email) {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM CompletedQuestions WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+        return result.rows.length !== 0
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion};
