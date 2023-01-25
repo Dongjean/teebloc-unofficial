@@ -1,5 +1,4 @@
 import {Link} from 'react-router-dom';
-import Cookies from '../../utils/Cookies.js';
 
 function CreatorNavBar(props) {
     function Logout() {
