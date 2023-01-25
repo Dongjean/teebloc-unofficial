@@ -37,7 +37,7 @@ function AccountDetailsPage(props) {
                         <div>
                             <button onClick={() => props.OpenSaved(UserInfo.email)}>Saved</button> <br />
                             <button onClick={() => props.OpenCompleted(UserInfo.email)}>Completed</button> <br />
-                            {/* for cretor accounts, have posts section */}
+                            {/* for Creator accounts, have posts section */}
                             {props.LoginData.AccType == 'Creator' ?
                                 <button onClick={() => props.OpenPosts(UserInfo.email)}>Posts</button>
                             :
