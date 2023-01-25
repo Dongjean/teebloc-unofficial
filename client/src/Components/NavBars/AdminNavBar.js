@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 
-function CreatorNavBar(props) {
+function AdminNavBar(props) {
     function Logout() {
         props.Logout()
     }
@@ -20,4 +20,4 @@ function CreatorNavBar(props) {
     )
 }
 
-export default CreatorNavBar;
+export default AdminNavBar;

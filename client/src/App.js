@@ -2,12 +2,14 @@
 import GuestNavBar from './Components/NavBars/GuestNavBar.js';
 import UserNavBar from './Components/NavBars/UserNavBar.js';
 import CreatorNavBar from './Components/NavBars/CreatorNavBar.js';
+import AdminNavBar from './Components/NavBars/AdminNavBar.js';
 
 //Page imports
 import HomePage from './Pages/HomePage.js';
 import LoginPage from './Pages/LoginPage.js';
 import SignUpPage from './Pages/SignUpPage.js';
-import PostPage from './Pages/PostPage.js';
+import PostQuestionPage from './Pages/PostQuestionPage.js';
+import PostCategoryPage from './Pages/PostCategoryPage.js';
 import AccountDetailsPage from './Pages/AccountDetailsPage.js';
 import OpenedQuestionPage from './Pages/OpenedQuestionPage.js';
 import SavedQuestionsPage from './Pages/SavedQuestionsPage.js';
@@ -73,20 +75,26 @@ function App() {
 		navigate('/Account/' + Email + '/Completed')
 	}
 
+	function PostCategory() {
+		navigate('/Post/Category')
+	}
+
 	return (
     	<div>
 			<div className='NavBar'>
 				{LoginData.Email ? null : <GuestNavBar /> /* NavBar for Guests who arent logged in */}
 				{LoginData.AccType == 'User' ? <UserNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Users who can only churn questions */}
 				{LoginData.AccType == 'Creator' ? <CreatorNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Creators who can post questions */}
+				{LoginData.AccType == 'Admin' ? <AdminNavBar LoginData={LoginData} Logout={Logout} /> : null /* NavBar for Admins */}
 			</div>
         	<Routes>
 				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} LoginData={LoginData} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
-				<Route path='/Post' exact element={<PostPage UserEmail={LoginData.Email} />} />
+				<Route path='/Post/Question' exact element={<PostQuestionPage UserEmail={LoginData.Email} />} />
+				<Route path='/Post/Category' exact element={<PostCategoryPage />} />
 
-				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} />} />
+				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} PostCategory={PostCategory} />} />
 				<Route path='/Account/:Email/Saved' exact element={<SavedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Posts' exact element={<MyQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Completed' exact element={<CompletedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />

@@ -6,7 +6,7 @@ import PostAnswer from "../Components/AnswerUpload/PostAnswer.js";
 
 import API from '../utils/API.js';
 
-function PostPage(props) {
+function PostQuestionPage(props) {
     const [AllSubjects, setAllSubjects] = useState([])
     const [Levels, setLevels] = useState([])
     const [Assessments, setAssessments] = useState([])
@@ -276,4 +276,4 @@ function PostPage(props) {
     )
 }
 
-export default PostPage;
+export default PostQuestionPage;
