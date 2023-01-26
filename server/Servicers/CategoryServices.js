@@ -178,6 +178,30 @@ async function AddNewLevel(Data) {
     }
 }
 
+async function AddNewAssessment(Data) {
+    try {
+        const result = await pool.query(`
+        INSERT INTO Assessments(AssessmentName) VALUES($1)
+        RETURNING AssessmentID
+        `, [Data.NewAssessment])
+
+        const NewAssessmentID = result.rows[0].assessmentid
+
+        console.log(Data)
+
+        if (Data.Levels.length !== 0) {
+            for (var i=0; i<Data.Levels.length; i++) {
+                await pool.query(`
+                INSERT INTO Assessment_Level VALUES($1, $2)
+                `, [NewAssessmentID, Data.Levels[i]])
+            }
+        }
+
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 async function GetAllLevels() {
     try {
         const result = await pool.query(`
@@ -222,4 +246,4 @@ async function GetAllAssessments() {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments};
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewAssessment, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments};
