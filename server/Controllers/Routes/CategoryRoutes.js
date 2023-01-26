@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, GetAllLevels, GetAllPapers, GetAllSchools} = require('../../Servicers/CategoryServices.js');
+const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments} = require('../../Servicers/CategoryServices.js');
 
 router.get('/Categories/Subjects/GetAll', (req, res) => {
     GetAllSubjects().then(response => res.json(response))
@@ -47,6 +47,11 @@ router.post('/Categories/New/Topic', (req, res) => {
     AddNewTopic(Data).then(response => res.json(response))
 })
 
+router.post('/Categories/New/Level', (req, res) => {
+    const Data = req.body
+    AddNewLevel(Data).then(response => res.json(response))
+})
+
 router.get('/Categories/Levels/GetAll', (req, res) => {
     GetAllLevels().then((response => res.json(response)))
 })
@@ -57,6 +62,10 @@ router.get('/Categories/Papers/GetAll', (req, res) => {
 
 router.get('/Categories/Schools/GetAll', (req, res) => {
     GetAllSchools().then((response => res.json(response)))
+})
+
+router.get('/Categories/Assessments/GetAll', (req, res) => {
+    GetAllAssessments().then((response => res.json(response)))
 })
 
 module.exports = router;
