@@ -3,13 +3,13 @@ const pool = require('../../../DB.js');
 async function DBCategoriesINIT() {
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Subjects(
-        SubjectID INTEGER PRIMARY KEY NOT NULL,
+        SubjectID BIGSERIAL PRIMARY KEY NOT NULL,
         Subject TEXT NOT NULL
     )`)
     
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Levels(
-        LevelID INTEGER PRIMARY KEY NOT NULL,
+        LevelID BIGSERIAL PRIMARY KEY NOT NULL,
         Level TEXT NOT NULL
     )`)
     
@@ -26,7 +26,7 @@ async function DBCategoriesINIT() {
     
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Assessments(
-        AssessmentID INTEGER PRIMARY KEY NOT NULL,
+        AssessmentID BIGSERIAL PRIMARY KEY NOT NULL,
         AssessmentName TEXT NOT NULL
     )`)
     
@@ -43,7 +43,7 @@ async function DBCategoriesINIT() {
     
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Topics(
-        TopicID INTEGER PRIMARY KEY NOT NULL,
+        TopicID BIGSERIAL PRIMARY KEY NOT NULL,
         TopicName TEXT NOT NULL,
         SubjectID INTEGER NOT NULL,
     
@@ -52,7 +52,7 @@ async function DBCategoriesINIT() {
 
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Papers(
-        PaperID INTEGER PRIMARY KEY NOT NULL,
+        PaperID BIGSERIAL PRIMARY KEY NOT NULL,
         Paper INTEGER NOT NULL
     )`)
     
@@ -69,7 +69,7 @@ async function DBCategoriesINIT() {
 
     await pool.query(`
     CREATE TABLE IF NOT EXISTS Schools(
-        SchoolID INTEGER PRIMARY KEY NOT NULL,
+        SchoolID BIGSERIAL PRIMARY KEY NOT NULL,
         SchoolName TEXT NOT NULL
     )`)
 
