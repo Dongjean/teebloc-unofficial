@@ -93,4 +93,77 @@ async function GetSchools(Subject) {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools};
+async function AddNewSubject(Data) {
+    try {
+        const result = await pool.query(`
+        INSERT INTO Subjects(Subject) VALUES($1)
+        RETURNING SubjectID
+        `, [Data.NewSubject])
+
+        const NewSubjectID = result.rows[0].subjectid
+
+        console.log(Data)
+
+        if (Data.Levels.length !== 0) {
+            for (var i=0; i<Data.Levels.length; i++) {
+                await pool.query(`
+                INSERT INTO Subject_Level VALUES($1, $2)
+                `, [NewSubjectID, Data.Levels[i]])
+            }
+        }
+
+        if (Data.Papers.length !== 0) {
+            for (var i=0; i<Data.Papers.length; i++) {
+                await pool.query(`
+                INSERT INTO Subject_Paper VALUES($1, $2)
+                `, [NewSubjectID, Data.Papers[i]])
+            }
+        }
+
+        if (Data.Schools.length !== 0) {
+            for (var i=0; i<Data.Schools.length; i++) {
+                await pool.query(`
+                INSERT INTO School_Subject VALUES($1, $2)
+                `, [Data.Schools[i], NewSubjectID])
+            }
+        }
+
+    } catch(err) {
+
+    }
+}
+
+async function GetAllLevels() {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Levels
+        `)
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function GetAllPapers() {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Papers
+        `)
+        return result.rows
+    } catch(err) {
+        console.log(err) 
+    }
+}
+
+async function GetAllSchools() {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Schools
+        `)
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, GetAllLevels, GetAllPapers, GetAllSchools};
