@@ -7,6 +7,7 @@ import TopicPoster from '../Components/CategoryUpload/TopicPoster';
 import LevelPoster from '../Components/CategoryUpload/LevelPoster';
 import AssessmentPoster from '../Components/CategoryUpload/AssessmentPoster';
 import SchoolPoster from '../Components/CategoryUpload/SchoolPoster';
+import PaperPoster from '../Components/CategoryUpload/PaperPoster';
 
 function PostCategoryPage() {
     const [UploadCategory, setUploadCategory] = useState('Subject')
@@ -97,6 +98,21 @@ function PostCategoryPage() {
         }
     }
 
+    async function SubmitPaper(event, Subjects, NewPaper) {
+        event.preventDefault()
+
+        if (NewPaper.length == 0) {
+            console.log('Please Enter the field for new Paper')
+            return
+        }
+
+        try {
+            await API.post('/Categories/New/Paper', {Subjects: Subjects, NewPaper: NewPaper})
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <form >
@@ -104,6 +120,7 @@ function PostCategoryPage() {
                     <option value='Subject'>Subject</option>
                     <option value='Topic'>Topic</option>
                     <option value='Level'>Level</option>
+                    <option value='Paper'>Paper</option>
                     <option value='Assessment'>Assessment</option>
                     <option value='School'>School</option>
                 </select>
@@ -122,6 +139,12 @@ function PostCategoryPage() {
 
                 {UploadCategory == 'Level' ?
                     <LevelPoster SubmitLevel={SubmitLevel} />
+                :
+                    null
+                }
+
+                {UploadCategory == 'Paper' ?
+                    <PaperPoster SubmitPaper={SubmitPaper} />
                 :
                     null
                 }

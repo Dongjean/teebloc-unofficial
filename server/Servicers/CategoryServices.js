@@ -157,11 +157,9 @@ async function AddNewLevel(Data) {
 
         if (Data.Subjects.length !== 0) {
             for (var i=0; i<Data.Subjects.length; i++) {
-                console.log(Data.Subjects[i])
                 await pool.query(`
                 INSERT INTO Subject_Level VALUES($1, $2)
                 `, [Data.Subjects[i], NewLevelID])
-                console.log('hi')
             }
         }
 
@@ -170,6 +168,30 @@ async function AddNewLevel(Data) {
                 await pool.query(`
                 INSERT INTO Assessment_Level VALUES($1, $2)
                 `, [NewLevelID, Data.Assessments[i]])
+            }
+        }
+
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function AddNewPaper(Data) {
+    try {
+        const result = await pool.query(`
+        INSERT INTO Papers(Paper) VALUES($1)
+        RETURNING PaperID
+        `, [Data.NewPaper])
+
+        const NewPaperID = result.rows[0].paperid
+
+        console.log(Data)
+
+        if (Data.Subjects.length !== 0) {
+            for (var i=0; i<Data.Subjects.length; i++) {
+                await pool.query(`
+                INSERT INTO Subject_Paper VALUES($1, $2)
+                `, [Data.Subjects[i], NewPaperID])
             }
         }
 
@@ -270,4 +292,4 @@ async function GetAllAssessments() {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments};
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments};
