@@ -6,6 +6,7 @@ import SubjectPoster from '../Components/CategoryUpload/SubjectPoster.js';
 import TopicPoster from '../Components/CategoryUpload/TopicPoster';
 import LevelPoster from '../Components/CategoryUpload/LevelPoster';
 import AssessmentPoster from '../Components/CategoryUpload/AssessmentPoster';
+import SchoolPoster from '../Components/CategoryUpload/SchoolPoster';
 
 function PostCategoryPage() {
     const [UploadCategory, setUploadCategory] = useState('Subject')
@@ -81,6 +82,21 @@ function PostCategoryPage() {
         }
     }
 
+    async function SubmitSchool(event, Subjects, NewSchool) {
+        event.preventDefault()
+
+        if (NewSchool.length == 0) {
+            console.log('Please Enter the field for new School')
+            return
+        }
+
+        try {
+            await API.post('/Categories/New/School', {Subjects: Subjects, NewSchool: NewSchool})
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <form >
@@ -112,6 +128,12 @@ function PostCategoryPage() {
 
                 {UploadCategory == 'Assessment' ?
                     <AssessmentPoster SubmitAssessment={SubmitAssessment} />
+                :
+                    null
+                }
+
+                {UploadCategory == 'School' ?
+                    <SchoolPoster SubmitSchool={SubmitSchool} />
                 :
                     null
                 }
