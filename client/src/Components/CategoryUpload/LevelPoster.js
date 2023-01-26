@@ -71,7 +71,7 @@ function LevelPoster(props) {
             <div style={{display: AssessmentsDisplay}}>
                 {Assessments.map(Assessment => 
                     <div key={Assessment.assessmentid}>
-                        {Assessment.assessment} <input type='checkbox' onClick={event => {
+                        {Assessment.assessmentname} <input type='checkbox' onClick={event => {
                             if (event.target.checked == true) {
                                 //Add this Assessment to AssessmentsRef.current
                                 AssessmentsRef.current.push(Assessment.assessmentid)
