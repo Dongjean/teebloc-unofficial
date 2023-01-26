@@ -3,6 +3,7 @@ import API from '../utils/API';
 
 //component imports
 import SubjectPoster from '../Components/CategoryUpload/SubjectPoster.js';
+import TopicPoster from '../Components/CategoryUpload/TopicPoster';
 
 function PostCategoryPage() {
     const [UploadCategory, setUploadCategory] = useState('Subject')
@@ -21,8 +22,29 @@ function PostCategoryPage() {
             return
         }
         
-        try{
-            API.post('/Categories/New/Subject', {Levels: Levels, Papers: Papers, Schools: Schools, NewSubject: NewSubject})
+        try {
+            await API.post('/Categories/New/Subject', {Levels: Levels, Papers: Papers, Schools: Schools, NewSubject: NewSubject})
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function SubmitTopic(event, Subject, NewTopic) {
+        event.preventDefault()
+        console.log(Subject.length)
+        if (NewTopic.length == 0) {
+            if (Subject.length == 0) {
+                console.log('Please Enter the field for new Topic and its Subject')
+                return
+            } else {
+                console.log('Please Enter the field for new Topic')
+                return
+            }
+        }
+
+        console.log(Subject.length)
+        try {
+            await API.post('/Categories/New/Topic', {Subject: Subject, NewTopic:NewTopic})
         } catch(err) {
             console.log(err)
         }
@@ -44,6 +66,13 @@ function PostCategoryPage() {
                 :
                     null
                 }
+
+                {UploadCategory == 'Topic' ?
+                    <TopicPoster SubmitTopic={SubmitTopic} />
+                :
+                    null
+                }
+
             </form>
         </div>
     )

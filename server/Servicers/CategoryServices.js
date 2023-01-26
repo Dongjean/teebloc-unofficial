@@ -129,7 +129,18 @@ async function AddNewSubject(Data) {
         }
 
     } catch(err) {
+        console.log(err)
+    }
+}
 
+async function AddNewTopic(Data) {
+    try {
+        await pool.query(`
+        INSERT INTO Topics(TopicName, SubjectID) VALUES($1, $2)
+        `, [Data.NewTopic, Data.Subject])
+
+    } catch(err) {
+        console.log(err)
     }
 }
 
@@ -166,4 +177,4 @@ async function GetAllSchools() {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, GetAllLevels, GetAllPapers, GetAllSchools};
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, GetAllLevels, GetAllPapers, GetAllSchools};
