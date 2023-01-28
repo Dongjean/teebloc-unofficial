@@ -3,6 +3,7 @@ import {useState} from "react";
 //component imports
 import SubjectEditor from "../Components/CategoryEdit/SubjectEditor";
 import LevelEditor from "../Components/CategoryEdit/LevelEditor";
+import PaperEditor from "../Components/CategoryEdit/PaperEditor";
 
 function EditCategoryPage() {
     const [EditCategory, setEditCategory] = useState('Subject') //Initially edit subjects
@@ -29,6 +30,13 @@ function EditCategoryPage() {
             {/* Level Editor */}
             {EditCategory == 'Level' ?
                 <LevelEditor />
+            :
+                null
+            }
+
+            {/* Paper Editor */}
+            {EditCategory == 'Paper' ?
+                <PaperEditor />
             :
                 null
             }

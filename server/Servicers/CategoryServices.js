@@ -99,6 +99,21 @@ async function Get_Subjects_fromLevelID(LevelID) {
     }
 }
 
+async function Get_Subjects_fromPaperID(PaperID) {
+    try {
+        const result = await pool.query(`
+        SELECT Subjects.Subject, Subjects.SubjectID
+        FROM Subjects JOIN Subject_Paper
+        ON Subjects.SubjectID = Subject_Paper.SubjectID
+        WHERE Subject_Paper.PaperID=$1
+        `, [PaperID])
+        console.log(result.rows)
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 
 //GetAll
 
@@ -354,6 +369,7 @@ module.exports = {
     Get_Papers_fromSubjectID,
     Get_Schools_fromSubjectID,
     Get_Subjects_fromLevelID,
+    Get_Subjects_fromPaperID,
     
     Get_Subjects_All,
     Get_Levels_All,
