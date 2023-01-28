@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments} = require('../../Servicers/CategoryServices.js');
+const {authAdminJWT} = require('../../utils/authAdminJWT.js');
 
 router.get('/Categories/Subjects/GetAll', (req, res) => {
     GetAllSubjects().then(response => res.json(response))
@@ -37,32 +38,32 @@ router.get('/Categories/Schools/Get/:Subject', (req, res) => {
     GetSchools(Subject).then(response => res.json(response))
 })
 
-router.post('/Categories/New/Subject', (req, res) => {
+router.post('/Categories/New/Subject', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewSubject(Data).then(response => res.json(response))
 })
 
-router.post('/Categories/New/Topic', (req, res) => {
+router.post('/Categories/New/Topic', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewTopic(Data).then(response => res.json(response))
 })
 
-router.post('/Categories/New/Level', (req, res) => {
+router.post('/Categories/New/Level', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewLevel(Data).then(response => res.json(response))
 })
 
-router.post('/Categories/New/Paper', (req, res) => {
+router.post('/Categories/New/Paper', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewPaper(Data).then(response => res.json(response))
 })
 
-router.post('/Categories/New/Assessment', (req, res) => {
+router.post('/Categories/New/Assessment', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewAssessment(Data).then(response => res.json(response))
 })
 
-router.post('/Categories/New/School', (req, res) => {
+router.post('/Categories/New/School', authAdminJWT, (req, res) => {
     const Data = req.body
     AddNewSchool(Data).then(response => res.json(response))
 })
