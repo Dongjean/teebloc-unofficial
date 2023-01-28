@@ -16,6 +16,20 @@ async function Get_Levels_fromSubjectID(SubjectID) {
     }
 }
 
+async function Get_Levels_fromAssessmentID(AssessmentID) {
+    try {
+        const result = await pool.query(`
+        SELECT Levels.LevelID, Levels.Level
+        FROM Levels JOIN Assessment_Level
+        ON Levels.LevelID = Assessment_Level.LevelID
+        WHERE Assessment_Level.AssessmentID = $1
+        `, [AssessmentID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 async function Get_Assessments_fromLevelID(LevelID) {
     try {
         const result = await pool.query(`
@@ -363,6 +377,7 @@ async function Unlink_Assessment_Level(AssessmentID, LevelID) {
 
 module.exports = {
     Get_Levels_fromSubjectID,
+    Get_Levels_fromAssessmentID,
     Get_Assessments_fromLevelID,
     Get_Assessments_fromLevelIDs,
     Get_Topics_fromSubjectID,

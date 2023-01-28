@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
     Get_Levels_fromSubjectID,
+    Get_Levels_fromAssessmentID,
     Get_Assessments_fromLevelID,
     Get_Assessments_fromLevelIDs,
     Get_Topics_fromSubjectID,
@@ -39,6 +40,12 @@ router.get('/Categories/Get/Levels/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Get_Levels_fromSubjectID(SubjectID).then(response => res.json(response))
+})
+
+router.get('/Categories/Get/Levels/fromAssessmentID/:AssessmentID', (req, res) => {
+    const AssessmentID = req.params.AssessmentID
+
+    Get_Levels_fromAssessmentID(AssessmentID).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Assessments/fromLevelID/:LevelID', (req, res) => {
