@@ -1,6 +1,108 @@
 const pool = require("../DB");
 
-async function GetAllSubjects() {
+//Conditional Get
+
+async function Get_Levels_fromSubjectID(SubjectID) {
+    try {
+        const result = await pool.query(`
+        SELECT Levels.LevelID, Levels.Level
+        FROM Levels JOIN Subject_Level
+        ON Levels.LevelID = Subject_Level.LevelID
+        WHERE Subject_Level.SubjectID = $1
+        `, [SubjectID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Assessments_fromLevelID(LevelID) {
+    try {
+        const result = await pool.query(`
+        SELECT Assessments.AssessmentID, Assessments.AssessmentName
+        FROM Assessments JOIN Assessment_Level
+        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
+        WHERE Assessment_Level.LevelID = $1
+        `, [LevelID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Assessments_fromLevelIDs(LevelIDs) {
+    try {
+        const result = await pool.query(`
+        SELECT DISTINCT Assessments.AssessmentID, Assessments.AssessmentName
+        FROM Assessments JOIN Assessment_Level
+        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
+        WHERE Assessment_Level.LevelID = ANY($1::int[])
+        `, [LevelIDs])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Topics_fromSubjectID(SubjectID) {
+    try {
+        const result = await pool.query(`
+        SELECT TopicID, TopicName
+        FROM Topics
+        WHERE SubjectID = $1
+        `, [SubjectID])
+        return result.rows
+    } catch(err) {
+
+    }
+}
+
+async function Get_Papers_fromSubjectID(SubjectID) {
+    try {
+        const result = await pool.query(`
+        SELECT Papers.PaperID, Papers.Paper
+        FROM Papers JOIN Subject_Paper
+        ON Papers.PaperID = Subject_Paper.PaperID
+        WHERE Subject_Paper.SubjectID = $1
+        `, [SubjectID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Schools_fromSubjectID(SubjectID) {
+    try {
+        const result = await pool.query(`
+        SELECT Schools.SchoolID, Schools.SchoolName
+        FROM Schools JOIN School_Subject
+        ON Schools.SchoolID = School_Subject.SchoolID
+        WHERE School_Subject.SubjectID = $1
+        `, [SubjectID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Subjects_fromLevelID(LevelID) {
+    try {
+        const result = await pool.query(`
+        SELECT Subjects.Subject, Subjects.SubjectID
+        FROM Subjects JOIN Subject_Level
+        ON Subjects.SubjectID = Subject_Level.SubjectID
+        WHERE Subject_Level.LevelID=$1
+        `, [LevelID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+
+//GetAll
+
+async function Get_Subjects_All() {
     try {
         const result = await pool.query(`SELECT * FROM Subjects ORDER BY Subject ASC`) //get all categories ordered in alphabetical order
         return result.rows
@@ -9,89 +111,52 @@ async function GetAllSubjects() {
     }
 }
 
-async function GetLevels(Subject) {
+async function Get_Levels_All() {
     try {
         const result = await pool.query(`
-        SELECT Levels.LevelID, Levels.Level
-        FROM Levels JOIN Subject_Level
-        ON Levels.LevelID = Subject_Level.LevelID
-        WHERE Subject_Level.SubjectID = $1
-        `, [Subject])
+        SELECT * FROM Levels
+        `)
         return result.rows
     } catch(err) {
         console.log(err)
     }
 }
 
-async function GetAssessments(Level) {
+async function Get_Papers_All() {
     try {
         const result = await pool.query(`
-        SELECT Assessments.AssessmentID, Assessments.AssessmentName
-        FROM Assessments JOIN Assessment_Level
-        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
-        WHERE Assessment_Level.LevelID = $1
-        `, [Level])
+        SELECT * FROM Papers
+        `)
+        return result.rows
+    } catch(err) {
+        console.log(err) 
+    }
+}
+
+async function Get_Schools_All() {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Schools
+        `)
         return result.rows
     } catch(err) {
         console.log(err)
     }
 }
 
-async function GetAssessmentsFromLevels(Levels) {
+async function Get_Assessments_All() {
     try {
         const result = await pool.query(`
-        SELECT DISTINCT Assessments.AssessmentID, Assessments.AssessmentName
-        FROM Assessments JOIN Assessment_Level
-        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
-        WHERE Assessment_Level.LevelID = ANY($1::int[])
-        `, [Levels])
+        SELECT * FROM Assessments
+        `)
         return result.rows
     } catch(err) {
         console.log(err)
     }
 }
 
-async function GetTopics(Subject) {
-    try {
-        const result = await pool.query(`
-        SELECT TopicID, TopicName
-        FROM Topics
-        WHERE SubjectID = $1
-        `, [Subject])
-        return result.rows
-    } catch(err) {
 
-    }
-}
-
-async function GetPapers(Subject) {
-    try {
-        const result = await pool.query(`
-        SELECT Papers.PaperID, Papers.Paper
-        FROM Papers JOIN Subject_Paper
-        ON Papers.PaperID = Subject_Paper.PaperID
-        WHERE Subject_Paper.SubjectID = $1
-        `, [Subject])
-        console.log(result.rows)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-async function GetSchools(Subject) {
-    try {
-        const result = await pool.query(`
-        SELECT Schools.SchoolID, Schools.SchoolName
-        FROM Schools JOIN School_Subject
-        ON Schools.SchoolID = School_Subject.SchoolID
-        WHERE School_Subject.SubjectID = $1
-        `, [Subject])
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
+//Add New
 
 async function AddNewSubject(Data) {
     try {
@@ -101,8 +166,6 @@ async function AddNewSubject(Data) {
         `, [Data.NewSubject])
 
         const NewSubjectID = result.rows[0].subjectid
-
-        console.log(Data)
 
         if (Data.Levels.length !== 0) {
             for (var i=0; i<Data.Levels.length; i++) {
@@ -153,8 +216,6 @@ async function AddNewLevel(Data) {
 
         const NewLevelID = result.rows[0].levelid
 
-        console.log(Data)
-
         if (Data.Subjects.length !== 0) {
             for (var i=0; i<Data.Subjects.length; i++) {
                 await pool.query(`
@@ -185,8 +246,6 @@ async function AddNewPaper(Data) {
 
         const NewPaperID = result.rows[0].paperid
 
-        console.log(Data)
-
         if (Data.Subjects.length !== 0) {
             for (var i=0; i<Data.Subjects.length; i++) {
                 await pool.query(`
@@ -208,8 +267,6 @@ async function AddNewAssessment(Data) {
         `, [Data.NewAssessment])
 
         const NewAssessmentID = result.rows[0].assessmentid
-
-        console.log(Data)
 
         if (Data.Levels.length !== 0) {
             for (var i=0; i<Data.Levels.length; i++) {
@@ -233,8 +290,6 @@ async function AddNewSchool(Data) {
 
         const NewSchoolID = result.rows[0].schoolid
 
-        console.log(Data)
-
         if (Data.Subjects.length !== 0) {
             for (var i=0; i<Data.Subjects.length; i++) {
                 await pool.query(`
@@ -248,49 +303,8 @@ async function AddNewSchool(Data) {
     }
 }
 
-async function GetAllLevels() {
-    try {
-        const result = await pool.query(`
-        SELECT * FROM Levels
-        `)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
 
-async function GetAllPapers() {
-    try {
-        const result = await pool.query(`
-        SELECT * FROM Papers
-        `)
-        return result.rows
-    } catch(err) {
-        console.log(err) 
-    }
-}
-
-async function GetAllSchools() {
-    try {
-        const result = await pool.query(`
-        SELECT * FROM Schools
-        `)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-async function GetAllAssessments() {
-    try {
-        const result = await pool.query(`
-        SELECT * FROM Assessments
-        `)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
+//Unlink
 
 async function Unlink_Subject_Level(SubjectID, LevelID) {
     try {
@@ -332,34 +346,30 @@ async function Unlink_Assessment_Level(AssessmentID, LevelID) {
     }
 }
 
-async function Get_Subjects_fromLevelID(LevelID) {
-    try {
-        const result = await pool.query(`
-        SELECT Subjects.Subject, Subjects.SubjectID
-        FROM Subjects JOIN Subject_Level
-        ON Subjects.SubjectID = Subject_Level.SubjectID
-        WHERE Subject_Level.LevelID=$1
-        `, [LevelID])
-        console.log(result.rows)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
+module.exports = {
+    Get_Levels_fromSubjectID,
+    Get_Assessments_fromLevelID,
+    Get_Assessments_fromLevelIDs,
+    Get_Topics_fromSubjectID,
+    Get_Papers_fromSubjectID,
+    Get_Schools_fromSubjectID,
+    Get_Subjects_fromLevelID,
+    
+    Get_Subjects_All,
+    Get_Levels_All,
+    Get_Papers_All,
+    Get_Schools_All,
+    Get_Assessments_All,
 
-async function Get_Assessments_fromLevelID(LevelID) {
-    try {
-        const result = await pool.query(`
-        SELECT Assessments.AssessmentName , Assessments.AssessmentID
-        FROM Assessments JOIN Assessment_Level
-        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
-        WHERE Assessment_Level.LevelID=$1
-        `, [LevelID])
-        console.log(result.rows)
-        return result.rows
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments, Unlink_Subject_Level, Unlink_Subject_Paper, Unlink_School_Subject, Unlink_Assessment_Level, Get_Subjects_fromLevelID, Get_Assessments_fromLevelID};
+    AddNewSubject,
+    AddNewTopic,
+    AddNewLevel,
+    AddNewPaper,
+    AddNewAssessment,
+    AddNewSchool,
+    
+    Unlink_Subject_Level,
+    Unlink_Subject_Paper,
+    Unlink_School_Subject,
+    Unlink_Assessment_Level
+};
