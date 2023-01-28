@@ -322,4 +322,44 @@ async function Unlink_School_Subject(SchoolID, SubjectID) {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments, Unlink_Subject_Level, Unlink_Subject_Paper, Unlink_School_Subject};
+async function Unlink_Assessment_Level(AssessmentID, LevelID) {
+    try {
+        await pool.query(`
+        DELETE FROM Assessment_Level WHERE AssessmentID=$1 AND LevelID=$2
+        `, [AssessmentID, LevelID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Subjects_fromLevelID(LevelID) {
+    try {
+        const result = await pool.query(`
+        SELECT Subjects.Subject, Subjects.SubjectID
+        FROM Subjects JOIN Subject_Level
+        ON Subjects.SubjectID = Subject_Level.SubjectID
+        WHERE Subject_Level.LevelID=$1
+        `, [LevelID])
+        console.log(result.rows)
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Assessments_fromLevelID(LevelID) {
+    try {
+        const result = await pool.query(`
+        SELECT Assessments.AssessmentName , Assessments.AssessmentID
+        FROM Assessments JOIN Assessment_Level
+        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
+        WHERE Assessment_Level.LevelID=$1
+        `, [LevelID])
+        console.log(result.rows)
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments, Unlink_Subject_Level, Unlink_Subject_Paper, Unlink_School_Subject, Unlink_Assessment_Level, Get_Subjects_fromLevelID, Get_Assessments_fromLevelID};
