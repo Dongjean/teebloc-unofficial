@@ -415,6 +415,20 @@ async function Unlink_Assessment_Level(AssessmentID, LevelID) {
     }
 }
 
+//Relink
+
+async function Relink_Topic_Subject(TopicID, SubjectID) {
+    try {
+        await pool.query(`
+        UPDATE Topics
+        SET SubjectID=$1
+        WHERE TopicID=$2
+        `, [SubjectID, TopicID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -445,5 +459,7 @@ module.exports = {
     Unlink_Subject_Level,
     Unlink_Subject_Paper,
     Unlink_School_Subject,
-    Unlink_Assessment_Level
+    Unlink_Assessment_Level,
+
+    Relink_Topic_Subject
 };

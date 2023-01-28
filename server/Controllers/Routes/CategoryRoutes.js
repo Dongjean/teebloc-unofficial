@@ -31,7 +31,9 @@ const {
     Unlink_Subject_Level,
     Unlink_Subject_Paper,
     Unlink_School_Subject,
-    Unlink_Assessment_Level
+    Unlink_Assessment_Level,
+
+    Relink_Topic_Subject
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -104,6 +106,7 @@ router.get('/Categories/Get/Subjects/fromTopicID/:TopicID', (req, res) => {
 
     Get_Subjects_fromTopicID(TopicID).then(response => res.json(response))
 })
+
 
 //GetAll
 
@@ -192,6 +195,16 @@ router.post('/Categories/Unlink/Assessment/:AssessmentID/Level/:LevelID', (req, 
     const LevelID = req.params.LevelID
     
     Unlink_Assessment_Level(AssessmentID, LevelID).then(response => res.json(response))
+})
+
+
+//Relink
+
+router.post('/Categories/Relink/Topic/:TopicID/Subject/:SubjectID', (req, res) => {
+    const TopicID = req.params.TopicID
+    const SubjectID = req.params.SubjectID
+
+    Relink_Topic_Subject(TopicID, SubjectID).then(response => res.json(response))
 })
 
 module.exports = router;
