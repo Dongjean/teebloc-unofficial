@@ -39,14 +39,19 @@ function AccountDetailsPage(props) {
                             <button onClick={() => props.OpenCompleted(UserInfo.email)}>Completed</button> <br />
                             {/* for Creator accounts, have posts button */}
                             {props.LoginData.AccType == 'Creator' || props.LoginData.AccType == 'Admin' ?
-                                <span><button onClick={() => props.OpenPosts(UserInfo.email)}>Posts</button> <br /></span>
+                                <span>
+                                    <button onClick={() => props.OpenPosts(UserInfo.email)}>Posts</button> <br />
+                                </span>
                             :
                                 null
                             }
 
                             {/* for Admin accounts, have Add Category button */}
                             {props.LoginData.AccType == 'Admin' ?
-                                <span><button onClick={() => props.PostCategory()}>Add Category</button> <br /></span>
+                                <span>
+                                    <button onClick={() => props.PostCategory()}>Add Category</button> <br />
+                                    <button onClick={() => props.EditCategory()}>EditCategory</button> <br />
+                                </span>
                             :
                                 null
                             }

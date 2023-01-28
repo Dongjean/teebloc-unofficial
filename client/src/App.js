@@ -15,6 +15,7 @@ import OpenedQuestionPage from './Pages/OpenedQuestionPage.js';
 import SavedQuestionsPage from './Pages/SavedQuestionsPage.js';
 import MyQuestionsPage from './Pages/MyQuestionsPage.js';
 import CompletedQuestionsPage from './Pages/CompletedQuestionsPage.js';
+import EditCategoryPage from './Pages/EditCategoryPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
@@ -79,6 +80,10 @@ function App() {
 		navigate('/Post/Category')
 	}
 
+	function EditCategory() {
+		navigate('/Admin/Category/Edit')
+	}
+
 	return (
     	<div>
 			<div className='NavBar'>
@@ -94,7 +99,9 @@ function App() {
 				<Route path='/Post/Question' exact element={<PostQuestionPage UserEmail={LoginData.Email} />} />
 				<Route path='/Post/Category' exact element={<PostCategoryPage />} />
 
-				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} PostCategory={PostCategory} />} />
+				<Route path='/Admin/Category/Edit' exact element={<EditCategoryPage />} />
+
+				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} PostCategory={PostCategory} EditCategory={EditCategory} />} />
 				<Route path='/Account/:Email/Saved' exact element={<SavedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Posts' exact element={<MyQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Completed' exact element={<CompletedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
