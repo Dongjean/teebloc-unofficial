@@ -1,18 +1,18 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
-//Authorises both Admins and Creators Access
-async function authCreatorJWT(req, res, next) {
+//Authorises only Admins Access
+async function authAdminJWT(req, res, next) {
     const Token = req.cookies.Token;
     try {
         jwt.verify(Token, process.env.TokenSecret, function(err, decoded) {
             if (err) {
                 res.stauts(401).send(err)
             } else {
-                if (decoded.AccType == 'Creator' || decoded.AccType == 'Admin') {
+                if (decoded.AccType == 'Admin') {
                     next()
                 } else {
-                    console.log('Invalid JWT: You are not authorised as a Creator!')
+                    console.log('Invalid JWT: You are not authorised as an Admin!')
                 }
             }
         })
@@ -21,4 +21,4 @@ async function authCreatorJWT(req, res, next) {
     }
 }
 
-module.exports = {authCreatorJWT}
+module.exports = {authAdminJWT}

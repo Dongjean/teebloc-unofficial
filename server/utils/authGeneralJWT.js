@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
+//Authorises any User logged in Access
 async function authGeneralJWT(req, res, next) {
     const Token = req.cookies.Token;
     try {
-        const result = jwt.verify(Token, process.env.TokenSecret, function(err, decoded) {
+        jwt.verify(Token, process.env.TokenSecret, function(err, decoded) {
             if (err) {
                 res.stauts(401).send(err)
             } else {
