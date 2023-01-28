@@ -12,8 +12,10 @@ const {
     Get_Subjects_fromLevelID,
     Get_Subjects_fromPaperID,
     Get_Subjects_fromSchoolID,
+    Get_Subjects_fromTopicID,
     
     Get_Subjects_All,
+    Get_Topics_All,
     Get_Levels_All,
     Get_Papers_All,
     Get_Schools_All,
@@ -97,11 +99,20 @@ router.get('/Categories/Get/Subjects/fromSchoolID/:SchoolID', (req, res) => {
     Get_Subjects_fromSchoolID(SchoolID).then(response => res.json(response))
 })
 
+router.get('/Categories/Get/Subjects/fromTopicID/:TopicID', (req, res) => {
+    const TopicID = req.params.TopicID
+
+    Get_Subjects_fromTopicID(TopicID).then(response => res.json(response))
+})
 
 //GetAll
 
 router.get('/Categories/Get/Subjects/All', (req, res) => {
     Get_Subjects_All().then(response => res.json(response))
+})
+
+router.get('/Categories/Get/Topics/All', (req, res) => {
+    Get_Topics_All().then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Levels/All', (req, res) => {

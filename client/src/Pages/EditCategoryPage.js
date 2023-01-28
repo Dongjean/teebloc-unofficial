@@ -6,6 +6,7 @@ import LevelEditor from "../Components/CategoryEdit/LevelEditor";
 import PaperEditor from "../Components/CategoryEdit/PaperEditor";
 import AssessmentEditor from "../Components/CategoryEdit/AssessmentEditor";
 import SchoolEditor from "../Components/CategoryEdit/SchoolEditor";
+import TopicEditor from "../Components/CategoryEdit/TopicEditor";
 
 function EditCategoryPage() {
     const [EditCategory, setEditCategory] = useState('Subject') //Initially edit subjects
@@ -25,6 +26,13 @@ function EditCategoryPage() {
             {/* Subject Editor */}
             {EditCategory == 'Subject' ?
                 <SubjectEditor />
+            :
+                null
+            }
+
+            {/* Topic Editor */}
+            {EditCategory == 'Topic' ?
+                <TopicEditor />
             :
                 null
             }

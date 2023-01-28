@@ -143,12 +143,37 @@ async function Get_Subjects_fromSchoolID(SchoolID) {
     }
 }
 
+async function Get_Subjects_fromTopicID(TopicID) {
+    try {
+        const result = await pool.query(`
+        SELECT Subjects.Subject, Subjects.SubjectID
+        FROM Subjects JOIN Topics
+        ON Subjects.SubjectID = Topics.SubjectID
+        WHERE Topics.TopicID=$1
+        `, [TopicID])
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 
 //GetAll
 
 async function Get_Subjects_All() {
     try {
         const result = await pool.query(`SELECT * FROM Subjects ORDER BY Subject ASC`) //get all categories ordered in alphabetical order
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Topics_All() {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Topics
+        `)
         return result.rows
     } catch(err) {
         console.log(err)
@@ -401,8 +426,10 @@ module.exports = {
     Get_Subjects_fromLevelID,
     Get_Subjects_fromPaperID,
     Get_Subjects_fromSchoolID,
+    Get_Subjects_fromTopicID,
     
     Get_Subjects_All,
+    Get_Topics_All,
     Get_Levels_All,
     Get_Papers_All,
     Get_Schools_All,
