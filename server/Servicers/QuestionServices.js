@@ -343,6 +343,9 @@ async function DeleteQuestion(QuestionID) {
         DELETE FROM SavedQuestions WHERE QuestionID=$1
         `, [QuestionID])
         await pool.query(`
+        DELETE FROM CompletedQuestions WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
         DELETE FROM Questions WHERE QuestionID=$1
         `, [QuestionID])
     } catch(err) {
