@@ -5,8 +5,6 @@ function TopicPoster(props) {
 
     const SubjectRef = useRef('')
 
-    const [SubjectsDisplay, setSubjectsDisplay] = useState('none')
-
     const NewTopicRef = useRef('')
 
     const [Subjects, setSubjects] = useState([])
@@ -17,7 +15,7 @@ function TopicPoster(props) {
 
     async function GetSubjects() {
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             SubjectRef.current = result.data[0].subjectid
             setSubjects(result.data)
         } catch(err) {

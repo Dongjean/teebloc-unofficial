@@ -25,7 +25,7 @@ function SubjectPoster(props) {
 
     async function GetLevels() {
         try {
-            const result = await API.get('/Categories/Levels/GetAll')
+            const result = await API.get('/Categories/Get/Levels/All')
             setLevels(result.data)
         } catch(err) {
             console.log(err)
@@ -34,7 +34,7 @@ function SubjectPoster(props) {
 
     async function GetPapers() {
         try {
-            const result = await API.get('/Categories/Papers/GetAll')
+            const result = await API.get('/Categories/Get/Papers/All')
             setPapers(result.data)
         } catch(err) {
             console.log(err)
@@ -43,7 +43,7 @@ function SubjectPoster(props) {
 
     async function GetSchools() {
         try {
-            const result = await API.get('/Categories/Schools/GetAll')
+            const result = await API.get('/Categories/Get/Schools/All')
             setSchools(result.data)
         } catch(err) {
             console.log(err)

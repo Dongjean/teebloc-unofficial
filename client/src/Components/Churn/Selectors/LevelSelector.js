@@ -16,7 +16,7 @@ function LevelSelector(props) {
 
     async function getLevels(Subject) { //get Levels to display
         try {
-            const result = await API.get('/Categories/Levels/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + Subject)
             setLevels(result.data)
 
             var temp = LevelsSelection;

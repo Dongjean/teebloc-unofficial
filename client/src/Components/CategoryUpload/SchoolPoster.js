@@ -17,7 +17,7 @@ function SchoolPoster(props) {
 
     async function GetSubjects() {
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             setSubjects(result.data)
         } catch(err) {
             console.log(err)

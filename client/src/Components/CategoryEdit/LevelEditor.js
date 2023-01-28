@@ -25,9 +25,9 @@ function LevelEditor() {
 
     async function GetAllLevels() {
         try {
-            const result = await API.get('/Categories/Levels/GetAll')
+            const result = await API.get('/Categories/Get/Levels/All')
             setAllLevels(result.data)
-            setEditLevel(result.data[0].levelid) //initially set the first Level as the subject to edit
+            setEditLevel(result.data[0].levelid) //initially set the first Level as the level to edit
         } catch(err) {
             console.log(err)
         }
@@ -35,7 +35,7 @@ function LevelEditor() {
 
     async function GetRelatedSubjects(LevelID) {
         try {
-            const result = await API.get('/Categories/Subjects/Get/fromLevelID/' + LevelID)
+            const result = await API.get('/Categories/Get/Subjects/fromLevelID/' + LevelID)
             console.log(result.data)
             setRelatedSubjects(result.data)
         } catch(err) {
@@ -45,7 +45,7 @@ function LevelEditor() {
 
     async function GetRelatedAssessments(LevelID) {
         try {
-            const result = await API.get('/Categories/Assessments/Get/fromLevelID/' + LevelID)
+            const result = await API.get('/Categories/Get/Assessments/fromLevelID/' + LevelID)
             setRelatedAssessments(result.data)
         } catch(err) {
             console.log(err)

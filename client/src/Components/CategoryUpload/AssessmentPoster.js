@@ -17,7 +17,7 @@ function AssessmentPoster(props) {
 
     async function GetLevels() {
         try {
-            const result = await API.get('/Categories/Levels/GetAll')
+            const result = await API.get('/Categories/Get/Levels/All')
             setLevels(result.data)
         } catch(err) {
             console.log(err)

@@ -28,7 +28,7 @@ function SubjectEditor() {
 
     async function GetAllSubjects() {
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             setAllSubjects(result.data)
             setEditSubject(result.data[0].subjectid) //initially set the first Subject as the subject to edit
         } catch(err) {
@@ -38,7 +38,7 @@ function SubjectEditor() {
 
     async function GetRelatedLevels(SubjectID) {
         try {
-            const result = await API.get('/Categories/Levels/Get/' + SubjectID)
+            const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + SubjectID)
             setRelatedLevels(result.data)
         } catch(err) {
             console.log(err)
@@ -47,7 +47,7 @@ function SubjectEditor() {
 
     async function GetRelatedPapers(SubjectID) {
         try {
-            const result = await API.get('/Categories/Papers/Get/' + SubjectID)
+            const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + SubjectID)
             setRelatedPapers(result.data)
         } catch(err) {
             console.log(err)
@@ -56,7 +56,7 @@ function SubjectEditor() {
 
     async function GetRelatedSchools(SubjectID) {
         try {
-            const result = await API.get('/Categories/Schools/Get/' + SubjectID)
+            const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + SubjectID)
             setRelatedSchools(result.data)
         } catch(err) {
             console.log(err)

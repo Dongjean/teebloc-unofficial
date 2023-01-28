@@ -16,7 +16,7 @@ function PaperSelector(props) {
 
     async function getPapers(Subject) { //get Papers to display
         try {
-            const result = await API.get('/Categories/Papers/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + Subject)
             setPapers(result.data)
 
             var temp = PapersSelection;

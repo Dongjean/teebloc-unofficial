@@ -16,7 +16,7 @@ function SchoolSelector(props) {
 
     async function getSchools(Subject) { //get Levels to display
         try {
-            const result = await API.get('/Categories/Schools/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + Subject)
             setSchools(result.data)
 
             var temp = SchoolsSelection;

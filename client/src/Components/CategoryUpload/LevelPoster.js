@@ -21,7 +21,7 @@ function LevelPoster(props) {
 
     async function GetSubjects() {
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             setSubjects(result.data)
         } catch(err) {
             console.log(err)
@@ -30,7 +30,7 @@ function LevelPoster(props) {
 
     async function GetAssessments() {
         try {
-            const result = await API.get('/Categories/Assessments/GetAll')
+            const result = await API.get('/Categories/Get/Assessments/All')
             setAssessments(result.data)
         } catch(err) {
             console.log(err)

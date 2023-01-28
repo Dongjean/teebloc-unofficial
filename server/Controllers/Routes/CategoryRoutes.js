@@ -34,43 +34,43 @@ const {authAdminJWT} = require('../../utils/authAdminJWT.js');
 
 //Conditional Get
 
-router.get('/Categories/Levels/Get/:SubjectID', (req, res) => {
+router.get('/Categories/Get/Levels/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Get_Levels_fromSubjectID(SubjectID).then(response => res.json(response))
 })
 
-router.get('/Categories/Assessments/Get/:LevelID', (req, res) => {
+router.get('/Categories/Get/Assessments/fromLevelID/:LevelID', (req, res) => {
     const LevelID = req.params.LevelID
 
     Get_Assessments_fromLevelID(LevelID).then(response => res.json(response))
 })
 
-router.get('/Categories/Assessments/GetFromLevels/:LevelIDs', (req, res) => {
+router.get('/Categories/Get/Assessments/fromLevels/:LevelIDs', (req, res) => {
     const LevelIDs = JSON.parse(req.params.LevelIDs)
 
     Get_Assessments_fromLevelIDs(LevelIDs).then(response => res.json(response))
 })
 
-router.get('/Categories/Topics/Get/:SubjectID', (req, res) => {
+router.get('/Categories/Get/Topics/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Get_Topics_fromSubjectID(SubjectID).then(response => res.json(response))
 })
 
-router.get('/Categories/Papers/Get/:SubjectID', (req, res) => {
+router.get('/Categories/Get/Papers/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Get_Papers_fromSubjectID(SubjectID).then(response => res.json(response))
 })
 
-router.get('/Categories/Schools/Get/:SubjectID', (req, res) => {
+router.get('/Categories/Get/Schools/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Get_Schools_fromSubjectID(SubjectID).then(response => res.json(response))
 })
 
-router.get('/Categories/Subjects/Get/fromLevelID/:LevelID', (req, res) => {
+router.get('/Categories/Get/Subjects/fromLevelID/:LevelID', (req, res) => {
     const LevelID = req.params.LevelID
 
     Get_Subjects_fromLevelID(LevelID).then(response => res.json(response))
@@ -79,23 +79,23 @@ router.get('/Categories/Subjects/Get/fromLevelID/:LevelID', (req, res) => {
 
 //GetAll
 
-router.get('/Categories/Subjects/GetAll', (req, res) => {
+router.get('/Categories/Get/Subjects/All', (req, res) => {
     Get_Subjects_All().then(response => res.json(response))
 })
 
-router.get('/Categories/Levels/GetAll', (req, res) => {
+router.get('/Categories/Get/Levels/All', (req, res) => {
     Get_Levels_All().then((response => res.json(response)))
 })
 
-router.get('/Categories/Papers/GetAll', (req, res) => {
+router.get('/Categories/Get/Papers/All', (req, res) => {
     Get_Papers_All().then((response => res.json(response)))
 })
 
-router.get('/Categories/Schools/GetAll', (req, res) => {
+router.get('/Categories/Get/Schools/All', (req, res) => {
     Get_Schools_All().then((response => res.json(response)))
 })
 
-router.get('/Categories/Assessments/GetAll', (req, res) => {
+router.get('/Categories/Get/Assessments/All', (req, res) => {
     Get_Assessments_All().then((response => res.json(response)))
 })
 

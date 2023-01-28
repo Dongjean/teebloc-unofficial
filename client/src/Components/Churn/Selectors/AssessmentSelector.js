@@ -17,7 +17,7 @@ function AssessmentSelector(props) {
     async function getAssessments(LevelIDs) { //get Assessments to display
         try {
             LevelIDs = JSON.stringify(LevelIDs)
-            const result = await API.get('/Categories/Assessments/GetFromLevels/' + LevelIDs)
+            const result = await API.get('/Categories/Get/Assessments/fromLevels/' + LevelIDs)
             setAssessments(result.data)
             
             var temp = AssessmentsSelection;

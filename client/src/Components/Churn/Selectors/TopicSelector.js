@@ -16,7 +16,7 @@ function TopicSelector(props) {
 
     async function getTopics(Subject) { //get Topics to display
         try {
-            const result = await API.get('/Categories/Topics/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Topics/fromSubjectID/' + Subject)
             setTopics(result.data)
 
             var temp = TopicsSelection;

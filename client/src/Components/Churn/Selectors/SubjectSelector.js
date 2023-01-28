@@ -13,7 +13,7 @@ function SubjectSelector(props) {
 
     async function getAllSubjects() { //get all Subjects initially to display
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             setAllSubjects(result.data)
         } catch(err) {
             console.log(err)
