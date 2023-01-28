@@ -63,6 +63,30 @@ function SubjectEditor() {
         }
     }
 
+    async function UnlinkLevel(SubjectID, LevelID) {
+        try {
+            await API.post('/Categories/Unlink/Subject/' + SubjectID + '/Level/' + LevelID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UnlinkPaper(SubjectID, PaperID) {
+        try {
+            await API.post('/Categories/Unlink/Subject/' + SubjectID + '/Paper/' + PaperID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UnlinkSchool(SubjectID, SchoolID) {
+        try {
+            await API.post('/Categories/Unlink/School/' + SchoolID + '/Subject/' + SubjectID)
+        } catch(err) {
+            console.log(err)
+        }  
+    }
+
     return (
         <div>
             <select onChange={event => setEditSubject(event.target.value)}>
@@ -79,7 +103,7 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedLevels(false)}>Hide Related Levels</button> <br />
                     {RelatedLevels.map(RelatedLevel => 
                         <div key={RelatedLevel.levelid}>
-                            {RelatedLevel.level} <button>Unlink</button>
+                            {RelatedLevel.level} <button onClick={() => UnlinkLevel(EditSubject, RelatedLevel.levelid)}>Unlink</button>
                         </div>
                     )}
                 </div>
@@ -94,7 +118,7 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedPapers(false)}>Hide Related Papers</button> <br />
                     {RelatedPapers.map(RelatedPaper => 
                         <div key={RelatedPaper.paperid}>
-                            {RelatedPaper.paper} <button>Unlink</button>
+                            {RelatedPaper.paper} <button onClick={() => UnlinkPaper(EditSubject, RelatedPaper.paperid)}>Unlink</button>
                         </div>
                     )}
                 </div>
@@ -109,7 +133,7 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedSchools(false)}>Hide Related Schools</button> <br />
                     {RelatedSchools.map(RelatedSchool => 
                         <div key={RelatedSchool.schoolid}>
-                            {RelatedSchool.schoolname} <button>Unlink</button>
+                            {RelatedSchool.schoolname} <button onClick={() => UnlinkSchool(EditSubject, RelatedSchool.schoolid)}>Unlink</button>
                         </div>
                     )}
                 </div>

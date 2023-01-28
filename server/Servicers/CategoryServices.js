@@ -292,4 +292,34 @@ async function GetAllAssessments() {
     }
 }
 
-module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments};
+async function Unlink_Subject_Level(SubjectID, LevelID) {
+    try {
+        await pool.query(`
+        DELETE FROM Subject_Level WHERE SubjectID=$1 AND LevelID=$2
+        `, [SubjectID, LevelID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Unlink_Subject_Paper(SubjectID, PaperID) {
+    try {
+        await pool.query(`
+        DELETE FROM Subject_Paper WHERE SubjectID=$1 AND PaperID=$2
+        `, [SubjectID, PaperID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Unlink_School_Subject(SchoolID, SubjectID) {
+    try {
+        await pool.query(`
+        DELETE FROM School_Subject WHERE SchoolID=$1 AND SubjectID=$2
+        `, [SchoolID, SubjectID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments, Unlink_Subject_Level, Unlink_Subject_Paper, Unlink_School_Subject};

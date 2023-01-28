@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments} = require('../../Servicers/CategoryServices.js');
+const {GetAllSubjects, GetLevels, GetAssessments, GetAssessmentsFromLevels, GetTopics, GetPapers, GetSchools, AddNewSubject, AddNewTopic, AddNewLevel, AddNewPaper, AddNewAssessment, AddNewSchool, GetAllLevels, GetAllPapers, GetAllSchools, GetAllAssessments, Unlink_Subject_Level, Unlink_Subject_Paper, Unlink_School_Subject} = require('../../Servicers/CategoryServices.js');
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
 
 router.get('/Categories/Subjects/GetAll', (req, res) => {
@@ -82,6 +82,27 @@ router.get('/Categories/Schools/GetAll', (req, res) => {
 
 router.get('/Categories/Assessments/GetAll', (req, res) => {
     GetAllAssessments().then((response => res.json(response)))
+})
+
+router.post('/Categories/Unlink/Subject/:SubjectID/Level/:LevelID', (req, res) => {
+    const SubjectID = req.params.SubjectID
+    const LevelID = req.params.LevelID
+    
+    Unlink_Subject_Level(SubjectID, LevelID).then(response => res.json(response))
+})
+
+router.post('/Categories/Unlink/Subject/:SubjectID/Paper/:PaperID', (req, res) => {
+    const SubjectID = req.params.SubjectID
+    const PaperID = req.params.PaperID
+    
+    Unlink_Subject_Paper(SubjectID, PaperID).then(response => res.json(response))
+})
+
+router.post('/Categories/Unlink/School/:SchoolID/Subject/:SubjectID', (req, res) => {
+    const SchoolID = req.params.SchoolID
+    const SubjectID = req.params.SubjectID
+    
+    Unlink_School_Subject(SchoolID, SubjectID).then(response => res.json(response))
 })
 
 module.exports = router;
