@@ -14,7 +14,7 @@ function SubjectEditor() {
     const [ShowRelatedPapers, setShowRelatedPapers] = useState(false)
     const [ShowRelatedSchools, setShowRelatedSchools] = useState(false)
 
-    const [isLinking, setisLinking] = useState(false) //not linking initially
+    const [isLinking, setisLinking] = useState(false)
 
     const [UnrelatedLevels, setUnrelatedLevels] = useState([])
     const [UnrelatedPapers, setUnrelatedPapers] = useState([])
