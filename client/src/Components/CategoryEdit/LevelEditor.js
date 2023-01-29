@@ -12,6 +12,14 @@ function LevelEditor() {
     const [ShowRelatedSubjects, setShowRelatedSubjects] = useState(false)
     const [ShowRelatedAssessments, setShowRelatedAssessments] = useState(false)
 
+    const [isLinking, setisLinking] = useState(false)
+
+    const [UnrelatedSubjects, setUnrelatedSubjects] = useState([])
+    const [UnrelatedAssessments, setUnrelatedAssessments] = useState([])
+
+    const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
+    const [ShowUnrelatedAssessments, setShowUnrelatedAssessments] = useState(false)
+
     useEffect(() => {
         GetAllLevels()
     }, [])
@@ -20,6 +28,9 @@ function LevelEditor() {
         if (EditLevel) {
             GetRelatedSubjects(EditLevel)
             GetRelatedAssessments(EditLevel)
+
+            GetUnrelatedSubjects(EditLevel)
+            GetUnrelatedAssessments(EditLevel)
         }
     }, [EditLevel])
 
@@ -36,7 +47,6 @@ function LevelEditor() {
     async function GetRelatedSubjects(LevelID) {
         try {
             const result = await API.get('/Categories/Get/Subjects/fromLevelID/' + LevelID)
-            console.log(result.data)
             setRelatedSubjects(result.data)
         } catch(err) {
             console.log(err)
@@ -47,6 +57,24 @@ function LevelEditor() {
         try {
             const result = await API.get('/Categories/Get/Assessments/fromLevelID/' + LevelID)
             setRelatedAssessments(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUnrelatedSubjects(LevelID) {
+        try {
+            const result = await API.get('/Categories/Get/Subjects/fromLevelID/' + LevelID + '?Options=Inverse')
+            setUnrelatedSubjects(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUnrelatedAssessments(LevelID) {
+        try {
+            const result = await API.get('/Categories/Get/Assessments/fromLevelID/' + LevelID + '?Options=Inverse')
+            setUnrelatedAssessments(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -63,6 +91,22 @@ function LevelEditor() {
     async function UnlinkAssessment(LevelID, AssessmentID) {
         try {
             await API.post('/Categories/Unlink/Assessment/' + AssessmentID + '/Level/' + LevelID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkSubject(LevelID, SubjectID) {
+        try {
+            await API.post('/Categories/Link/Subject/' + SubjectID + '/Level/' + LevelID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkAssessment(LevelID, AssessmentID) {
+        try {
+            await API.post('/Categories/Link/Assessment/' + AssessmentID + '/Level/' + LevelID)
         } catch(err) {
             console.log(err)
         }
@@ -109,6 +153,47 @@ function LevelEditor() {
                 </div>
             }
 
+            {isLinking ?
+                <div>
+                    <button onClick={() => setisLinking(false)}>Stop Linking</button> <br />
+
+
+                    {ShowUnrelatedSubjects ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
+                            {UnrelatedSubjects.map(UnrelatedSubject =>
+                                <div key={UnrelatedSubject.subjectid}>
+                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditLevel, UnrelatedSubject.subjectid)}>Link</button>
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedSubjects(true)}>Show Unrelated Subjects</button>
+                        </div>
+                    }
+
+
+                    {ShowUnrelatedAssessments ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedAssessments(false)}>Hide Unrelated Assessments</button>
+                            {UnrelatedAssessments.map(UnrelatedAssessment =>
+                                <div key={UnrelatedAssessment.assessmentid}>
+                                    {UnrelatedAssessment.assessmentname} <button onClick={() => LinkAssessment(EditLevel, UnrelatedAssessment.assessmentid)}>Link</button>
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedAssessments(true)}>Show Unrelated Assessments</button>
+                        </div>
+                    }
+                </div>
+            :
+                <div>
+                    <button onClick={() => setisLinking(true)}>Start Linking</button>
+                </div>
+            }
         </div>
     )
 }

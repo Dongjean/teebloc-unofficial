@@ -37,7 +37,8 @@ const {
 
     Link_Subject_Level,
     Link_Subject_Paper,
-    Link_School_Subject
+    Link_School_Subject,
+    Link_Assessment_Level
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -60,8 +61,9 @@ router.get('/Categories/Get/Levels/fromAssessmentID/:AssessmentID', (req, res) =
 
 router.get('/Categories/Get/Assessments/fromLevelID/:LevelID', (req, res) => {
     const LevelID = req.params.LevelID
+    const Options = req.query.Options
 
-    Get_Assessments_fromLevelID(LevelID).then(response => res.json(response))
+    Get_Assessments_fromLevelID(LevelID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Assessments/fromLevels/:LevelIDs', (req, res) => {
@@ -92,8 +94,9 @@ router.get('/Categories/Get/Schools/fromSubjectID/:SubjectID', (req, res) => {
 
 router.get('/Categories/Get/Subjects/fromLevelID/:LevelID', (req, res) => {
     const LevelID = req.params.LevelID
+    const Options = req.query.Options
 
-    Get_Subjects_fromLevelID(LevelID).then(response => res.json(response))
+    Get_Subjects_fromLevelID(LevelID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Subjects/fromPaperID/:PaperID', (req, res) => {
@@ -236,6 +239,13 @@ router.post('/Categories/Link/School/:SchoolID/Subject/:SubjectID', (req, res) =
     const SubjectID = req.params.SubjectID
 
     Link_School_Subject(SchoolID, SubjectID).then(response => res.json(response))
+})
+
+router.post('/Categories/Link/Assessment/:AssessmentID/Level/:LevelID', (req, res) => {
+    const AssessmentID = req.params.AssessmentID
+    const LevelID = req.params.LevelID
+    
+    Link_Assessment_Level(AssessmentID, LevelID).then(response => res.json(response))
 })
 
 module.exports = router;

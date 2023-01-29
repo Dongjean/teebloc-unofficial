@@ -43,15 +43,28 @@ async function Get_Levels_fromAssessmentID(AssessmentID) {
     }
 }
 
-async function Get_Assessments_fromLevelID(LevelID) {
+async function Get_Assessments_fromLevelID(LevelID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Assessments.AssessmentID, Assessments.AssessmentName
-        FROM Assessments JOIN Assessment_Level
-        ON Assessments.AssessmentID = Assessment_Level.AssessmentID
-        WHERE Assessment_Level.LevelID = $1
-        `, [LevelID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT AssessmentID, AssessmentName
+            FROM Assessments
+            WHERE NOT AssessmentID IN (
+                SELECT AssessmentID FROM Assessment_Level WHERE LevelID=$1
+            )
+            `, [LevelID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Assessments.AssessmentID, Assessments.AssessmentName
+            FROM Assessments JOIN Assessment_Level
+            ON Assessments.AssessmentID = Assessment_Level.AssessmentID
+            WHERE Assessment_Level.LevelID = $1
+            `, [LevelID])
+
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }
@@ -138,15 +151,28 @@ async function Get_Schools_fromSubjectID(SubjectID, Options) {
     }
 }
 
-async function Get_Subjects_fromLevelID(LevelID) {
+async function Get_Subjects_fromLevelID(LevelID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Subjects.Subject, Subjects.SubjectID
-        FROM Subjects JOIN Subject_Level
-        ON Subjects.SubjectID = Subject_Level.SubjectID
-        WHERE Subject_Level.LevelID=$1
-        `, [LevelID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT SubjectID, Subject
+            FROM Subjects
+            WHERE NOT SubjectID IN (
+                SELECT SubjectID FROM Subject_Level WHERE LevelID=$1
+            )
+            `, [LevelID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Subjects.SubjectID, Subjects.Subject
+            FROM Subjects JOIN Subject_Level
+            ON Subjects.SubjectID = Subject_Level.SubjectID
+            WHERE Subject_Level.LevelID=$1
+            `, [LevelID])
+
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }
@@ -502,6 +528,16 @@ async function Link_School_Subject(SchoolID, SubjectID) {
     }
 }
 
+async function Link_Assessment_Level(AssessmentID, LevelID) {
+    try {
+        await pool.query(`
+        INSERT INTO Assessment_Level(AssessmentID, LevelID) VALUES($1, $2)
+        `, [AssessmentID, LevelID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -538,5 +574,6 @@ module.exports = {
 
     Link_Subject_Level,
     Link_Subject_Paper,
-    Link_School_Subject
+    Link_School_Subject,
+    Link_Assessment_Level
 };
