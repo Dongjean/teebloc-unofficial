@@ -218,16 +218,28 @@ async function Get_Subjects_fromPaperID(PaperID, Options) {
     }
 }
 
-async function Get_Subjects_fromSchoolID(SchoolID) {
+async function Get_Subjects_fromSchoolID(SchoolID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Subjects.Subject, Subjects.SubjectID
-        FROM Subjects JOIN School_Subject
-        ON Subjects.SubjectID = School_Subject.SubjectID
-        WHERE School_Subject.SchoolID=$1
-        `, [SchoolID])
-        console.log(result.rows)
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT SubjectID, Subject
+            FROM Subjects
+            WHERE NOT SubjectID IN (
+                SELECT SubjectID FROM School_Subject WHERE SchoolID=$1
+            )
+            `, [SchoolID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Subjects.SubjectID, Subjects.Subject
+            FROM Subjects JOIN School_Subject
+            ON Subjects.SubjectID = School_Subject.SubjectID
+            WHERE School_Subject.SchoolID=$1
+            `, [SchoolID])
+
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }

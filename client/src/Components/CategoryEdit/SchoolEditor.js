@@ -10,6 +10,12 @@ function SchoolEditor() {
 
     const [ShowRelatedSubjects, setShowRelatedSubjects] = useState(false)
 
+    const [isLinking, setisLinking] = useState(false)
+
+    const [UnrelatedSubjects, setUnrelatedSubjects] = useState([])
+
+    const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
+
     useEffect(() => {
         GetAllSchools()
     }, [])
@@ -17,6 +23,8 @@ function SchoolEditor() {
     useEffect(() => {
         if (EditSchool) {
             GetRelatedSubjects(EditSchool)
+
+            GetUnrelatedSubjects(EditSchool)
         }
     }, [EditSchool])
 
@@ -40,9 +48,26 @@ function SchoolEditor() {
         }
     }
 
+    async function GetUnrelatedSubjects(SchoolID) {
+        try {
+            const result = await API.get('/Categories/Get/Subjects/fromSchoolID/' + SchoolID + '?Options=Inverse')
+            setUnrelatedSubjects(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     async function UnlinkSubject(SchoolID, SubjectID) {
         try {
             await API.post('/Categories/Unlink/School/' + SchoolID + '/Subject/' + SubjectID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkSubject(SchoolID, SubjectID) {
+        try {
+            await API.post('/Categories/Link/School/' + SchoolID + '/Subject/' + SubjectID)
         } catch(err) {
             console.log(err)
         }
@@ -73,6 +98,33 @@ function SchoolEditor() {
                     <button onClick={() => setShowRelatedSubjects(true)}>Show Related Subjects</button> <br />
                 </div>
             }
+
+            {isLinking ?
+                <div>
+                    <button onClick={() => setisLinking(false)}>Stop Linking</button> <br />
+
+
+                    {ShowUnrelatedSubjects ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
+                            {UnrelatedSubjects.map(UnrelatedSubject =>
+                                <div key={UnrelatedSubject.subjectid}>
+                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditSchool, UnrelatedSubject.subjectid)}>Link</button>
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedSubjects(true)}>Show Unrelated Subjects</button>
+                        </div>
+                    }
+                </div>
+            :
+                <div>
+                    <button onClick={() => setisLinking(true)}>Start Linking</button>
+                </div>
+            }
+
 
         </div>
     )
