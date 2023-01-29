@@ -29,15 +29,28 @@ async function Get_Levels_fromSubjectID(SubjectID, Options) {
     }
 }
 
-async function Get_Levels_fromAssessmentID(AssessmentID) {
+async function Get_Levels_fromAssessmentID(AssessmentID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Levels.LevelID, Levels.Level
-        FROM Levels JOIN Assessment_Level
-        ON Levels.LevelID = Assessment_Level.LevelID
-        WHERE Assessment_Level.AssessmentID = $1
-        `, [AssessmentID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT LevelID, Level
+            FROM Levels
+            WHERE NOT LevelID IN (
+                SELECT LevelID FROM Assessment_Level WHERE AssessmentID=$1
+            )
+            `, [AssessmentID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Levels.LevelID, Levels.Level
+            FROM Levels JOIN Assessment_Level
+            ON Levels.LevelID = Assessment_Level.LevelID
+            WHERE Assessment_Level.AssessmentID = $1
+            `, [AssessmentID])
+            
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }
@@ -188,7 +201,7 @@ async function Get_Subjects_fromPaperID(PaperID, Options) {
                 SELECT SubjectID FROM Subject_Paper WHERE PaperID=$1
             )
             `, [PaperID])
-            
+
             return result.rows
         } else {
             const result = await pool.query(`

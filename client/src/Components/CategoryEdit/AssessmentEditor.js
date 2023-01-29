@@ -10,6 +10,12 @@ function AssessmentEditor() {
 
     const [ShowRelatedLevels, setShowRelatedLevels] = useState(false)
 
+    const [isLinking, setisLinking] = useState(false)
+
+    const [UnrelatedLevels, setUnrelatedLevels] = useState([])
+
+    const [ShowUnrelatedLevels, setShowUnrelatedLevels] = useState(false)
+
     useEffect(() => {
         GetAllAssessments()
     }, [])
@@ -17,6 +23,8 @@ function AssessmentEditor() {
     useEffect(() => {
         if (EditAssessment) {
             GetRelatedLevels(EditAssessment)
+
+            GetUnrelatedLevels(EditAssessment)
         }
     }, [EditAssessment])
 
@@ -40,9 +48,26 @@ function AssessmentEditor() {
         }
     }
 
+    async function GetUnrelatedLevels(AssessmentID) {
+        try {
+            const result = await API.get('/Categories/Get/Levels/fromAssessmentID/' + AssessmentID + '?Options=Inverse')
+            setUnrelatedLevels(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     async function UnlinkLevel(AssessmentID, LevelID) {
         try {
             await API.post('/Categories/Unlink/Assessment/' + AssessmentID + '/Level/' + LevelID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkLevel(AssessmentID, LevelID) {
+        try {
+            await API.post('/Categories/Link/Assessment/' + AssessmentID + '/Level/' + LevelID)
         } catch(err) {
             console.log(err)
         }
@@ -71,6 +96,32 @@ function AssessmentEditor() {
             :
                 <div>
                     <button onClick={() => setShowRelatedLevels(true)}>Show Related Levels</button> <br />
+                </div>
+            }
+
+            {isLinking ?
+                <div>
+                    <button onClick={() => setisLinking(false)}>Stop Linking</button> <br />
+
+
+                    {ShowUnrelatedLevels ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedLevels(false)}>Hide Unrelated Levels</button>
+                            {UnrelatedLevels.map(UnrelatedLevel =>
+                                <div key={UnrelatedLevel.levelid}>
+                                    {UnrelatedLevel.level} <button onClick={() => LinkLevel(EditAssessment, UnrelatedLevel.levelid)}>Link</button>
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedLevels(true)}>Show Unrelated Levels</button>
+                        </div>
+                    }
+                </div>
+            :
+                <div>
+                    <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
 

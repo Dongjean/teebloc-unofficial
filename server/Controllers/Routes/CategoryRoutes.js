@@ -55,8 +55,9 @@ router.get('/Categories/Get/Levels/fromSubjectID/:SubjectID', (req, res) => {
 
 router.get('/Categories/Get/Levels/fromAssessmentID/:AssessmentID', (req, res) => {
     const AssessmentID = req.params.AssessmentID
+    const Options = req.query.Options
 
-    Get_Levels_fromAssessmentID(AssessmentID).then(response => res.json(response))
+    Get_Levels_fromAssessmentID(AssessmentID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Assessments/fromLevelID/:LevelID', (req, res) => {
