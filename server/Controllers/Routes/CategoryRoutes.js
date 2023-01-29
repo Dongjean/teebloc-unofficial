@@ -43,8 +43,9 @@ const {authAdminJWT} = require('../../utils/authAdminJWT.js');
 
 router.get('/Categories/Get/Levels/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
+    const Options = req.query.Options
 
-    Get_Levels_fromSubjectID(SubjectID).then(response => res.json(response))
+    Get_Levels_fromSubjectID(SubjectID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Levels/fromAssessmentID/:AssessmentID', (req, res) => {
@@ -73,14 +74,16 @@ router.get('/Categories/Get/Topics/fromSubjectID/:SubjectID', (req, res) => {
 
 router.get('/Categories/Get/Papers/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
+    const Options = req.query.Options
 
-    Get_Papers_fromSubjectID(SubjectID).then(response => res.json(response))
+    Get_Papers_fromSubjectID(SubjectID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Schools/fromSubjectID/:SubjectID', (req, res) => {
     const SubjectID = req.params.SubjectID
+    const Options = req.query.Options
 
-    Get_Schools_fromSubjectID(SubjectID).then(response => res.json(response))
+    Get_Schools_fromSubjectID(SubjectID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Subjects/fromLevelID/:LevelID', (req, res) => {

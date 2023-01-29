@@ -2,15 +2,28 @@ const pool = require("../DB");
 
 //Conditional Get
 
-async function Get_Levels_fromSubjectID(SubjectID) {
+async function Get_Levels_fromSubjectID(SubjectID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Levels.LevelID, Levels.Level
-        FROM Levels JOIN Subject_Level
-        ON Levels.LevelID = Subject_Level.LevelID
-        WHERE Subject_Level.SubjectID = $1
-        `, [SubjectID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT LevelID, Level
+            FROM Levels
+            WHERE NOT LevelID IN (
+                SELECT LevelID FROM Subject_Level WHERE SubjectID=$1
+            )
+            `, [SubjectID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Levels.LevelID, Levels.Level
+            FROM Levels JOIN Subject_Level
+            ON Levels.LevelID = Subject_Level.LevelID
+            WHERE Subject_Level.SubjectID = $1
+            `, [SubjectID])
+
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }
@@ -71,29 +84,55 @@ async function Get_Topics_fromSubjectID(SubjectID) {
     }
 }
 
-async function Get_Papers_fromSubjectID(SubjectID) {
+async function Get_Papers_fromSubjectID(SubjectID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Papers.PaperID, Papers.Paper
-        FROM Papers JOIN Subject_Paper
-        ON Papers.PaperID = Subject_Paper.PaperID
-        WHERE Subject_Paper.SubjectID = $1
-        `, [SubjectID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT PaperID, Paper
+            FROM Papers
+            WHERE NOT PaperID IN (
+                SELECT PaperID FROM Subject_Paper WHERE SubjectID=$1
+            )
+            `, [SubjectID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Papers.PaperID, Papers.Paper
+            FROM Papers JOIN Subject_Paper
+            ON Papers.PaperID = Subject_Paper.PaperID
+            WHERE Subject_Paper.SubjectID = $1
+            `, [SubjectID])
+            
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }
 }
 
-async function Get_Schools_fromSubjectID(SubjectID) {
+async function Get_Schools_fromSubjectID(SubjectID, Options) {
     try {
-        const result = await pool.query(`
-        SELECT Schools.SchoolID, Schools.SchoolName
-        FROM Schools JOIN School_Subject
-        ON Schools.SchoolID = School_Subject.SchoolID
-        WHERE School_Subject.SubjectID = $1
-        `, [SubjectID])
-        return result.rows
+        if (Options == 'Inverse') {
+            const result = await pool.query(`
+            SELECT SchoolID, SchoolName
+            FROM Schools
+            WHERE NOT SchoolID IN (
+                SELECT SchoolID FROM School_Subject WHERE SubjectID=$1
+            )
+            `, [SubjectID])
+
+            return result.rows
+        } else {
+            const result = await pool.query(`
+            SELECT Schools.SchoolID, Schools.SchoolName
+            FROM Schools JOIN School_Subject
+            ON Schools.SchoolID = School_Subject.SchoolID
+            WHERE School_Subject.SubjectID = $1
+            `, [SubjectID])
+
+            return result.rows
+        }
     } catch(err) {
         console.log(err)
     }

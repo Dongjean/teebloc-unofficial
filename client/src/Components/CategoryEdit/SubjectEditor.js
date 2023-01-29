@@ -14,6 +14,16 @@ function SubjectEditor() {
     const [ShowRelatedPapers, setShowRelatedPapers] = useState(false)
     const [ShowRelatedSchools, setShowRelatedSchools] = useState(false)
 
+    const [isLinking, setisLinking] = useState(false) //not linking initially
+
+    const [UnrelatedLevels, setUnrelatedLevels] = useState([])
+    const [UnrelatedPapers, setUnrelatedPapers] = useState([])
+    const [UnrelatedSchools, setUnrelatedSchools] = useState([])
+
+    const [ShowUnrelatedLevels, setShowUnrelatedLevels] = useState(false)
+    const [ShowUnrelatedPapers, setShowUnrelatedPapers] = useState(false)
+    const [ShowUnrelatedSchools, setShowUnrelatedSchools] = useState(false)
+
     useEffect(() => {
         GetAllSubjects()
     }, [])
@@ -23,6 +33,10 @@ function SubjectEditor() {
             GetRelatedLevels(EditSubject)
             GetRelatedPapers(EditSubject)
             GetRelatedSchools(EditSubject)
+
+            GetUnrelatedLevels(EditSubject)
+            GetUnrelatedPapers(EditSubject)
+            GetUnrelatedSchools(EditSubject)
         }
     }, [EditSubject])
 
@@ -58,6 +72,34 @@ function SubjectEditor() {
         try {
             const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + SubjectID)
             setRelatedSchools(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUnrelatedLevels(SubjectID) {
+        try {
+            const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + SubjectID + '?Options=Inverse')
+            setUnrelatedLevels(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUnrelatedPapers(SubjectID) {
+        try {
+            const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + SubjectID + '?Options=Inverse')
+            setUnrelatedPapers(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUnrelatedSchools(SubjectID) {
+        try {
+            const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + SubjectID + '?Options=Inverse')
+            setUnrelatedSchools(result.data)
+            console.log(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -140,6 +182,64 @@ function SubjectEditor() {
             :
                 <div>
                     <button onClick={() => setShowRelatedSchools(true)}>Show Related Schools</button> <br />
+                </div>
+            }
+
+            {isLinking ?
+                <div>
+                    <button onClick={() => setisLinking(false)}>Stop Linking</button> <br />
+
+
+                    {ShowUnrelatedLevels ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedLevels(false)}>Hide Unrelated Levels</button>
+                            {UnrelatedLevels.map(UnrelatedLevel =>
+                                <div key={UnrelatedLevel.levelid}>
+                                    {UnrelatedLevel.level}
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedLevels(true)}>Show Unrelated Levels</button>
+                        </div>
+                    }
+
+
+                    {ShowUnrelatedPapers ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedPapers(false)}>Hide Unrelated Papers</button>
+                            {UnrelatedPapers.map(UnrelatedPaper =>
+                                <div key={UnrelatedPaper.paperid}>
+                                    {UnrelatedPaper.paper}
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedPapers(true)}>Show Unrelated Papers</button>
+                        </div>
+                    }
+
+
+                    {ShowUnrelatedSchools ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedSchools(false)}>Hide Unrelated Schools</button>
+                            {UnrelatedSchools.map(UnrelatedSchool =>
+                                <div key={UnrelatedSchool.schoolid}>
+                                    {UnrelatedSchool.schoolname}
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedSchools(true)}>Show Unrelated Schools</button>
+                        </div>
+                    }
+                </div>
+            :
+                <div>
+                    <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
 
