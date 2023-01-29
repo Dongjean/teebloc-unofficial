@@ -101,8 +101,9 @@ router.get('/Categories/Get/Subjects/fromLevelID/:LevelID', (req, res) => {
 
 router.get('/Categories/Get/Subjects/fromPaperID/:PaperID', (req, res) => {
     const PaperID = req.params.PaperID
+    const Options = req.query.Options
 
-    Get_Subjects_fromPaperID(PaperID).then(response => res.json(response))
+    Get_Subjects_fromPaperID(PaperID, Options).then(response => res.json(response))
 })
 
 router.get('/Categories/Get/Subjects/fromSchoolID/:SchoolID', (req, res) => {

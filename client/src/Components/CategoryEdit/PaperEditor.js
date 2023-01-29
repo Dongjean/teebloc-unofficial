@@ -10,6 +10,12 @@ function PaperEditor() {
 
     const [ShowRelatedSubjects, setShowRelatedSubjects] = useState(false)
 
+    const [isLinking, setisLinking] = useState(false)
+
+    const [UnrelatedSubjects, setUnrelatedSubjects] = useState([])
+
+    const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
+
     useEffect(() => {
         GetAllPapers()
     }, [])
@@ -17,6 +23,8 @@ function PaperEditor() {
     useEffect(() => {
         if (EditPaper) {
             GetRelatedSubjects(EditPaper)
+
+            GetUnrelatedSubjects(EditPaper)
         }
     }, [EditPaper])
 
@@ -40,9 +48,26 @@ function PaperEditor() {
         }
     }
 
+    async function GetUnrelatedSubjects(PaperID) {
+        try {
+            const result = await API.get('/Categories/Get/Subjects/fromPaperID/' + PaperID + '?Options=Inverse')
+            setUnrelatedSubjects(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     async function UnlinkSubject(PaperID, SubjectID) {
         try {
             await API.post('/Categories/Unlink/Subject/' + SubjectID + '/Paper/' + PaperID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkSubject(PaperID, SubjectID) {
+        try {
+            await API.post('/Categories/Link/Subject/' + SubjectID + '/Paper/' + PaperID)
         } catch(err) {
             console.log(err)
         }
@@ -71,6 +96,32 @@ function PaperEditor() {
             :
                 <div>
                     <button onClick={() => setShowRelatedSubjects(true)}>Show Related Subjects</button> <br />
+                </div>
+            }
+
+            {isLinking ?
+                <div>
+                    <button onClick={() => setisLinking(false)}>Stop Linking</button> <br />
+
+
+                    {ShowUnrelatedSubjects ?
+                        <div>
+                            <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
+                            {UnrelatedSubjects.map(UnrelatedSubject =>
+                                <div key={UnrelatedSubject.subjectid}>
+                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditPaper, UnrelatedSubject.subjectid)}>Link</button>
+                                </div>
+                            )}
+                        </div>
+                    :
+                        <div>               
+                            <button onClick={() => setShowUnrelatedSubjects(true)}>Show Unrelated Subjects</button>
+                        </div>
+                    }
+                </div>
+            :
+                <div>
+                    <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
 
