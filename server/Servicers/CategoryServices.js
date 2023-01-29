@@ -454,6 +454,7 @@ async function Unlink_Assessment_Level(AssessmentID, LevelID) {
     }
 }
 
+
 //Relink
 
 async function Relink_Topic_Subject(TopicID, SubjectID) {
@@ -463,6 +464,39 @@ async function Relink_Topic_Subject(TopicID, SubjectID) {
         SET SubjectID=$1
         WHERE TopicID=$2
         `, [SubjectID, TopicID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+
+//Link
+
+async function Link_Subject_Level(SubjectID, LevelID) {
+    try {
+        await pool.query(`
+        INSERT INTO Subject_Level(SubjectID, LevelID) VALUES($1, $2)
+        `, [SubjectID, LevelID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Link_Subject_Paper(SubjectID, PaperID) {
+    try {
+        await pool.query(`
+        INSERT INTO Subject_Paper(SubjectID, PaperID) VALUES($1, $2)
+        `, [SubjectID, PaperID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Link_School_Subject(SchoolID, SubjectID) {
+    try {
+        await pool.query(`
+        INSERT INTO School_Subject(SchoolID, SubjectID) VALUES($1, $2)
+        `, [SchoolID, SubjectID])
     } catch(err) {
         console.log(err)
     }
@@ -500,5 +534,9 @@ module.exports = {
     Unlink_School_Subject,
     Unlink_Assessment_Level,
 
-    Relink_Topic_Subject
+    Relink_Topic_Subject,
+
+    Link_Subject_Level,
+    Link_Subject_Paper,
+    Link_School_Subject
 };

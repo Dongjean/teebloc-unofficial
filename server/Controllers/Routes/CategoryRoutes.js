@@ -33,7 +33,11 @@ const {
     Unlink_School_Subject,
     Unlink_Assessment_Level,
 
-    Relink_Topic_Subject
+    Relink_Topic_Subject,
+
+    Link_Subject_Level,
+    Link_Subject_Paper,
+    Link_School_Subject
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -208,6 +212,30 @@ router.post('/Categories/Relink/Topic/:TopicID/Subject/:SubjectID', (req, res) =
     const SubjectID = req.params.SubjectID
 
     Relink_Topic_Subject(TopicID, SubjectID).then(response => res.json(response))
+})
+
+
+//Link
+
+router.post('/Categories/Link/Subject/:SubjectID/Level/:LevelID', (req, res) => {
+    const SubjectID = req.params.SubjectID
+    const LevelID = req.params.LevelID
+
+    Link_Subject_Level(SubjectID, LevelID).then(response => res.json(response))
+})
+
+router.post('/Categories/Link/Subject/:SubjectID/Paper/:PaperID', (req, res) => {
+    const SubjectID = req.params.SubjectID
+    const PaperID = req.params.PaperID
+
+    Link_Subject_Paper(SubjectID, PaperID).then(response => res.json(response))
+})
+
+router.post('/Categories/Link/School/:SchoolID/Subject/:SubjectID', (req, res) => {
+    const SchoolID = req.params.SchoolID
+    const SubjectID = req.params.SubjectID
+
+    Link_School_Subject(SchoolID, SubjectID).then(response => res.json(response))
 })
 
 module.exports = router;

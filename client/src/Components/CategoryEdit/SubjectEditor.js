@@ -129,6 +129,30 @@ function SubjectEditor() {
         }  
     }
 
+    async function LinkLevel(SubjectID, LevelID) {
+        try {
+            await API.post('/Categories/Link/Subject/' + SubjectID + '/Level/' + LevelID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkPaper(SubjectID, PaperID) {
+        try {
+            await API.post('/Categories/Link/Subject/' + SubjectID + '/Paper/' + PaperID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function LinkSchool(SubjectID, SchoolID) {
+        try {
+            await API.post('/Categories/Link/School/' + SchoolID + '/Subject/' + SubjectID)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditSubject(event.target.value)}>
@@ -195,7 +219,7 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedLevels(false)}>Hide Unrelated Levels</button>
                             {UnrelatedLevels.map(UnrelatedLevel =>
                                 <div key={UnrelatedLevel.levelid}>
-                                    {UnrelatedLevel.level}
+                                    {UnrelatedLevel.level} <button onClick={() => LinkLevel(EditSubject, UnrelatedLevel.levelid)}>Link</button>
                                 </div>
                             )}
                         </div>
@@ -211,7 +235,7 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedPapers(false)}>Hide Unrelated Papers</button>
                             {UnrelatedPapers.map(UnrelatedPaper =>
                                 <div key={UnrelatedPaper.paperid}>
-                                    {UnrelatedPaper.paper}
+                                    {UnrelatedPaper.paper} <button onClick={() => LinkPaper(EditSubject, UnrelatedPaper.paperid)}>Link</button>
                                 </div>
                             )}
                         </div>
@@ -227,7 +251,7 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedSchools(false)}>Hide Unrelated Schools</button>
                             {UnrelatedSchools.map(UnrelatedSchool =>
                                 <div key={UnrelatedSchool.schoolid}>
-                                    {UnrelatedSchool.schoolname}
+                                    {UnrelatedSchool.schoolname} <button onClick={() => LinkSchool(EditSubject, UnrelatedSchool.schoolid)}>Link</button>
                                 </div>
                             )}
                         </div>
