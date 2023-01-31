@@ -8,6 +8,7 @@ const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
 router.get('/Questions/Churn', (req, res) => {
+    console.log(req.query)
     //parses through the Categories query string
     const Categories = {
         Topics: JSON.parse(req.query.Topics),

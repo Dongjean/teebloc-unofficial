@@ -1,67 +1,50 @@
-import API from '../../utils/API.js';
-
-import {useMemo, useState, useEffect, useRef} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import Cookies from '../../utils/Cookies.js';
+import {useState, useEffect} from 'react';
 
 //component imports
 import Question from './Question.js';
 
-function useQuery() {
-    const { search } = useLocation();
-
-    return useMemo(() => new URLSearchParams(search), [search]);
-}
-
 function ChurnedQuestions(props) {
-    const query = useQuery()
+    const [Page, setPage] = useState(props.Selection.initialPage)
 
-    const [Page, setPage] = useState(query.get('Page')) //set the initial page value to the queried value
-    const isLoadingRef = useRef(true) //loading at first
-
+    const [isLoading, setisLoading] = useState(true)
+    
     const [Churned, setChurned] = useState()
 
-    //gets a new set of churned questions on mount/when ForceUpdate is used in HomePage.js and Update state changes
-    useEffect(() => {
-        GetChurnedQuestions(
-            props.TopicsSelection,
-            props.LevelsSelection,
-            props.PapersSelection,
-            props.AssessmentsSelection,
-            props.SchoolsSelection
+    function UpdatePage(NewPage) {
+        props.navigator(
+            '?Subject=' + props.Selection.Subject + '&' +
+            'Topics=' + JSON.stringify(props.Selection.Topics) + '&' +
+            'Levels=' + JSON.stringify(props.Selection.Levels) + '&' +
+            'Papers=' + JSON.stringify(props.Selection.Papers) + '&' +
+            'Assessments=' + JSON.stringify(props.Selection.Assessments) + '&' +
+            'Schools=' + JSON.stringify(props.Selection.Schools) + '&' +
+            'QNsperPage=' + props.Selection.QNsperPage + '&' +
+            'isChurned=' + props.Selection.isChurned + '&' +
+            'Page=' + NewPage
         )
-    }, [props.Update])
-
-    async function GetChurnedQuestions(TopicsSelection, LevelsSelection, PapersSelection, AssessmentsSelection, SchoolsSelection) {
-        try {
-            const Queries =
-                'Topics=' + JSON.stringify(TopicsSelection) + '&' +
-                'Levels=' + JSON.stringify(LevelsSelection) + '&' +
-                'Papers=' + JSON.stringify(PapersSelection) + '&' +
-                'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
-                'Schools=' + JSON.stringify(SchoolsSelection)
-            
-            const result = await API.get(`/Questions/Churn?` + Queries)
-
-            console.log(result.data)
-
-            isLoadingRef.current = false
-
-            if (!Page || Page == 'null') {
-                setPage(1)
-                props.setPage(1)
-            }
-            setChurned(result.data)
-        } catch(err) {
-            console.log(err)
-        }
     }
+
+    useEffect(() => {
+        if (props.Churned) {
+            if (!props.Selection.initialPage || props.Selection.initialPage == 'null') {
+                setPage(1)
+                UpdatePage(1)
+            } else {
+                setPage(parseInt(props.Selection.initialPage))
+            }
+            setisLoading(false)
+            setChurned(props.Churned)
+        }
+    }, [props.Churned])
 
     return (
         <div>
-            {!isLoadingRef.current ?
+            {props.Selection.isChurned ?
+                isLoading ?
+                    null
+                :
                     <div>
-                        {Churned.Questions.slice(props.QNsperPage * (Page-1), props.QNsperPage * (Page-1) + props.QNsperPage).map(question =>
+                        {Churned.Questions.slice(props.Selection.QNsperPage * (Page-1), props.Selection.QNsperPage * (Page-1) + props.Selection.QNsperPage).map(question =>
                             <div key={question.questionid}>
                                 <button onClick={() => props.OpenQuestion(question.questionid)}>
                                     <Question Question={question} FirstQuestionIMG={Churned.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == question.questionid)[0]} LoginData={props.LoginData} />
@@ -72,11 +55,11 @@ function ChurnedQuestions(props) {
                         )}
 
                         {/* Page Buttons */}
-                        <button onClick={() => {setPage(Page - 1); props.DecrementPage();}}>Previous Page</button>
-                        <button onClick={() => {setPage(Page + 1); props.IncrementPage();}}>Next Page</button>
+                        <button onClick={() => {setPage(Page - 1); UpdatePage(Page -1)}}>Previous Page</button>
+                        <button onClick={() => {setPage(Page + 1); UpdatePage(Page + 1)}}>Next Page</button>
                     </div>
             :
-                null
+                console.log(props.Selection.isChurned)
             }
         </div>
     )
