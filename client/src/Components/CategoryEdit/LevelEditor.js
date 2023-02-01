@@ -20,6 +20,12 @@ function LevelEditor() {
     const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
     const [ShowUnrelatedAssessments, setShowUnrelatedAssessments] = useState(false)
 
+    const [UnlinkedSubjects, setUnlinkedSubjects] = useState([])
+    const [UnlinkedAssessments, setUnlinkedAssessments] = useState([])
+
+    const [LinkedSubjects, setLinkedSubjects] = useState([])
+    const [LinkedAssessments, setLinkedAssessments] = useState([])
+
     useEffect(() => {
         GetAllLevels()
     }, [])
@@ -112,6 +118,33 @@ function LevelEditor() {
         }
     }
 
+    function Commit_Changes() {
+        try {
+
+            //unlinking
+            for (var i=0; i<UnlinkedSubjects.length; i++) {
+                UnlinkSubject(EditLevel, UnlinkedSubjects[i])
+            }
+
+            for (var i=0; i<UnlinkedAssessments.length; i++) {
+                UnlinkAssessment(EditLevel, UnlinkedAssessments[i])
+            }
+
+            //linking
+            for (var i=0; i<LinkedSubjects.length; i++) {
+                LinkSubject(EditLevel, LinkedSubjects[i])
+            }
+
+            for (var i=0; i<LinkedAssessments.length; i++) {
+                LinkAssessment(EditLevel, LinkedAssessments[i])
+            }
+
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditLevel(event.target.value)}>
@@ -128,7 +161,12 @@ function LevelEditor() {
                     <button onClick={() => setShowRelatedSubjects(false)}>Hide Related Subjects</button> <br />
                     {RelatedSubjects.map(RelatedSubject => 
                         <div key={RelatedSubject.subjectid}>
-                            {RelatedSubject.subject} <button onClick={() => UnlinkSubject(EditLevel, RelatedSubject.subjectid)}>Unlink</button>
+                            {RelatedSubject.subject}
+                            {UnlinkedSubjects.includes(RelatedSubject.subjectid) ?
+                                <button onClick={() => setUnlinkedSubjects(UnlinkedSubjects.filter(UnlinkedSubject => UnlinkedSubject !== RelatedSubject.subjectid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedSubjects(current => [...current, RelatedSubject.subjectid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -143,7 +181,12 @@ function LevelEditor() {
                     <button onClick={() => setShowRelatedAssessments(false)}>Hide Related Assessments</button> <br />
                     {RelatedAssessments.map(RelatedAssessment => 
                         <div key={RelatedAssessment.assessmentid}>
-                            {RelatedAssessment.assessmentname} <button onClick={() => UnlinkAssessment(EditLevel, RelatedAssessment.assessmentid)}>Unlink</button>
+                            {RelatedAssessment.assessmentname}
+                            {UnlinkedAssessments.includes(RelatedAssessment.assessmentid) ?
+                                <button onClick={() => setUnlinkedAssessments(UnlinkedAssessments.filter(UnlinkedAssessment => UnlinkedAssessment !== RelatedAssessment.assessmentid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedAssessments(current => [...current, RelatedAssessment.assessmentid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -163,7 +206,12 @@ function LevelEditor() {
                             <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
                             {UnrelatedSubjects.map(UnrelatedSubject =>
                                 <div key={UnrelatedSubject.subjectid}>
-                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditLevel, UnrelatedSubject.subjectid)}>Link</button>
+                                    {UnrelatedSubject.subject}
+                                    {LinkedSubjects.includes(UnrelatedSubject.subjectid) ?
+                                        <button onClick={() => setLinkedSubjects(LinkedSubjects.filter(LinkedSubject => LinkedSubject !== UnrelatedSubject.subjectid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedSubjects(current => [...current, UnrelatedSubject.subjectid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -179,7 +227,12 @@ function LevelEditor() {
                             <button onClick={() => setShowUnrelatedAssessments(false)}>Hide Unrelated Assessments</button>
                             {UnrelatedAssessments.map(UnrelatedAssessment =>
                                 <div key={UnrelatedAssessment.assessmentid}>
-                                    {UnrelatedAssessment.assessmentname} <button onClick={() => LinkAssessment(EditLevel, UnrelatedAssessment.assessmentid)}>Link</button>
+                                    {UnrelatedAssessment.assessmentname}
+                                    {LinkedAssessments.includes(UnrelatedAssessment.assessmentid) ?
+                                        <button onClick={() => setLinkedAssessments(LinkedAssessments.filter(LinkedAssessment => LinkedAssessment !== UnrelatedAssessment.assessmentid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedAssessments(current => [...current, UnrelatedAssessment.assessmentid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -194,6 +247,10 @@ function LevelEditor() {
                     <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
+
+
+            <button onClick={Commit_Changes}>Commit Edits</button>
+            
         </div>
     )
 }
