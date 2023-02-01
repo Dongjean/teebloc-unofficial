@@ -24,6 +24,14 @@ function SubjectEditor() {
     const [ShowUnrelatedPapers, setShowUnrelatedPapers] = useState(false)
     const [ShowUnrelatedSchools, setShowUnrelatedSchools] = useState(false)
 
+    const [UnlinkedLevels, setUnlinkedLevels] = useState([])
+    const [UnlinkedPapers, setUnlinkedPapers] = useState([])
+    const [UnlinkedSchools, setUnlinkedSchools] = useState([])
+
+    const [LinkedLevels, setLinkedLevels] = useState([])
+    const [LinkedPapers, setLinkedPapers] = useState([])
+    const [LinkedSchools, setLinkedSchools] = useState([])
+
     useEffect(() => {
         GetAllSubjects()
     }, [])
@@ -153,6 +161,41 @@ function SubjectEditor() {
         }
     }
 
+    function Commit_Changes() {
+        try {
+
+            //unlinking
+            for (var i=0; i<UnlinkedLevels.length; i++) {
+                UnlinkLevel(EditSubject, UnlinkedLevels[i])
+            }
+
+            for (var i=0; i<UnlinkedPapers.length; i++) {
+                UnlinkPaper(EditSubject, UnlinkedPapers[i])
+            }
+
+            for (var i=0; i<UnlinkedSchools.length; i++) {
+                UnlinkSchool(EditSubject, UnlinkedSchools[i])
+            }
+
+            //linking
+            for (var i=0; i<LinkedLevels.length; i++) {
+                LinkLevel(EditSubject, LinkedLevels[i])
+            }
+
+            for (var i=0; i<LinkedPapers.length; i++) {
+                LinkPaper(EditSubject, LinkedPapers[i])
+            }
+
+            for (var i=0; i<LinkedSchools.length; i++) {
+                LinkSchool(EditSubject, LinkedSchools[i])
+            }
+
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditSubject(event.target.value)}>
@@ -169,7 +212,12 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedLevels(false)}>Hide Related Levels</button> <br />
                     {RelatedLevels.map(RelatedLevel => 
                         <div key={RelatedLevel.levelid}>
-                            {RelatedLevel.level} <button onClick={() => UnlinkLevel(EditSubject, RelatedLevel.levelid)}>Unlink</button>
+                            {RelatedLevel.level}
+                            {UnlinkedLevels.includes(RelatedLevel.levelid) ?
+                                <button onClick={() => setUnlinkedLevels(UnlinkedLevels.filter(UnlinkedLevel => UnlinkedLevel !== RelatedLevel.levelid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedLevels(current => [...current, RelatedLevel.levelid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -184,7 +232,12 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedPapers(false)}>Hide Related Papers</button> <br />
                     {RelatedPapers.map(RelatedPaper => 
                         <div key={RelatedPaper.paperid}>
-                            {RelatedPaper.paper} <button onClick={() => UnlinkPaper(EditSubject, RelatedPaper.paperid)}>Unlink</button>
+                            {RelatedPaper.paper}
+                            {UnlinkedPapers.includes(RelatedPaper.paperid) ?
+                                <button onClick={() => setUnlinkedPapers(UnlinkedPapers.filter(UnlinkedPaper => UnlinkedPaper !== RelatedPaper.paperid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedPapers(current => [...current, RelatedPaper.paperid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -199,7 +252,12 @@ function SubjectEditor() {
                     <button onClick={() => setShowRelatedSchools(false)}>Hide Related Schools</button> <br />
                     {RelatedSchools.map(RelatedSchool => 
                         <div key={RelatedSchool.schoolid}>
-                            {RelatedSchool.schoolname} <button onClick={() => UnlinkSchool(EditSubject, RelatedSchool.schoolid)}>Unlink</button>
+                            {RelatedSchool.schoolname}
+                            {UnlinkedSchools.includes(RelatedSchool.schoolid) ?
+                                <button onClick={() => setUnlinkedSchools(UnlinkedSchools.filter(UnlinkedSchool => UnlinkedSchool !== RelatedSchool.schoolid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedSchools(current => [...current, RelatedSchool.schoolid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -219,7 +277,12 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedLevels(false)}>Hide Unrelated Levels</button>
                             {UnrelatedLevels.map(UnrelatedLevel =>
                                 <div key={UnrelatedLevel.levelid}>
-                                    {UnrelatedLevel.level} <button onClick={() => LinkLevel(EditSubject, UnrelatedLevel.levelid)}>Link</button>
+                                    {UnrelatedLevel.level}
+                                    {LinkedLevels.includes(UnrelatedLevel.levelid) ?
+                                        <button onClick={() => setLinkedLevels(LinkedLevels.filter(LinkedLevel => LinkedLevel !== UnrelatedLevel.levelid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedLevels(current => [...current, UnrelatedLevel.levelid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -235,7 +298,12 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedPapers(false)}>Hide Unrelated Papers</button>
                             {UnrelatedPapers.map(UnrelatedPaper =>
                                 <div key={UnrelatedPaper.paperid}>
-                                    {UnrelatedPaper.paper} <button onClick={() => LinkPaper(EditSubject, UnrelatedPaper.paperid)}>Link</button>
+                                    {UnrelatedPaper.paper}
+                                    {LinkedPapers.includes(UnrelatedPaper.paperid) ?
+                                        <button onClick={() => setLinkedPapers(LinkedPapers.filter(LinkedPaper => LinkedPaper !== UnrelatedPaper.paperid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedPapers(current => [...current, UnrelatedPaper.paperid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -251,7 +319,12 @@ function SubjectEditor() {
                             <button onClick={() => setShowUnrelatedSchools(false)}>Hide Unrelated Schools</button>
                             {UnrelatedSchools.map(UnrelatedSchool =>
                                 <div key={UnrelatedSchool.schoolid}>
-                                    {UnrelatedSchool.schoolname} <button onClick={() => LinkSchool(EditSubject, UnrelatedSchool.schoolid)}>Link</button>
+                                    {UnrelatedSchool.schoolname}
+                                    {LinkedSchools.includes(UnrelatedSchool.schoolid) ?
+                                        <button onClick={() => setLinkedSchools(LinkedSchools.filter(LinkedSchool => LinkedSchool !== UnrelatedSchool.schoolid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedSchools(current => [...current, UnrelatedSchool.schoolid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -266,6 +339,9 @@ function SubjectEditor() {
                     <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
+
+
+            <button onClick={Commit_Changes}>Commit Edits</button>
 
         </div>
     )
