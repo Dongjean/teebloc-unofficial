@@ -16,6 +16,10 @@ function PaperEditor() {
 
     const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
 
+    const [UnlinkedSubjects, setUnlinkedSubjects] = useState([])
+
+    const [LinkedSubjects, setLinkedSubjects] = useState([])
+
     useEffect(() => {
         GetAllPapers()
     }, [])
@@ -73,6 +77,25 @@ function PaperEditor() {
         }
     }
 
+    function Commit_Changes() {
+        try {
+
+            //unlinking
+            for (var i=0; i<UnlinkedSubjects.length; i++) {
+                UnlinkSubject(EditPaper, UnlinkedSubjects[i])
+            }
+
+            //linking
+            for (var i=0; i<LinkedSubjects.length; i++) {
+                LinkSubject(EditPaper, LinkedSubjects[i])
+            }
+
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditPaper(event.target.value)}>
@@ -89,7 +112,12 @@ function PaperEditor() {
                     <button onClick={() => setShowRelatedSubjects(false)}>Hide Related Subjects</button> <br />
                     {RelatedSubjects.map(RelatedSubject => 
                         <div key={RelatedSubject.subjectid}>
-                            {RelatedSubject.subject} <button onClick={() => UnlinkSubject(EditPaper, RelatedSubject.subjectid)}>Unlink</button>
+                            {RelatedSubject.subject}
+                            {UnlinkedSubjects.includes(RelatedSubject.subjectid) ?
+                                <button onClick={() => setUnlinkedSubjects(UnlinkedSubjects.filter(UnlinkedSubject => UnlinkedSubject !== RelatedSubject.subjectid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedSubjects(current => [...current, RelatedSubject.subjectid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -109,7 +137,12 @@ function PaperEditor() {
                             <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
                             {UnrelatedSubjects.map(UnrelatedSubject =>
                                 <div key={UnrelatedSubject.subjectid}>
-                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditPaper, UnrelatedSubject.subjectid)}>Link</button>
+                                    {UnrelatedSubject.subject}
+                                    {LinkedSubjects.includes(UnrelatedSubject.subjectid) ?
+                                        <button onClick={() => setLinkedSubjects(LinkedSubjects.filter(LinkedSubject => LinkedSubject !== UnrelatedSubject.subjectid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedSubjects(current => [...current, UnrelatedSubject.subjectid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -124,6 +157,9 @@ function PaperEditor() {
                     <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
+
+
+            <button onClick={Commit_Changes}>Commit Edits</button>
 
         </div>
     )
