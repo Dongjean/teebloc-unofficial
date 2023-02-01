@@ -16,6 +16,10 @@ function AssessmentEditor() {
 
     const [ShowUnrelatedLevels, setShowUnrelatedLevels] = useState(false)
 
+    const [UnlinkedLevels, setUnlinkedLevels] = useState([])
+
+    const [LinkedLevels, setLinkedLevels] = useState([])
+
     useEffect(() => {
         GetAllAssessments()
     }, [])
@@ -73,6 +77,25 @@ function AssessmentEditor() {
         }
     }
 
+    function Commit_Changes() {
+        try {
+
+            //unlinking
+            for (var i=0; i<UnlinkedLevels.length; i++) {
+                UnlinkLevel(EditAssessment, UnlinkedLevels[i])
+            }
+
+            //linking
+            for (var i=0; i<LinkedLevels.length; i++) {
+                LinkLevel(EditAssessment, LinkedLevels[i])
+            }
+
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditAssessment(event.target.value)}>
@@ -89,7 +112,12 @@ function AssessmentEditor() {
                     <button onClick={() => setShowRelatedLevels(false)}>Hide Related Levels</button> <br />
                     {RelatedLevels.map(RelatedLevel => 
                         <div key={RelatedLevel.levelid}>
-                            {RelatedLevel.level} <button onClick={() => UnlinkLevel(EditAssessment, RelatedLevel.levelid)}>Unlink</button>
+                            {RelatedLevel.level}
+                            {UnlinkedLevels.includes(RelatedLevel.levelid) ?
+                                <button onClick={() => setUnlinkedLevels(UnlinkedLevels.filter(UnlinkedLevel => UnlinkedLevel !== RelatedLevel.levelid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedLevels(current => [...current, RelatedLevel.levelid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -109,7 +137,12 @@ function AssessmentEditor() {
                             <button onClick={() => setShowUnrelatedLevels(false)}>Hide Unrelated Levels</button>
                             {UnrelatedLevels.map(UnrelatedLevel =>
                                 <div key={UnrelatedLevel.levelid}>
-                                    {UnrelatedLevel.level} <button onClick={() => LinkLevel(EditAssessment, UnrelatedLevel.levelid)}>Link</button>
+                                    {UnrelatedLevel.level}
+                                    {LinkedLevels.includes(UnrelatedLevel.levelid) ?
+                                        <button onClick={() => setLinkedLevels(LinkedLevels.filter(LinkedLevel => LinkedLevel !== UnrelatedLevel.levelid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedLevels(current => [...current, UnrelatedLevel.levelid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -124,6 +157,9 @@ function AssessmentEditor() {
                     <button onClick={() => setisLinking(true)}>Start Linking</button>
                 </div>
             }
+
+
+            <button onClick={Commit_Changes}>Commit Edits</button>
 
         </div>
     )
