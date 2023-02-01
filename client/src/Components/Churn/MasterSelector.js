@@ -88,14 +88,10 @@ function MasterSelector(props) {
     }
     const PageRef = useRef(Pageno)
 
-    //updates the URL query parameters to update the Selections
-    useEffect(() => {
-        UpdateSelection()
-    }, [])
-
     function UpdateSelection() {
         props.navigator(
-            '?Subject=' + SubjectSelection + '&' +
+            '?isFiltered=' + true + '&' +
+            'Subject=' + SubjectSelection + '&' +
             'Topics=' + JSON.stringify(TopicsSelection) + '&' +
             'Levels=' + JSON.stringify(LevelsSelection) + '&' +
             'Papers=' + JSON.stringify(PapersSelection) + '&' +
@@ -103,9 +99,10 @@ function MasterSelector(props) {
             'Schools=' + JSON.stringify(SchoolsSelection) + '&' +
             'QNsperPage=' + QNsperPageRef.current + '&' +
             'isChurned=' + isChurnedRef.current + '&' +
-            'Page=' + PageRef.current
+            'initialPage=' + PageRef.current
         )
         props.setSelection({
+            isFiltered: true,
             Subject: SubjectSelection,
             Topics: TopicsSelection,
             Levels: LevelsSelection,

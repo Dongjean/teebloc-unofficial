@@ -20,6 +20,7 @@ function HomePage(props) {
     }
 
     useEffect(() => {
+        console.log(CurrURL)
         navigate(CurrURL)
     }, [CurrURL])
 

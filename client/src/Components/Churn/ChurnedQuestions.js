@@ -12,25 +12,58 @@ function ChurnedQuestions(props) {
 
     function UpdatePage(NewPage) {
         props.navigator(
-            '?Subject=' + props.Selection.Subject + '&' +
-            'Topics=' + JSON.stringify(props.Selection.Topics) + '&' +
-            'Levels=' + JSON.stringify(props.Selection.Levels) + '&' +
-            'Papers=' + JSON.stringify(props.Selection.Papers) + '&' +
-            'Assessments=' + JSON.stringify(props.Selection.Assessments) + '&' +
-            'Schools=' + JSON.stringify(props.Selection.Schools) + '&' +
+            '?isFiltered=' + props.Selection.isFiltered + '&'
+
+            +
+            //only have category selection in url query params if churn is filtered
+            (props.Selection.isFiltered ?
+                'Subject=' + props.Selection.Subject + '&' +
+                'Topics=' + JSON.stringify(props.Selection.Topics) + '&' +
+                'Levels=' + JSON.stringify(props.Selection.Levels) + '&' +
+                'Papers=' + JSON.stringify(props.Selection.Papers) + '&' +
+                'Assessments=' + JSON.stringify(props.Selection.Assessments) + '&' +
+                'Schools=' + JSON.stringify(props.Selection.Schools) + '&' 
+            :
+                '')
+            +
+
             'QNsperPage=' + props.Selection.QNsperPage + '&' +
             'isChurned=' + props.Selection.isChurned + '&' +
-            'Page=' + NewPage
+            'initialPage=' + NewPage
+        )
+    }
+
+    function FilteredChurnURLQueriesINIT(Selection) {
+        props.navigator(
+            '?isFiltered=' + true + '&' +
+            'Subject=' + Selection.Subject + '&' +
+            'Topics=' + JSON.stringify(Selection.Topics) + '&' +
+            'Levels=' + JSON.stringify(Selection.Levels) + '&' +
+            'Papers=' + JSON.stringify(Selection.Papers) + '&' +
+            'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
+            'Schools=' + JSON.stringify(Selection.Schools) + '&' +
+            'QNsperPage=' + Selection.QNsperPage + '&' +
+            'isChurned=' + Selection.isChurned + '&' +
+            'initialPage=' + Selection.initialPage
+        )
+    }
+
+    function UnfilteredChurnURLQueriesINIT(Selection) {
+        props.navigator(
+            '?isFiltered=' + false + '&' +
+            'QNsperPage=' + Selection.QNsperPage + '&' +
+            'isChurned=' + Selection.isChurned + '&' +
+            'initialPage=' + Selection.initialPage
         )
     }
 
     useEffect(() => {
-        if (props.Churned) {
-            if (!props.Selection.initialPage || props.Selection.initialPage == 'null') {
-                setPage(1)
-                UpdatePage(1)
+        if (props.Selection.isChurned) {
+            console.log(props.Selection)
+            if (props.Selection.isFiltered) {
+                FilteredChurnURLQueriesINIT(props.Selection)
             } else {
-                setPage(parseInt(props.Selection.initialPage))
+                UnfilteredChurnURLQueriesINIT(props.Selection)
             }
             setisLoading(false)
             setChurned(props.Churned)
@@ -59,7 +92,7 @@ function ChurnedQuestions(props) {
                         <button onClick={() => {setPage(Page + 1); UpdatePage(Page + 1)}}>Next Page</button>
                     </div>
             :
-                console.log(props.Selection.isChurned)
+                null
             }
         </div>
     )

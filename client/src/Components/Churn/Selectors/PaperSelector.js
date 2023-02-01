@@ -35,13 +35,13 @@ function PaperSelector(props) {
 
     function PaperSelected(PaperID) {
         var temp = [...PapersSelection]
-        temp.push(PaperID)
+        temp.push(parseInt(PaperID))
         setPapersSelection(temp)
         props.PaperChanged(temp)
     }
 
     function PaperDeselected(PaperID) {
-        const temp = PapersSelection.filter(paperid => paperid !== PaperID)
+        const temp = PapersSelection.filter(paperid => paperid !== parseInt(PaperID))
         setPapersSelection(temp)
         props.PaperChanged(temp)
     }

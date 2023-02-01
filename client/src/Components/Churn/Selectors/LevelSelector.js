@@ -35,13 +35,13 @@ function LevelSelector(props) {
 
     function LevelSelected(LevelID) {
         var temp = [...LevelsSelection]
-        temp.push(LevelID)
+        temp.push(parseInt(LevelID))
         setLevelsSelection(temp)
         props.LevelChanged(temp)
     }
 
     function LevelDeselected(LevelID) {
-        const temp = LevelsSelection.filter(levelid => levelid !== LevelID)
+        const temp = LevelsSelection.filter(levelid => levelid !== parseInt(LevelID))
         setLevelsSelection(temp)
         props.LevelChanged(temp)
     }

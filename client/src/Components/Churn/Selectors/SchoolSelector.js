@@ -35,13 +35,13 @@ function SchoolSelector(props) {
 
     function SchoolSelected(SchoolID) {
         var temp = [...SchoolsSelection]
-        temp.push(SchoolID)
+        temp.push(parseInt(SchoolID))
         setSchoolsSelection(temp)
         props.SchoolChanged(temp)
     }
 
     function SchoolDeselected(SchoolID) {
-        const temp = SchoolsSelection.filter(schoolid => schoolid !== SchoolID)
+        const temp = SchoolsSelection.filter(schoolid => schoolid !== parseInt(SchoolID))
         setSchoolsSelection(temp)
         props.SchoolChanged(temp)
     }

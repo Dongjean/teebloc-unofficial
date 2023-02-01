@@ -35,13 +35,13 @@ function TopicSelector(props) {
 
     function TopicSelected(TopicID) {
         var temp = [...TopicsSelection]
-        temp.push(TopicID)
+        temp.push(parseInt(TopicID))
         setTopicsSelection(temp)
         props.TopicChanged(temp)
     }
 
     function TopicDeselected(TopicID) {
-        const temp = TopicsSelection.filter(topicid => topicid !== TopicID)
+        const temp = TopicsSelection.filter(topicid => topicid !== parseInt(TopicID))
         setTopicsSelection(temp)
         props.TopicChanged(temp)
     }

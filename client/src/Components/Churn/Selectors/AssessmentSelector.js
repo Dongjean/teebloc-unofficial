@@ -36,13 +36,13 @@ function AssessmentSelector(props) {
 
     function AssessmentSelected(AssessmentID) {
         var temp = [...AssessmentsSelection]
-        temp.push(AssessmentID)
+        temp.push(parseInt(AssessmentID))
         setAssessmentsSelection(temp)
         props.AssessmentChanged(temp)
     }
 
     function AssessmentDeselected(AssessmentID) {
-        const temp = AssessmentsSelection.filter(assessmentid => assessmentid !== AssessmentID)
+        const temp = AssessmentsSelection.filter(assessmentid => assessmentid !== parseInt(AssessmentID))
         setAssessmentsSelection(temp)
         props.AssessmentChanged(temp)
     }
