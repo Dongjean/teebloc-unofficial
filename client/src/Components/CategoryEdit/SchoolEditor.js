@@ -16,6 +16,10 @@ function SchoolEditor() {
 
     const [ShowUnrelatedSubjects, setShowUnrelatedSubjects] = useState(false)
 
+    const [UnlinkedSubjects, setUnlinkedSubjects] = useState([])
+
+    const [LinkedSubjects, setLinkedSubjects] = useState([])
+
     useEffect(() => {
         GetAllSchools()
     }, [])
@@ -73,6 +77,25 @@ function SchoolEditor() {
         }
     }
 
+    function Commit_Changes() {
+        try {
+
+            //unlinking
+            for (var i=0; i<UnlinkedSubjects.length; i++) {
+                UnlinkSubject(EditSchool, UnlinkedSubjects[i])
+            }
+
+            //linking
+            for (var i=0; i<LinkedSubjects.length; i++) {
+                LinkSubject(EditSchool, LinkedSubjects[i])
+            }
+
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditSchool(event.target.value)}>
@@ -89,7 +112,12 @@ function SchoolEditor() {
                     <button onClick={() => setShowRelatedSubjects(false)}>Hide Related Subjects</button> <br />
                     {RelatedSubjects.map(RelatedSubject => 
                         <div key={RelatedSubject.subjectid}>
-                            {RelatedSubject.subject} <button onClick={() => UnlinkSubject(EditSchool, RelatedSubject.subjectid)}>Unlink</button>
+                            {RelatedSubject.subject}
+                            {UnlinkedSubjects.includes(RelatedSubject.subjectid) ?
+                                <button onClick={() => setUnlinkedSubjects(UnlinkedSubjects.filter(UnlinkedSubject => UnlinkedSubject !== RelatedSubject.subjectid))}>Undo</button>
+                            :
+                                <button onClick={() => setUnlinkedSubjects(current => [...current, RelatedSubject.subjectid])}>Unlink</button>
+                            }
                         </div>
                     )}
                 </div>
@@ -109,7 +137,12 @@ function SchoolEditor() {
                             <button onClick={() => setShowUnrelatedSubjects(false)}>Hide Unrelated Subjects</button>
                             {UnrelatedSubjects.map(UnrelatedSubject =>
                                 <div key={UnrelatedSubject.subjectid}>
-                                    {UnrelatedSubject.subject} <button onClick={() => LinkSubject(EditSchool, UnrelatedSubject.subjectid)}>Link</button>
+                                    {UnrelatedSubject.subject}
+                                    {LinkedSubjects.includes(UnrelatedSubject.subjectid) ?
+                                        <button onClick={() => setLinkedSubjects(LinkedSubjects.filter(LinkedSubject => LinkedSubject !== UnrelatedSubject.subjectid))}>Undo</button>
+                                    :
+                                        <button onClick={() => setLinkedSubjects(current => [...current, UnrelatedSubject.subjectid])}>Link</button>
+                                    }
                                 </div>
                             )}
                         </div>
@@ -125,6 +158,8 @@ function SchoolEditor() {
                 </div>
             }
 
+
+            <button onClick={Commit_Changes}>Commit Edits</button>
 
         </div>
     )
