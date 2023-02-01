@@ -1,5 +1,6 @@
 import {useMemo, useState, useEffect}  from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
+import jsPDF from "jspdf";
 import API from "../utils/API";
 
 function useQuery() {
@@ -107,6 +108,36 @@ function OpenedQuestionPage(props) {
         }
     }
 
+    async function DownloadPDF(Question) {
+        const document = new jsPDF()
+
+        //Add Question Images to PDF
+        for (var i=0; i<Question.QuestionImages.length; i++) {
+            const QuestionImage = Question.QuestionImages[i]
+            var image = new Image()
+            image.src = 'data:image/jpeg;base64,' + QuestionImage.QuestionIMGData
+            await image.decode()
+
+            if (i !== 0) {
+                document.addPage()
+            }
+            document.addImage('data:image/jpeg;base64,' + QuestionImage.QuestionIMGData, 'JPEG', 0, 0, 210, image.height/image.width * 210)
+        }
+
+        //Add Answer Images to PDF
+        for (var i=0; i<Question.AnswerImages.length; i++) {
+            const AnswerImage = Question.AnswerImages[i]
+            var image = new Image()
+            image.src = 'data:image/jpeg;base64,' + AnswerImage.AnswerIMGData
+            await image.decode()
+
+            document.addPage()
+            document.addImage('data:image/jpeg;base64,' + AnswerImage.AnswerIMGData, 'JPEG', 0, 0, 210, image.height/image.width * 210)
+        }
+
+        document.save('QuestionID' + QuestionID +'.pdf')
+    }
+
     return (
         <div>
             {isLoading ?
@@ -155,6 +186,13 @@ function OpenedQuestionPage(props) {
                     {/* only show option to delete question if logged in user is the author */}
                     {props.LoginData.Email == Question.Question.email ?
                         <button onClick={() => DeleteQuestion(Question.Question.questionid)}>Delete</button>
+                    :
+                        null
+                    }
+
+                    {/* only show option to Download PDF of the question if logged in user is an Admin */}
+                    {props.LoginData.AccType == 'Admin' ?
+                        <button onClick={() => DownloadPDF(Question)}>Download PDF</button>
                     :
                         null
                     }
