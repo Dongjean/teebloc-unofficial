@@ -1,44 +1,124 @@
-import {useParams} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useState, useEffect, useRef} from 'react';
 import API from '../utils/API';
+import useQuery from '../utils/useQuery';
 
 //component imports
-import Question from '../Components/Churn/Question.js';
+import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
+import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
 function CompletedQuestionsPage(props) {
     let {Email} = useParams();
+    const query = useQuery();
+    const navigate = useNavigate();
     
     const [isLoading, setisLoading] = useState(true)
     const [CompletedQuestions, setCompletedQuestions] = useState()
 
-    useEffect(() => {
-        GetCompletedQuestions(Email)
-    }, [])
+    const [isFiltering, setisFiltering] = useState(false)
 
-    async function GetCompletedQuestions(Email) {
+    const [Selection, setSelection] = useState({
+        isChurned: query.get('isChurned') == 'true' || false,
+        isFiltered: query.get('isFiltered') == 'true' || false,
+        QNsperPage: parseInt(query.get('QNsperPage')) || 5,
+        initialPage: parseInt(query.get('initialPage')),
+
+        Subject: JSON.parse(query.get('Subject')) || null,
+        Topics: JSON.parse(query.get('Topics')) || null,
+        Levels: JSON.parse(query.get('Levels')) || null,
+        Papers: JSON.parse(query.get('Papers')) || null,
+        Assessments: JSON.parse(query.get('Assessments')) || null,
+        Schools: JSON.parse(query.get('Schools')) || null
+    })
+
+    const [CurrURL, setCurrURL] = useState('/Account/' + Email + '/Completed')
+
+    function navigator(Queries) {
+        console.log('/Account/' + Email + '/Completed/' + Queries)
+        setCurrURL('/Account/' + Email + '/Completed/' + Queries)
+    }
+
+    const isFirstMountRef = useRef(true)
+    useEffect(() => {
+        if (isFirstMountRef.current) {
+            isFirstMountRef.current = false
+        } else {
+            console.log(CurrURL)
+            navigate(CurrURL)
+        }
+    }, [CurrURL])
+
+    useEffect(() => {
+        if (Selection.isFiltered) {
+            GetQueriedCompletedQuestions(Email, Selection)
+        } else {
+            GetAllCompletedQuestions(Email)
+        }
+    }, [Selection])
+
+    async function GetAllCompletedQuestions(Email) {
         try {
-            const result = await API.get('/Questions/Get/Completed/' + Email)
+            const result = await API.get('/Questions/Get/Completed/All/' + Email)
             setCompletedQuestions(result.data)
+
+            const temp = Selection
+            temp.isChurned = true
+            temp.initialPage = temp.initialPage || 1
+            setSelection(temp)
+            
             setisLoading(false)
         } catch(err) {
             console.log(err)
         }
     }
-    console.log(CompletedQuestions)
+    
+    async function GetQueriedCompletedQuestions(Email, Selection) {
+        try {
+            const Queries = '?' +
+            'Topics=' + JSON.stringify(Selection.Topics) + '&' +
+            'Levels=' + JSON.stringify(Selection.Levels) + '&' +
+            'Papers=' + JSON.stringify(Selection.Papers) + '&' +
+            'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
+            'Schools=' + JSON.stringify(Selection.Schools)
+
+            const result = await API.get('/Questions/Get/Completed/Filtered/' + Email + Queries)
+            console.log(result.data)
+            setCompletedQuestions(result.data)
+            
+            const temp = Selection
+            temp.isChurned = true
+            temp.initialPage = temp.initialPage || 1
+            setSelection(temp)
+            
+            setisLoading(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
     return (
         <div>
             {isLoading ?
                 null
             :
                 <div>
-                    {CompletedQuestions.Questions.map(CompletedQuestion => 
-                        <div key={CompletedQuestion.questionid}>
-                            <button onClick={() => props.OpenQuestion(CompletedQuestion.questionid)}>
-                                <Question Question={CompletedQuestion} FirstQuestionIMG={CompletedQuestions.QuestionImages.filter(QuestionImage => QuestionImage.QuestionID == CompletedQuestion.questionid)[0]} LoginData={props.LoginData} />
-                                <br />
-                            </button>
+                    {isFiltering ?
+                        <div>
+                            <MasterSelector LoginData={props.LoginData} OpenQuestion={props.OpenQuestion} navigator={navigator} setSelection={setSelection} />
+                            <button onClick={() => setisFiltering(false)}>Close Filters</button>
                         </div>
-                    )}
+                    :
+                        <div>
+                            <button onClick={() => setisFiltering(true)}>Open Filters</button>
+                        </div>
+                    }
+
+                    <ChurnedQuestions
+                        Churned={CompletedQuestions}
+                        OpenQuestion={(QuestionID) => props.OpenQuestion(QuestionID)}
+                        Selection={Selection}
+                        LoginData={props.LoginData}
+                        navigator={navigator}
+                    />
                 </div>
             }
         </div>

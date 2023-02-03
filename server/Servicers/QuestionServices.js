@@ -588,4 +588,76 @@ async function Get_Saved_Questions_Filtered(Email, Categories) {
 
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered};
+async function Get_Completed_Questions_Filtered(Email, Categories) {
+    try {
+        const result = await pool.query(`
+        SELECT
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+
+        FROM Questions JOIN Users
+            ON Users.Email = Questions.Email
+        JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        JOIN Papers
+            ON Papers.PaperID = Questions.PaperID
+        JOIN Levels
+            ON Levels.LevelID = Questions.LevelID
+        JOIN Assessments
+            ON Assessments.AssessmentID = Questions.AssessmentID
+        JOIN Schools
+            ON Schools.SchoolID = Questions.SchoolID
+
+        JOIN CompletedQuestions
+            ON CompletedQuestions.QuestionID = Questions.QuestionID
+
+        WHERE
+            Questions.TopicID=ANY($1::int[]) AND
+            Questions.PaperID=ANY($2::int[]) AND
+            Questions.LevelID=ANY($3::int[]) AND
+            Questions.AssessmentID=ANY($4::int[]) AND
+            Questions.SchoolID=ANY($5::int[]) AND
+            
+            CompletedQuestions.Email=$6
+        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools, Email]) //Get all Questions for the Categories queried
+        const Questions = result.rows
+        console.log(Questions)
+
+        var QuestionImages = [];
+        for (var i=0; i<Questions.length; i++) {
+            const Question = Questions[i]
+
+             //get the first Question Image only related to this Question from DB
+            const QNresult = (await pool.query(`
+            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            FROM QuestionIMGs
+            WHERE QuestionID=$1
+            LIMIT 1
+            `, [Question.questionid])).rows[0]
+
+            //get Image Data from the Image Directory for the first Image for this Question
+            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.questionid
+            })
+        }
+
+        const Data = {
+            Questions: Questions,
+            QuestionImages: QuestionImages
+        }
+        return Data
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered};
