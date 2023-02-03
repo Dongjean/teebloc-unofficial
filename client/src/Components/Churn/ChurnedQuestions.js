@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 import Question from './Question.js';
 
 function ChurnedQuestions(props) {
-    const [Page, setPage] = useState(1)
+    const [Page, setPage] = useState(props.Selection.Page)
 
     const [isLoading, setisLoading] = useState(true)
     
@@ -29,7 +29,7 @@ function ChurnedQuestions(props) {
 
             'QNsperPage=' + props.Selection.QNsperPage + '&' +
             'isChurned=' + props.Selection.isChurned + '&' +
-            'initialPage=' + NewPage
+            'Page=' + NewPage
         )
     }
 
@@ -44,7 +44,7 @@ function ChurnedQuestions(props) {
             'Schools=' + JSON.stringify(Selection.Schools) + '&' +
             'QNsperPage=' + Selection.QNsperPage + '&' +
             'isChurned=' + Selection.isChurned + '&' +
-            'initialPage=' + Selection.initialPage
+            'Page=' + Selection.Page
         )
     }
 
@@ -53,7 +53,7 @@ function ChurnedQuestions(props) {
             '?isFiltered=' + false + '&' +
             'QNsperPage=' + Selection.QNsperPage + '&' +
             'isChurned=' + Selection.isChurned + '&' +
-            'initialPage=' + Selection.initialPage
+            'Page=' + Selection.Page
         )
     }
 
@@ -67,9 +67,7 @@ function ChurnedQuestions(props) {
                 UnfilteredChurnURLQueriesINIT(props.Selection)
             }
             if (props.Churned) {
-                if (typeof(Page) !== 'number') {
-                    setPage(props.Selection.initialPage)
-                }
+                setPage(props.Selection.Page)
                 setChurned(props.Churned)
                 setisLoading(false)
             }

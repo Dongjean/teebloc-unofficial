@@ -15,7 +15,7 @@ function HomePage(props) {
         isChurned: query.get('isChurned') == 'true' || false,
         isFiltered: query.get('isFiltered') == 'true' || false,
         QNsperPage: parseInt(query.get('QNsperPage')) || 5,
-        initialPage: parseInt(query.get('initialPage')),
+        Page: parseInt(query.get('Page')),
 
         Subject: JSON.parse(query.get('Subject')) || null,
         Topics: JSON.parse(query.get('Topics')) || null,
@@ -65,7 +65,7 @@ function HomePage(props) {
             console.log(result.data)
             const temp = Selection
             temp.isChurned = true
-            temp.initialPage = temp.initialPage || 1
+            temp.Page = temp.Page || 1
             setSelection(temp)
 
             setChurned(result.data)

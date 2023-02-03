@@ -21,7 +21,7 @@ function SavedQuestionsPage(props) {
         isChurned: query.get('isChurned') == 'true' || false,
         isFiltered: query.get('isFiltered') == 'true' || false,
         QNsperPage: parseInt(query.get('QNsperPage')) || 5,
-        initialPage: parseInt(query.get('initialPage')),
+        Page: parseInt(query.get('Page')),
 
         Subject: JSON.parse(query.get('Subject')) || null,
         Topics: JSON.parse(query.get('Topics')) || null,
@@ -64,7 +64,8 @@ function SavedQuestionsPage(props) {
             
             const temp = Selection
             temp.isChurned = true
-            temp.initialPage = temp.initialPage || 1
+            console.log(temp.Page)
+            temp.Page = temp.Page || 1
             setSelection(temp)
             
             setisLoading(false)
@@ -88,7 +89,8 @@ function SavedQuestionsPage(props) {
             
             const temp = Selection
             temp.isChurned = true
-            temp.initialPage = temp.initialPage || 1
+            console.log(temp.Page)
+            temp.Page = temp.Page || 1
             setSelection(temp)
             
             setisLoading(false)
