@@ -4,7 +4,7 @@ import API from '../utils/API.js';
 import useQuery from "../utils/useQuery.js";
 
 //component imports
-import MasterSelector from '../Components/Churn/MasterSelector';
+import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
 function HomePage(props) {

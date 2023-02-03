@@ -1,10 +1,10 @@
 //Components imports
-import TopicSelector from "./Selectors/TopicSelector.js";
-import SubjectSelector from "./Selectors/SubjectSelector.js";
-import LevelSelector from "./Selectors/LevelSelector.js";
-import PaperSelector from "./Selectors/PaperSelector.js";
-import AssessmentSelector from "./Selectors/AssessmentSelector.js";
-import SchoolSelector from "./Selectors/SchoolSelector.js";
+import TopicSelector from "./TopicSelector.js";
+import SubjectSelector from "./SubjectSelector.js";
+import LevelSelector from "./LevelSelector.js";
+import PaperSelector from "./PaperSelector.js";
+import AssessmentSelector from "./AssessmentSelector.js";
+import SchoolSelector from "./SchoolSelector.js";
 
 import {useMemo, useState, useRef} from 'react';
 import {useLocation} from "react-router-dom";
