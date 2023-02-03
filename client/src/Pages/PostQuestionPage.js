@@ -35,7 +35,7 @@ function PostQuestionPage(props) {
 
     async function getAllSubjects() { //get all Subjects initially to display
         try {
-            const result = await API.get('/Categories/Subjects/GetAll')
+            const result = await API.get('/Categories/Get/Subjects/All')
             setAllSubjects(result.data)
         } catch(err) {
             console.log(err)
@@ -45,7 +45,7 @@ function PostQuestionPage(props) {
     //get the Levels that offer this subject
     async function getLevels(Subject) {
         try {
-            const result = await API.get('/Categories/Levels/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + Subject)
             setLevels(result.data)
         } catch(err) {
             console.log(err)
@@ -55,7 +55,7 @@ function PostQuestionPage(props) {
     //get the Assessments that exists at this level
     async function getAssessments(Level) {
         try {
-            const result = await API.get('/Categories/Assessments/Get/' + Level)
+            const result = await API.get('/Categories/Get/Assessments/fromLevelID/' + Level)
             setAssessments(result.data)
         } catch(err) {
             console.log(err)
@@ -65,7 +65,7 @@ function PostQuestionPage(props) {
     //get the Topics that are tested at this Assessment
     async function getTopics(Subject) {
         try {
-            const result = await API.get('/Categories/Topics/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Topics/fromSubjectID/' + Subject)
             setTopics(result.data)
         } catch(err) {
             console.log(err)
@@ -75,7 +75,7 @@ function PostQuestionPage(props) {
     //get the Papers that exist for this Subject
     async function getPapers(Subject) {
         try {
-            const result = await API.get('/Categories/Papers/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + Subject)
             setPapers(result.data)
         } catch(err) {
             console.log(err)
@@ -85,7 +85,7 @@ function PostQuestionPage(props) {
     //get the Schools that offer this Subject
     async function getSchools(Subject) {
         try {
-            const result = await API.get('/Categories/Schools/Get/' + Subject)
+            const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + Subject)
             setSchools(result.data)
         } catch(err) {
             console.log(err)
