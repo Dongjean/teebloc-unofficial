@@ -20,7 +20,7 @@ function SchoolSelector(props) {
             setSchools(result.data)
 
             var temp = SchoolsSelection;
-            const SchoolIDs = result.data.map(school => school.schoolid)
+            const SchoolIDs = result.data.map(school => parseInt(school.schoolid))
             for (var i=0; i<SchoolsSelection.length; i++) {
                 if (!SchoolIDs.includes(SchoolsSelection[i])) {
                     temp = temp.filter(SchoolID => SchoolID !== SchoolsSelection[i])
@@ -49,7 +49,7 @@ function SchoolSelector(props) {
     return (
         <div>
             {Schools.map(school =>
-                <School key={school.schoolid} School={school} SchoolSelected={SchoolSelected} SchoolDeselected={SchoolDeselected} isSchoolSelected={SchoolsSelection.includes(school.schoolid)} />
+                <School key={school.schoolid} School={school} SchoolSelected={SchoolSelected} SchoolDeselected={SchoolDeselected} isSchoolSelected={SchoolsSelection.includes(parseInt(school.schoolid))} />
             )}
         </div>
     )

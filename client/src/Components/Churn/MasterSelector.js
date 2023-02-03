@@ -6,7 +6,7 @@ import PaperSelector from "./Selectors/PaperSelector.js";
 import AssessmentSelector from "./Selectors/AssessmentSelector.js";
 import SchoolSelector from "./Selectors/SchoolSelector.js";
 
-import {useMemo, useState, useRef, useEffect} from 'react';
+import {useMemo, useState, useRef} from 'react';
 import {useLocation} from "react-router-dom";
 
 function useQuery() {
@@ -88,33 +88,6 @@ function MasterSelector(props) {
     }
     const PageRef = useRef(Pageno)
 
-    function UpdateSelection() {
-        props.navigator(
-            '?isFiltered=' + true + '&' +
-            'Subject=' + SubjectSelection + '&' +
-            'Topics=' + JSON.stringify(TopicsSelection) + '&' +
-            'Levels=' + JSON.stringify(LevelsSelection) + '&' +
-            'Papers=' + JSON.stringify(PapersSelection) + '&' +
-            'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
-            'Schools=' + JSON.stringify(SchoolsSelection) + '&' +
-            'QNsperPage=' + QNsperPageRef.current + '&' +
-            'isChurned=' + isChurnedRef.current + '&' +
-            'initialPage=' + PageRef.current
-        )
-        props.setSelection({
-            isFiltered: true,
-            Subject: SubjectSelection,
-            Topics: TopicsSelection,
-            Levels: LevelsSelection,
-            Papers: PapersSelection,
-            Assessments: AssessmentsSelection,
-            Schools: SchoolsSelection,
-            QNsperPage: QNsperPageRef.current,
-            isChurned: isChurnedRef.current,
-            initialPage: PageRef.current
-        })
-    }
-
     function Churn() {
         if (
             SubjectSelection !== 0 &&
@@ -126,7 +99,18 @@ function MasterSelector(props) {
         ) {
             isChurnedRef.current = true
             PageRef.current = 1
-            UpdateSelection()
+            props.setSelection({
+                isFiltered: true,
+                Subject: SubjectSelection,
+                Topics: TopicsSelection,
+                Levels: LevelsSelection,
+                Papers: PapersSelection,
+                Assessments: AssessmentsSelection,
+                Schools: SchoolsSelection,
+                QNsperPage: QNsperPageRef.current,
+                isChurned: isChurnedRef.current,
+                initialPage: PageRef.current
+            })
         } else {
             console.log('Please Select All Categories')
         }

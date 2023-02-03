@@ -21,7 +21,7 @@ function AssessmentSelector(props) {
             setAssessments(result.data)
             
             var temp = AssessmentsSelection;
-            const AssessmentIDs = result.data.map(Assessment => Assessment.assessmentid)
+            const AssessmentIDs = result.data.map(Assessment => parseInt(Assessment.assessmentid))
             for (var i=0; i<AssessmentsSelection.length; i++) {
                 if (!AssessmentIDs.includes(AssessmentsSelection[i])) {
                     temp = temp.filter(AssessmentID => AssessmentID !== AssessmentsSelection[i])
@@ -50,7 +50,7 @@ function AssessmentSelector(props) {
     return (
         <div>
             {Assessments.map(assessment =>
-                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} isAssessmentSelected={AssessmentsSelection.includes(assessment.assessmentid)} />
+                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} isAssessmentSelected={AssessmentsSelection.includes(parseInt(assessment.assessmentid))} />
             )}          
         </div>
     )

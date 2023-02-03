@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
@@ -49,9 +49,24 @@ router.get('/Questions/CheckSaved/:QuestionID/:Email', authGeneralJWT, (req, res
     CheckSavedQuestion(QuestionID, Email).then(response => res.json(response))
 })
 
-router.get('/Questions/Get/Saved/:Email', authGeneralJWT, (req, res) => {
+router.get('/Questions/Get/Saved/All/:Email', authGeneralJWT, (req, res) => {
     const Email = req.params.Email
     GetSavedQuestions(Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Saved/Filtered/:Email', authGeneralJWT, (req, res) => {
+    const Email = req.params.Email
+
+    //parses through the Categories query string
+    const Categories = {
+        Topics: JSON.parse(req.query.Topics),
+        Levels: JSON.parse(req.query.Levels),
+        Papers: JSON.parse(req.query.Papers),
+        Assessments: JSON.parse(req.query.Assessments),
+        Schools: JSON.parse(req.query.Schools)
+    }
+    
+    Get_Saved_Questions_Filtered(Email, Categories).then(response => res.json(response))
 })
 
 router.post('/Questions/Delete/:QuestionID', authCreatorJWT, (req, res) => {

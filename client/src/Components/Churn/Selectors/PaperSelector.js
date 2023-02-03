@@ -20,7 +20,7 @@ function PaperSelector(props) {
             setPapers(result.data)
 
             var temp = PapersSelection;
-            const PaperIDs = result.data.map(paper => paper.paperid)
+            const PaperIDs = result.data.map(paper => parseInt(paper.paperid))
             for (var i=0; i<PapersSelection.length; i++) {
                 if (!PaperIDs.includes(PapersSelection[i])) {
                     temp = temp.filter(PaperID => PaperID !== PapersSelection[i])
@@ -49,7 +49,7 @@ function PaperSelector(props) {
     return (
         <div>
             {Papers.map(paper =>
-                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} isPaperSelected={PapersSelection.includes(paper.paperid)} />
+                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} isPaperSelected={PapersSelection.includes(parseInt(paper.paperid))} />
             )}
         </div>
     )

@@ -1,16 +1,11 @@
-import {useParams, useNavigate, useLocation} from 'react-router-dom';
-import {useState, useEffect, useMemo} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useState, useEffect, useRef} from 'react';
 import API from '../utils/API';
+import useQuery from '../utils/useQuery';
 
 //component imports
 import MasterSelector from '../Components/Churn/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
-
-function useQuery() {
-    const { search } = useLocation();
-
-    return useMemo(() => new URLSearchParams(search), [search]);
-}
 
 function SavedQuestionsPage(props) {
     let {Email} = useParams();
@@ -43,18 +38,51 @@ function SavedQuestionsPage(props) {
         setCurrURL('/Account/' + Email + '/Saved/' + Queries)
     }
 
+    const isFirstMountRef = useRef(true)
     useEffect(() => {
-        console.log(CurrURL)
-        navigate(CurrURL)
+        if (isFirstMountRef.current) {
+            isFirstMountRef.current = false
+        } else {
+            console.log(CurrURL)
+            navigate(CurrURL)
+        }
     }, [CurrURL])
 
     useEffect(() => {
-        GetAllSavedQuestions(Email)
-    }, [])
+        if (Selection.isFiltered) {
+            GetQueriedSavedQuestions(Email, Selection)
+        } else {
+            GetAllSavedQuestions(Email)
+        }
+    }, [Selection])
 
     async function GetAllSavedQuestions(Email) {
         try {
-            const result = await API.get('/Questions/Get/Saved/' + Email)
+            const result = await API.get('/Questions/Get/Saved/All/' + Email)
+            console.log(result.data)
+            setSavedQuestions(result.data)
+            
+            const temp = Selection
+            temp.isChurned = true
+            temp.initialPage = temp.initialPage || 1
+            setSelection(temp)
+            
+            setisLoading(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetQueriedSavedQuestions(Email, Selection) {
+        try {
+            const Queries = '?' +
+            'Topics=' + JSON.stringify(Selection.Topics) + '&' +
+            'Levels=' + JSON.stringify(Selection.Levels) + '&' +
+            'Papers=' + JSON.stringify(Selection.Papers) + '&' +
+            'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
+            'Schools=' + JSON.stringify(Selection.Schools)
+
+            const result = await API.get('/Questions/Get/Saved/Filtered/' + Email + Queries)
             console.log(result.data)
             setSavedQuestions(result.data)
             

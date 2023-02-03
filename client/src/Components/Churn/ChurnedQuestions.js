@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 import Question from './Question.js';
 
 function ChurnedQuestions(props) {
-    const [Page, setPage] = useState(props.Selection.initialPage)
+    const [Page, setPage] = useState(1)
 
     const [isLoading, setisLoading] = useState(true)
     
@@ -58,6 +58,7 @@ function ChurnedQuestions(props) {
     }
 
     useEffect(() => {
+        console.log(props.Churned, props.Selection)
         if (props.Selection.isChurned) {
             console.log(props.Selection)
             if (props.Selection.isFiltered) {
@@ -65,10 +66,15 @@ function ChurnedQuestions(props) {
             } else {
                 UnfilteredChurnURLQueriesINIT(props.Selection)
             }
-            setisLoading(false)
-            setChurned(props.Churned)
+            if (props.Churned) {
+                if (typeof(Page) !== 'number') {
+                    setPage(props.Selection.initialPage)
+                }
+                setChurned(props.Churned)
+                setisLoading(false)
+            }
         }
-    }, [props.Churned])
+    }, [props.Churned, props.Selection])
 
     return (
         <div>

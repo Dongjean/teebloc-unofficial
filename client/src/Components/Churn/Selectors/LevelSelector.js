@@ -20,7 +20,7 @@ function LevelSelector(props) {
             setLevels(result.data)
 
             var temp = LevelsSelection;
-            const LevelIDs = result.data.map(level => level.levelid)
+            const LevelIDs = result.data.map(level => parseInt(level.levelid))
             for (var i=0; i<LevelsSelection.length; i++) {
                 if (!LevelIDs.includes(LevelsSelection[i])) {
                     temp = temp.filter(LevelID => LevelID !== LevelsSelection[i])
@@ -49,7 +49,7 @@ function LevelSelector(props) {
     return (
         <div>
             {Levels.map(level =>
-                <Level key={level.levelid} Level={level} LevelSelected={LevelSelected} LevelDeselected={LevelDeselected} isLevelSelected={LevelsSelection.includes(level.levelid)} />
+                <Level key={level.levelid} Level={level} LevelSelected={LevelSelected} LevelDeselected={LevelDeselected} isLevelSelected={LevelsSelection.includes(parseInt(level.levelid))} />
             )}
         </div>
     )
