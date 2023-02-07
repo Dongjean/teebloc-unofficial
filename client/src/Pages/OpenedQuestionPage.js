@@ -109,8 +109,9 @@ function OpenedQuestionPage(props) {
     }
 
     async function DownloadPDF(Question) {
-        const document = new jsPDF()
+        const document = new jsPDF('p', 'mm', [297, 210])
 
+        var QuestionYPos = 0
         //Add Question Images to PDF
         for (var i=0; i<Question.QuestionImages.length; i++) {
             const QuestionImage = Question.QuestionImages[i]
@@ -119,11 +120,18 @@ function OpenedQuestionPage(props) {
             await image.decode()
 
             if (i !== 0) {
-                document.addPage()
+                if (image.height/image.width * 210 > (297 - QuestionYPos) ) {
+                    document.addPage()
+                    QuestionYPos = 0
+                }
             }
-            document.addImage('data:image/jpeg;base64,' + QuestionImage.QuestionIMGData, 'JPEG', 0, 0, 210, image.height/image.width * 210)
+            document.addImage('data:image/jpeg;base64,' + QuestionImage.QuestionIMGData, 'JPEG', 0, QuestionYPos, 210, image.height/image.width * 210)
+            QuestionYPos += image.height/image.width * 210
         }
 
+        document.addPage() //always start answers on a new page
+
+        var AnswerYPos = 0
         //Add Answer Images to PDF
         for (var i=0; i<Question.AnswerImages.length; i++) {
             const AnswerImage = Question.AnswerImages[i]
@@ -131,8 +139,14 @@ function OpenedQuestionPage(props) {
             image.src = 'data:image/jpeg;base64,' + AnswerImage.AnswerIMGData
             await image.decode()
 
-            document.addPage()
-            document.addImage('data:image/jpeg;base64,' + AnswerImage.AnswerIMGData, 'JPEG', 0, 0, 210, image.height/image.width * 210)
+            if (i !== 0) {
+                if (image.height/image.width * 210 > (297 - AnswerYPos) ) {
+                    document.addPage()
+                    AnswerYPos = 0
+                }
+            }
+            document.addImage('data:image/jpeg;base64,' + AnswerImage.AnswerIMGData, 'JPEG', 0, AnswerYPos, 210, image.height/image.width * 210)
+            AnswerYPos += image.height/image.width * 210
         }
 
         document.save('QuestionID' + QuestionID +'.pdf')
