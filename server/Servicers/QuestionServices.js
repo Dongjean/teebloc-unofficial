@@ -333,6 +333,25 @@ async function GetSavedQuestions(Email) {
 
 async function DeleteQuestion(QuestionID) {
     try {
+        //get the directories of the question image files to delete
+        const QuestionIMGs = (await pool.query(`
+        SELECT QuestionIMGDIR FROM QuestionIMGs WHERE QuestionID=$1
+        `, [QuestionID])).rows
+
+        //get the directories of the answer image files to delete
+        const AnswerIMGs = (await pool.query(`
+        SELECT AnswerIMGDIR FROM AnswerIMGs WHERE QuestionID=$1
+        `, [QuestionID])).rows
+
+        console.log(QuestionIMGs, AnswerIMGs)
+        for (var i=0; i<QuestionIMGs.length; i++) {
+            fs.promises.unlink(QuestionIMGs[i].questionimgdir)
+        }
+
+        for (var i=0; i<AnswerIMGs.length; i++) {
+            fs.promises.unlink(AnswerIMGs[i].answerimgdir)
+        }
+
         await pool.query(`
         DELETE FROM QuestionIMGs WHERE QuestionID=$1
         `, [QuestionID])
