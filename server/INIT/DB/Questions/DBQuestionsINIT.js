@@ -60,6 +60,16 @@ async function DBQuestionsINIT() {
         FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID),
         FOREIGN KEY (Email) REFERENCES Users(Email)
     )`)
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS Reports(
+        ReportID BIGSERIAL PRIMARY KEY NOT NULL,
+        ReportText TEXT NOT NULL,
+        Email TEXT NOT NULL,
+        QuestionID INTEGER NOT NULL,
+
+        FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)
+    )`)
 }
 
 module.exports = {DBQuestionsINIT}
