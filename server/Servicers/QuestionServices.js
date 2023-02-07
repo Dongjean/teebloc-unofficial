@@ -200,8 +200,8 @@ async function SaveImages(Images, ImageType) {
     var IMGDIRs = []
     for (var i=0; i<Images.length; i++) {
         const filenames = await fs.promises.readdir('./Images/' + ImageType) //read all file names in the QN or ANS Images directory
-        const Imageextension = Images[i].name.split('.').slice(-1)[0] //get the extension
-
+        const Imageextension = Images[i].name.split('.').slice(-1)[0].toLowerCase() //get the extension in lowercase since when files are saved the extensions become lowercase
+        
         //gets an array of all filenames in the folder with the same extension as the uploaded file
         const sameEXTfilenames = filenames.map(filename => {
             const filenamedata = filename.split('.')
