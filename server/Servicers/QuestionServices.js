@@ -31,7 +31,9 @@ async function Churn(Categories) {
             Questions.PaperID=ANY($2::int[]) AND
             Questions.LevelID=ANY($3::int[]) AND
             Questions.AssessmentID=ANY($4::int[]) AND
-            Questions.SchoolID=ANY($5::int[])
+            Questions.SchoolID=ANY($5::int[]) AND
+
+            Questions.isActive=TRUE
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
@@ -72,7 +74,7 @@ async function GetQuestionsByID(QuestionID) {
     try {
         const result = await pool.query(`
         SELECT
-            Questions.QuestionID,
+            Questions.QuestionID, Questions.isActive,
             Users.FirstName, Users.LastName, Users.Email,
             Topics.TopicID, Topics.TopicName,
             Papers.PaperID, Papers.Paper,
@@ -292,7 +294,10 @@ async function GetSavedQuestions(Email) {
         JOIN SavedQuestions
             ON SavedQuestions.QuestionID = Questions.QuestionID
             
-        WHERE SavedQuestions.Email = $1
+        WHERE
+            SavedQuestions.Email = $1 AND
+            
+            Questions.isActive=TRUE
         `, [Email])
         const Questions = result.rows
         console.log(Questions)
@@ -495,7 +500,10 @@ async function GetCompletedQuestions(Email) {
         JOIN CompletedQuestions
             ON CompletedQuestions.QuestionID = Questions.QuestionID
             
-        WHERE CompletedQuestions.Email = $1
+        WHERE
+            CompletedQuestions.Email = $1 AND
+
+            Questions.isActive=TRUE
         `, [Email])
         const Questions = result.rows
         console.log(Questions)
@@ -569,7 +577,9 @@ async function Get_Saved_Questions_Filtered(Email, Categories) {
             Questions.AssessmentID=ANY($4::int[]) AND
             Questions.SchoolID=ANY($5::int[]) AND
             
-            SavedQuestions.Email=$6
+            SavedQuestions.Email=$6 AND
+
+            Questions.isActive=TRUE
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools, Email]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
@@ -642,7 +652,9 @@ async function Get_Completed_Questions_Filtered(Email, Categories) {
             Questions.AssessmentID=ANY($4::int[]) AND
             Questions.SchoolID=ANY($5::int[]) AND
             
-            CompletedQuestions.Email=$6
+            CompletedQuestions.Email=$6 AND
+
+            Questions.isActive=TRUE
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools, Email]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
@@ -714,4 +726,42 @@ async function Resolve_Report(ReportID) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report};
+async function CheckisQuestionActive(QuestionID) {
+    try {
+        const result = await pool.query(`
+        SELECT isActive, Email
+        FROM Questions
+        WHERE QuestionID=$1
+        `, [QuestionID])
+
+        return result.rows[0]
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function DeActivateQuestion(QuestionID) {
+    try {
+        await pool.query(`
+        UPDATE Questions
+        SET isActive=FALSE
+        WHERE QuestionID=$1
+        `, [QuestionID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function ActivateQuestion(QuestionID) {
+    try {
+        await pool.query(`
+        UPDATE Questions
+        SET isActive=TRUE
+        WHERE QuestionID=$1
+        `, [QuestionID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion};

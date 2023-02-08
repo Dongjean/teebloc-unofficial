@@ -28,9 +28,16 @@ function OpenedQuestionPage(props) {
     const [isReporting, setisReporting] = useState(false)
     const ReportTextRef = useRef('')
 
+    const [isQuestionActive, setisQuestionActive] = useState(false)
+
     //runs only on mount
     useEffect(() => {
-        GetQuestion(QuestionID)
+        console.log(props.LoginData)
+        if (props.LoginData.AccType == 'Admin') {
+            GetQuestion(QuestionID) //Get Question data if accessor is an admin
+        } else {
+            CheckisQuestionActive(QuestionID)
+        }
     }, [])
 
     //gets the Question info
@@ -40,7 +47,22 @@ function OpenedQuestionPage(props) {
             setQuestion(result.data)
             CheckSaved(result.data.Question.questionid, props.LoginData.Email)
             CheckCompleted(result.data.Question.questionid, props.LoginData.Email)
+            setisQuestionActive(result.data.Question.isactive)
             setisLoading(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function CheckisQuestionActive(QuestionID) {
+        try {
+            const result = await API.get('/Questions/Check/Question/isActive/' + QuestionID)
+            
+            if (result.data.isactive) {
+                GetQuestion(QuestionID) //Get Question data if Question is active
+            } else if (result.data.email == props.LoginData.Email) {
+                GetQuestion(QuestionID) //Get Question data if accessor of the disabled question is the author
+            }
         } catch(err) {
             console.log(err)
         }
@@ -166,12 +188,37 @@ function OpenedQuestionPage(props) {
         }
     }
 
+    async function DeActivateQuestion(QuestionID) {
+        try {
+            await API.post('/Questions/DeActivateQuestion/' + QuestionID)
+            setisQuestionActive(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function ActivateQuestion(QuestionID) {
+        try {
+            await API.post('/Questions/ActivateQuestion/' + QuestionID)
+            setisQuestionActive(true)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             {isLoading ?
                 null
             :
                 <div>
+                    {/* only shows this if question is unactivated */}
+                    {isQuestionActive ?
+                        null
+                    :
+                        <span><i>Unactivated Question</i><br /></span>
+                    }
+
                     Author: {Question.Question.firstname + Question.Question.lastname} <br />
                     Question: <br />
                     {Question.QuestionImages.map(QuestionImage => <div key={QuestionImage.QuestionIMGID}><img src={'data:image/png;base64,' + QuestionImage.QuestionIMGData} alt={QuestionImage.QuestionIMGName} style={{width: 500}} /> <br /></div>)}
@@ -242,6 +289,16 @@ function OpenedQuestionPage(props) {
                                 </form>
                             </div>
                         </div>
+                    :
+                        null
+                    }
+
+                    {/* only show option to deactivate a question if logged in user is the author or is an admin */}
+                    {props.LoginData.AccType == 'Admin' || props.LoginData.Email == Question.Question.email ?
+                        isQuestionActive ?
+                            <button onClick={() => DeActivateQuestion(Question.Question.questionid)}>DeActivate Question</button>
+                        :
+                            <button onClick={() => ActivateQuestion(Question.Question.questionid)}>Activate Question</button>
                     :
                         null
                     }

@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -135,4 +135,25 @@ router.post('/Questions/Reports/Resolve/:ReportID', authAdminJWT, (req, res) => 
 
     Resolve_Report(ReportID).then(response => res.json(response))
 })
+
+router.get('/Questions/Check/Question/isActive/:QuestionID', (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    CheckisQuestionActive(QuestionID).then(response => res.json(response))
+})
+
+//authorise with Creator authorisor as user must be at least creator or admin ranked in order to deactivate a question
+router.post('/Questions/DeActivateQuestion/:QuestionID', authCreatorJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    DeActivateQuestion(QuestionID).then(response => res.json(response))
+})
+
+//authorise with Creator authorisor as user must be at least creator or admin ranked in order to activate a question
+router.post('/Questions/ActivateQuestion/:QuestionID', authCreatorJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    ActivateQuestion(QuestionID).then(response => res.json(response))
+})
+
 module.exports = router;
