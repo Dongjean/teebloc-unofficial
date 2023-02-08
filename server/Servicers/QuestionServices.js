@@ -194,7 +194,7 @@ async function PostQuestion(FormData) {
 
         //Set this Question as a pending payment under the author's name
         await pool.query(`
-        INSERT INTO PendingPayments VALUE($1, $2)
+        INSERT INTO PendingPayments VALUES($1, $2)
         `, [QuestionID, FormData.Email])
 
     } catch(err) {
@@ -769,4 +769,34 @@ async function ActivateQuestion(QuestionID) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion};
+async function Pay_Creator(Email) {
+    try {
+        //get the number of pending payments for this creator
+        const result = await pool.query(`
+        SELECT COUNT(QuestionID) AS PaymentCount FROM PendingPayments WHERE Email=$1
+        `, [Email])
+
+        //Remove record of pending payment for this creator
+        await pool.query(`
+        DELETE FROM PendingPayments WHERE Email=$1
+        `, [Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_All_PendingPayments() {
+    try {
+        const result = await pool.query(`
+        SELECT COUNT(QuestionID) AS PaymentCount, Email
+        FROM PendingPayments
+        GROUP BY Email
+        `)
+
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments};

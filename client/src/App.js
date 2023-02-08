@@ -17,6 +17,7 @@ import MyQuestionsPage from './Pages/MyQuestionsPage.js';
 import CompletedQuestionsPage from './Pages/CompletedQuestionsPage.js';
 import EditCategoryPage from './Pages/EditCategoryPage.js';
 import ReportsPage from './Pages/ReportsPage.js';
+import PayCreatorsPage from './Pages/PayCreatorsPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
@@ -89,6 +90,10 @@ function App() {
 		navigate('/Admin/Reports')
 	}
 
+	function OpenPayCreators() {
+		navigate('/Admin/PayCreators')
+	}
+
 	return (
     	<div>
 			<div className='NavBar'>
@@ -106,8 +111,9 @@ function App() {
 
 				<Route path='/Admin/Category/Edit' exact element={<EditCategoryPage />} />
 				<Route path='/Admin/Reports' exact element={<ReportsPage OpenQuestion={OpenQuestion} />} />
+				<Route path='/Admin/PayCreators' exact element={<PayCreatorsPage />} />
 
-				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} PostCategory={PostCategory} EditCategory={EditCategory} OpenReports={OpenReports} />} />
+				<Route path='/Account/:Email' exact element={<AccountDetailsPage LoginData={LoginData} OpenSaved={OpenSaved} OpenCompleted={OpenCompleted} OpenPosts={OpenPosts} PostCategory={PostCategory} EditCategory={EditCategory} OpenReports={OpenReports} OpenPayCreators={OpenPayCreators} />} />
 				<Route path='/Account/:Email/Saved' exact element={<SavedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Posts' exact element={<MyQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 				<Route path='/Account/:Email/Completed' exact element={<CompletedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
