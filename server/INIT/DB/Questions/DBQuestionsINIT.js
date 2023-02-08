@@ -10,6 +10,7 @@ async function DBQuestionsINIT() {
         AssessmentID INTEGER NOT NULL,
         SchoolID INTEGER NOT NULL,
         Email TEXT NOT NULL,
+        isActive BOOLEAN NOT NULL,
     
         FOREIGN KEY (TopicID) REFERENCES Topics(TopicID),
         FOREIGN KEY (PaperID) REFERENCES Papers(PaperID),
