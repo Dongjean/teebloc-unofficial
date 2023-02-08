@@ -1,6 +1,8 @@
 const pool = require('../DB.js');
 const fs = require('fs');
 
+const {Pay} = require('../utils/PaymentHandler.js');
+
 async function Churn(Categories) {
     try {
         const result = await pool.query(`
@@ -780,6 +782,8 @@ async function Pay_Creator(Email) {
         await pool.query(`
         DELETE FROM PendingPayments WHERE Email=$1
         `, [Email])
+
+        Pay(result.rows[0].paymentcount)
     } catch(err) {
         console.log(err)
     }
