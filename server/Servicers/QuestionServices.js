@@ -690,4 +690,28 @@ async function Report_Question(QuestionID, Email, ReportText) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question};
+async function Get_Reports_All() {
+    try {
+        const result = await pool.query(`
+        SELECT Users.FirstName, Users.LastName, Reports.ReportID, Reports.ReportText, Reports.QuestionID
+        FROM Users JOIN Reports
+        ON Users.Email = Reports.Email
+        `)
+
+        return result.rows
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Resolve_Report(ReportID) {
+    try {
+        await pool.query(`
+        DELETE FROM Reports WHERE ReportID=$1
+        `, [ReportID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report};
