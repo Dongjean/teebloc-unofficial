@@ -7,7 +7,7 @@ async function authCreatorJWT(req, res, next) {
     try {
         jwt.verify(Token, process.env.TokenSecret, function(err, decoded) {
             if (err) {
-                res.stauts(401).send(err)
+                res.status(401).send(err)
             } else {
                 if (decoded.AccType == 'Creator' || decoded.AccType == 'Admin') {
                     next()
