@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 
@@ -115,6 +115,14 @@ router.get('/Questions/Get/Completed/Filtered/:Email', authGeneralJWT, (req, res
     }
     
     Get_Completed_Questions_Filtered(Email, Categories).then(response => res.json(response))
+})
+
+router.post('/Questions/Report/:QuestionID', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.body.Email
+    const ReportText = req.body.ReportText
+
+    Report_Question(QuestionID, Email, ReportText).then(response => res.json(response))
 })
 
 module.exports = router;

@@ -1,7 +1,8 @@
-import {useMemo, useState, useEffect}  from 'react';
+import {useMemo, useState, useEffect, useRef}  from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import jsPDF from "jspdf";
 import API from "../utils/API";
+import '../CSS/UploadModal.css';
 
 function useQuery() {
     const { search } = useLocation();
@@ -23,6 +24,9 @@ function OpenedQuestionPage(props) {
 
     const [isSaved, setisSaved] = useState(false)
     const [isCompleted, setisCompleted] = useState(false)
+
+    const [isReporting, setisReporting] = useState(false)
+    const ReportTextRef = useRef('')
 
     //runs only on mount
     useEffect(() => {
@@ -152,6 +156,16 @@ function OpenedQuestionPage(props) {
         document.save('QuestionID' + QuestionID +'.pdf')
     }
 
+    async function Report(event, QuestionID, Email, ReportText) {
+        event.preventDefault()
+
+        try {
+            await API.post('/Questions/Report/' + QuestionID, {Email: Email, ReportText: ReportText})
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             {isLoading ?
@@ -210,6 +224,28 @@ function OpenedQuestionPage(props) {
                     :
                         null
                     }
+
+                    {/* only show option to report question if user is logged in */}
+                    {props.LoginData.Email ?
+                        <button onClick={() => setisReporting(true)}>Report</button>
+                    :
+                        null
+                    }
+
+                    {isReporting ?
+                        <div className="ModalBackground" onClick={() => setisReporting(false)}>
+                            <div className="ModalContainer" onClick={event => event.stopPropagation()}>
+                                <form onSubmit={event => {Report(event, QuestionID, props.LoginData.Email, ReportTextRef.current); setisReporting(false)}}>
+                                    Report Details:<br />
+                                    <textarea rows="4" cols="50" onChange={event => ReportTextRef.current = event.target.value}></textarea>
+                                    <input type='submit' />
+                                </form>
+                            </div>
+                        </div>
+                    :
+                        null
+                    }
+
                 </div>
             }
         </div>

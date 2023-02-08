@@ -679,4 +679,15 @@ async function Get_Completed_Questions_Filtered(Email, Categories) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered};
+async function Report_Question(QuestionID, Email, ReportText) {
+    try {
+        await pool.query(`
+        INSERT INTO Reports(ReportText, Email, QuestionID)
+        VALUES($1, $2, $3)
+        `, [ReportText, Email, QuestionID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question};
