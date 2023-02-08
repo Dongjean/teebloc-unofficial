@@ -192,6 +192,11 @@ async function PostQuestion(FormData) {
             `, [ANSImage.name, ANSIMGDIRs[i], QuestionID])
         }
 
+        //Set this Question as a pending payment under the author's name
+        await pool.query(`
+        INSERT INTO PendingPayments VALUE($1, $2)
+        `, [QuestionID, FormData.Email])
+
     } catch(err) {
         console.log(err)
     }
