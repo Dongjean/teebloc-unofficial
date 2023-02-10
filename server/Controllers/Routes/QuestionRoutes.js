@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -170,6 +170,27 @@ router.get('/Questions/Get/Upvotes/Count/:QuestionID', (req, res) => {
     const QuestionID = req.params.QuestionID
 
     Get_Upvotes_Count(QuestionID).then(response => res.json(response))
+})
+
+router.post('/Questions/Upvotes/Unupvote/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Unupvote_Question(QuestionID, Email).then(response => res.json(response))
+})
+
+router.post('/Questions/Upvotes/Upvote/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Upvote_Question(QuestionID, Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Upvotes/CheckUpvoted/:QuestionID/:Email', (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Check_Upvoted(QuestionID, Email).then(response => res.json(response))
 })
 
 module.exports = router;

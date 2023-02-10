@@ -817,4 +817,39 @@ async function Get_Upvotes_Count(QuestionID) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count};
+async function Unupvote_Question(QuestionID, Email) {
+    try {
+        await pool.query(`
+        DELETE FROM Upvotes
+        WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Upvote_Question(QuestionID, Email) {
+    try {
+        await pool.query(`
+        INSERT INTO Upvotes
+        VALUES($1, $2)
+        `, [QuestionID, Email])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Check_Upvoted(QuestionID, Email) {
+    try {
+        const result = await pool.query(`
+        SELECT * FROM Upvotes
+        WHERE QuestionID=$1 AND Email=$2
+        `, [QuestionID, Email])
+
+        return result.rows.length !== 0
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted};

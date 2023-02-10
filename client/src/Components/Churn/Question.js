@@ -9,8 +9,12 @@ function Question(props) {
 
     const [UpvoteCount, setUpvoteCount] = useState(0)
 
+    const [isUpvoted, setisUpvoted] = useState(false)
+
     useEffect(() => {
         CheckSaved(Question.questionid, props.LoginData.Email)
+
+        CheckUpvoted(Question.questionid, props.LoginData.Email)
         GetUpvoteCount(Question.questionid)
     }, [])
 
@@ -56,6 +60,40 @@ function Question(props) {
             console.log(err)
         }
     }
+
+    async function UnupvoteQuestion(event, QuestionID, Email) {
+        event.stopPropagation();
+
+        try {
+            await API.post('/Questions/Upvotes/Unupvote/' + QuestionID + '/' + Email)
+            setisUpvoted(false)
+            setUpvoteCount(current => current - 1)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UpvoteQuestion(event, QuestionID, Email) {
+        event.stopPropagation();
+
+        try {
+            await API.post('/Questions/Upvotes/Upvote/' + QuestionID + '/' + Email)
+            setisUpvoted(true)
+            setUpvoteCount(current => current + 1)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function CheckUpvoted(QuestionID, Email) {
+        try {
+            const result = await API.get('/Questions/Upvotes/CheckUpvoted/' + QuestionID + '/' + Email)
+
+            setisUpvoted(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
     
     return (
         <div>
@@ -68,19 +106,29 @@ function Question(props) {
             Assessment: {Question.assessmentname} <br />
             School: {Question.schoolname} <br />
 
-            {/* only show option to save question if logged in */}
+            {/* only show option to save or upvote question if logged in */}
             {props.LoginData.Email ?
-                isSaved ?
-                    <button onClick={event => UnsaveQuestion(event, Question.questionid, props.LoginData.Email)}>UnSave</button>
-                :
-                    <button onClick={event => SaveQuestion(event, Question.questionid, props.LoginData.Email)}>Save</button>
-                
+                <span>
+                    {isSaved ?
+                        <button onClick={event => UnsaveQuestion(event, Question.questionid, props.LoginData.Email)}>UnSave</button>
+                    :
+                        <button onClick={event => SaveQuestion(event, Question.questionid, props.LoginData.Email)}>Save</button>
+                    }
+                    
+                    <br />
+
+                    {isUpvoted ?
+                        <a onClick={event => UnupvoteQuestion(event, Question.questionid, props.LoginData.Email)}>⬆</a>
+                    :
+                        <a onClick={event => UpvoteQuestion(event, Question.questionid, props.LoginData.Email)}>⇧</a>
+                    }
+                </span>
             :
                 null
             }
 
             <br />
-            
+
             Upvotes : {UpvoteCount}
         </div>
     )
