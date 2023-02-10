@@ -183,6 +183,7 @@ function OpenedQuestionPage(props) {
 
         try {
             await API.post('/Questions/Report/' + QuestionID, {Email: Email, ReportText: ReportText})
+            ReportTextRef.current = ''
         } catch(err) {
             console.log(err)
         }
