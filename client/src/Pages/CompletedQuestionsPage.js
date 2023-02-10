@@ -87,7 +87,7 @@ function CompletedQuestionsPage(props) {
             
             const temp = Selection
             temp.isChurned = true
-            temp.initialPage = temp.initialPage || 1
+            temp.Page = temp.Page || 1
             setSelection(temp)
             
             setisLoading(false)
