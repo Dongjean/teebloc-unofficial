@@ -810,8 +810,8 @@ async function Get_Upvotes_Count(QuestionID) {
         FROM UPVOTES
         WHERE QuestionID=$1
         `, [QuestionID])
-        
-        return result.rows[0].upvotescount
+
+        return parseInt(result.rows[0].upvotescount)
     } catch(err) {
         console.log(err)
     }
