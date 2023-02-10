@@ -7,9 +7,13 @@ function Question(props) {
 
     const [isSaved, setisSaved] = useState(false)
 
+    const [UpvoteCount, setUpvoteCount] = useState(0)
+
     useEffect(() => {
         CheckSaved(Question.questionid, props.LoginData.Email)
+        GetUpvoteCount(Question.questionid)
     }, [])
+
     async function CheckSaved(QuestionID, Email) {
         try {
             const result = await API.get('/Questions/CheckSaved/' + QuestionID + '/' + Email)
@@ -43,6 +47,15 @@ function Question(props) {
             console.log(err)
         }
     }
+
+    async function GetUpvoteCount(QuestionID) {
+        try {
+            const result = await API.get('/Questions/Get/Upvotes/Count/' + QuestionID)
+            setUpvoteCount(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
     
     return (
         <div>
@@ -65,6 +78,10 @@ function Question(props) {
             :
                 null
             }
+
+            <br />
+            
+            Upvotes : {UpvoteCount}
         </div>
     )
 }
