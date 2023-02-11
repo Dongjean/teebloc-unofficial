@@ -1,4 +1,4 @@
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import Cropper from 'react-cropper';
 import '../../CSS/Cropperjs/Cropper.css';
 
@@ -11,6 +11,13 @@ function QuestionIMGUploader(props) {
 
     const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
     const cropperRef = useRef(null)
+
+    useEffect(() => {
+        setQNImage(props.QNImage)
+        if (!props.QNImage.CroppedIMGData) {
+            setisCropping(true)
+        }
+    }, [props.QNImage])
 
     function ChangeImage(file, index) {
         const temp = {File: file, OriginalIMGData: URL.createObjectURL(file)}
@@ -44,7 +51,7 @@ function QuestionIMGUploader(props) {
 
     return (
         <div>
-            {QNImage.File.name}<br />
+            {QNImage.File.name}{console.log(QNImage)}<br />
             {isCropping ?
                 <div>
                     <Cropper
@@ -68,6 +75,7 @@ function QuestionIMGUploader(props) {
                 </div>
             }
 
+            <button type='button' onClick={() => props.DeleteImage(props.index)}>Delete</button>
             <button type='button' onClick={OpenUploadModal}>Change File</button>
             {isUploadModalOpen ?
                 <UploadModal CloseUploadModal={CloseUploadModal} OnUploadImage={file => ChangeImage(file, props.index)} />

@@ -6,7 +6,6 @@ import UploadModal from '../Upload/UploadModal.js';
 
 function PostQuestion(props) {
     const [QNImages, setQNImages] = useState([])
-
     const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
 
     function AddImage(file) {
@@ -32,6 +31,16 @@ function PostQuestion(props) {
         setisUploadModalOpen(false)
     }
 
+    function DeleteImage(index) {
+        console.log(QNImages, index)
+        console.log(QNImages[index])
+
+        const temp = [...QNImages]
+        temp.splice(index, 1)
+
+        setQNImages(temp)
+    }
+
     return (
         <div>
             {QNImages.length == 0 ?
@@ -47,7 +56,7 @@ function PostQuestion(props) {
             :
             <div>
                 {QNImages.map((QNImage, index) =>
-                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} />
+                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} DeleteImage={DeleteImage} />
                 )}
 
                 <button type='button' onClick={OpenUploadModal}>Upload a New File</button>

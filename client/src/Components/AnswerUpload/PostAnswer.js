@@ -32,6 +32,16 @@ function PostAnswer(props) {
         setisUploadModalOpen(false)
     }
 
+    function DeleteImage(index) {
+        console.log(ANSImages, index)
+        console.log(ANSImages[index])
+
+        const temp = [...ANSImages]
+        temp.splice(index, 1)
+
+        setANSImages(temp)
+    }
+console.log(ANSImages)
     return (
         <div>
             {ANSImages.length == 0 ?
@@ -47,7 +57,7 @@ function PostAnswer(props) {
             :
             <div>
                 {ANSImages.map((ANSImage, index) =>
-                    <AnswerIMGUploader key={index} index={index} ANSImage={ANSImage} onAnswerIMGChange={onAnswerIMGChange} />
+                    <AnswerIMGUploader key={index} index={index} ANSImage={ANSImage} onAnswerIMGChange={onAnswerIMGChange} DeleteImage={DeleteImage} />
                 )}
 
                 <button type='button' onClick={OpenUploadModal}>Upload a New File</button>

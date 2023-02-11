@@ -1,4 +1,4 @@
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import Cropper from 'react-cropper';
 import '../../CSS/Cropperjs/Cropper.css';
 
@@ -11,6 +11,13 @@ function AnswerIMGUploader(props) {
 
     const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
     const cropperRef = useRef(null)
+
+    useEffect(() => {
+        setANSImage(props.ANSImage)
+        if (!props.ANSImage.CroppedIMGData) {
+            setisCropping(true)
+        }
+    }, [props.ANSImage])
 
     function ChangeImage(file, index) {
         const temp = {File: file, OriginalIMGData: URL.createObjectURL(file)}
@@ -68,6 +75,7 @@ function AnswerIMGUploader(props) {
                 </div>
             }
 
+            <button type='button' onClick={() => props.DeleteImage(props.index)}>Delete</button>
             <button type='button' onClick={OpenUploadModal}>Change File</button>
             {isUploadModalOpen ?
                 <UploadModal CloseUploadModal={CloseUploadModal} OnUploadImage={file => ChangeImage(file, props.index)} />
