@@ -41,6 +41,28 @@ function PostQuestion(props) {
         setQNImages(temp)
     }
 
+    function MoveImageUp(index) {
+        if (index !== 0) {
+            const temp = [...QNImages]
+            temp[index - 1] = temp[index]
+            temp[index] = QNImages[index - 1]
+
+            setQNImages(temp)
+        }
+    }
+
+    function MoveImageDown(index) {
+        const SwapTarget = QNImages[index + 1]
+        if (SwapTarget) {
+            const temp = [...QNImages]
+            temp[index + 1] = temp[index]
+            temp[index] = SwapTarget
+            console.log(temp)
+            setQNImages(temp)
+            console.log(QNImages)
+        }
+    }
+
     return (
         <div>
             {QNImages.length == 0 ?
@@ -56,7 +78,7 @@ function PostQuestion(props) {
             :
             <div>
                 {QNImages.map((QNImage, index) =>
-                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} DeleteImage={DeleteImage} />
+                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} DeleteImage={DeleteImage} MoveImageUp={MoveImageUp} MoveImageDown={MoveImageDown} />
                 )}
 
                 <button type='button' onClick={OpenUploadModal}>Upload a New File</button>

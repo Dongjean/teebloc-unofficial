@@ -16,6 +16,8 @@ function QuestionIMGUploader(props) {
         setQNImage(props.QNImage)
         if (!props.QNImage.CroppedIMGData) {
             setisCropping(true)
+        } else {
+            setisCropping(false)
         }
     }, [props.QNImage])
 
@@ -38,7 +40,10 @@ function QuestionIMGUploader(props) {
     }
 
     function StartCrop() {
+        var temp = QNImage
+        temp.CroppedIMGData = null
         setisCropping(true)
+        setQNImage(temp)
     }
 
     function OpenUploadModal() {
@@ -75,6 +80,8 @@ function QuestionIMGUploader(props) {
                 </div>
             }
 
+            <button type='button' onClick={() => props.MoveImageUp(props.index)}>Move Image Up</button>
+            <button type='button' onClick={() => props.MoveImageDown(props.index)}>Move Image Down</button>
             <button type='button' onClick={() => props.DeleteImage(props.index)}>Delete</button>
             <button type='button' onClick={OpenUploadModal}>Change File</button>
             {isUploadModalOpen ?
