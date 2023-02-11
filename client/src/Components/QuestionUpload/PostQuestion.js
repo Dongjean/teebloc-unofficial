@@ -78,7 +78,7 @@ function PostQuestion(props) {
             :
             <div>
                 {QNImages.map((QNImage, index) =>
-                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} CloseUploadModal={CloseUploadModal} DeleteImage={DeleteImage} MoveImageUp={MoveImageUp} MoveImageDown={MoveImageDown} />
+                    <QuestionIMGUploader key={index} index={index} QNImage={QNImage} onQuestionIMGChange={onQuestionIMGChange} DeleteImage={DeleteImage} MoveImageUp={MoveImageUp} MoveImageDown={MoveImageDown} />
                 )}
 
                 <button type='button' onClick={OpenUploadModal}>Upload a New File</button>
