@@ -41,7 +41,29 @@ function PostAnswer(props) {
 
         setANSImages(temp)
     }
-console.log(ANSImages)
+
+    function MoveImageUp(index) {
+        if (index !== 0) {
+            const temp = [...ANSImages]
+            temp[index - 1] = temp[index]
+            temp[index] = ANSImages[index - 1]
+
+            setANSImages(temp)
+        }
+    }
+
+    function MoveImageDown(index) {
+        const SwapTarget = ANSImages[index + 1]
+        if (SwapTarget) {
+            const temp = [...ANSImages]
+            temp[index + 1] = temp[index]
+            temp[index] = SwapTarget
+            console.log(temp)
+            setANSImages(temp)
+            console.log(ANSImages)
+        }
+    }
+
     return (
         <div>
             {ANSImages.length == 0 ?
@@ -57,7 +79,7 @@ console.log(ANSImages)
             :
             <div>
                 {ANSImages.map((ANSImage, index) =>
-                    <AnswerIMGUploader key={index} index={index} ANSImage={ANSImage} onAnswerIMGChange={onAnswerIMGChange} DeleteImage={DeleteImage} />
+                    <AnswerIMGUploader key={index} index={index} ANSImage={ANSImage} onAnswerIMGChange={onAnswerIMGChange} DeleteImage={DeleteImage} MoveImageUp={MoveImageUp} MoveImageDown={MoveImageDown} />
                 )}
 
                 <button type='button' onClick={OpenUploadModal}>Upload a New File</button>

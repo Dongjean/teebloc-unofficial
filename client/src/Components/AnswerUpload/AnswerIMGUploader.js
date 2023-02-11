@@ -16,6 +16,8 @@ function AnswerIMGUploader(props) {
         setANSImage(props.ANSImage)
         if (!props.ANSImage.CroppedIMGData) {
             setisCropping(true)
+        } else {
+            setisCropping(false)
         }
     }, [props.ANSImage])
 
@@ -75,6 +77,8 @@ function AnswerIMGUploader(props) {
                 </div>
             }
 
+            <button type='button' onClick={() => props.MoveImageUp(props.index)}>Move Image Up</button>
+            <button type='button' onClick={() => props.MoveImageDown(props.index)}>Move Image Down</button>
             <button type='button' onClick={() => props.DeleteImage(props.index)}>Delete</button>
             <button type='button' onClick={OpenUploadModal}>Change File</button>
             {isUploadModalOpen ?
