@@ -6,7 +6,42 @@ const {Pay} = require('../utils/PaymentHandler.js');
 async function Churn(Categories) {
     try {
         const result = await pool.query(`
-        SELECT
+            SELECT
+                Questions.QuestionID,
+                Users.FirstName, Users.LastName,
+                Topics.TopicID, Topics.TopicName,
+                Papers.PaperID, Papers.Paper,
+                Levels.LevelID, Levels.Level,
+                Assessments.AssessmentID, Assessments.AssessmentName,
+                Schools.SchoolID, Schools.SchoolName
+
+            FROM Questions JOIN Users
+                ON Users.Email = Questions.Email
+            JOIN Topics
+                ON Topics.TopicID = Questions.TopicID
+            JOIN Papers
+                ON Papers.PaperID = Questions.PaperID
+            JOIN Levels
+                ON Levels.LevelID = Questions.LevelID
+            JOIN Assessments
+                ON Assessments.AssessmentID = Questions.AssessmentID
+            JOIN Schools
+                ON Schools.SchoolID = Questions.SchoolID
+
+            LEFT JOIN Upvotes
+                ON Upvotes.QuestionID = Questions.QuestionID
+
+            WHERE
+                Questions.TopicID=ANY($1::int[]) AND
+                Questions.PaperID=ANY($2::int[]) AND
+                Questions.LevelID=ANY($3::int[]) AND
+                Questions.AssessmentID=ANY($4::int[]) AND
+                Questions.SchoolID=ANY($5::int[]) AND
+
+                Questions.isActive=TRUE
+
+        GROUP BY
+            Upvotes.QuestionID,
             Questions.QuestionID,
             Users.FirstName, Users.LastName,
             Topics.TopicID, Topics.TopicName,
@@ -14,28 +49,8 @@ async function Churn(Categories) {
             Levels.LevelID, Levels.Level,
             Assessments.AssessmentID, Assessments.AssessmentName,
             Schools.SchoolID, Schools.SchoolName
-
-        FROM Questions JOIN Users
-            ON Users.Email = Questions.Email
-        JOIN Topics
-            ON Topics.TopicID = Questions.TopicID
-        JOIN Papers
-            ON Papers.PaperID = Questions.PaperID
-        JOIN Levels
-            ON Levels.LevelID = Questions.LevelID
-        JOIN Assessments
-            ON Assessments.AssessmentID = Questions.AssessmentID
-        JOIN Schools
-            ON Schools.SchoolID = Questions.SchoolID
-
-        WHERE
-            Questions.TopicID=ANY($1::int[]) AND
-            Questions.PaperID=ANY($2::int[]) AND
-            Questions.LevelID=ANY($3::int[]) AND
-            Questions.AssessmentID=ANY($4::int[]) AND
-            Questions.SchoolID=ANY($5::int[]) AND
-
-            Questions.isActive=TRUE
+        
+        ORDER BY Count(Upvotes.Email) DESC
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
@@ -300,11 +315,26 @@ async function GetSavedQuestions(Email) {
         
         JOIN SavedQuestions
             ON SavedQuestions.QuestionID = Questions.QuestionID
+
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
             
         WHERE
             SavedQuestions.Email = $1 AND
             
             Questions.isActive=TRUE
+        
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
         `, [Email])
         const Questions = result.rows
         console.log(Questions)
@@ -506,11 +536,26 @@ async function GetCompletedQuestions(Email) {
         
         JOIN CompletedQuestions
             ON CompletedQuestions.QuestionID = Questions.QuestionID
+
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
             
         WHERE
             CompletedQuestions.Email = $1 AND
 
             Questions.isActive=TRUE
+        
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
         `, [Email])
         const Questions = result.rows
         console.log(Questions)
@@ -577,6 +622,9 @@ async function Get_Saved_Questions_Filtered(Email, Categories) {
         JOIN SavedQuestions
             ON SavedQuestions.QuestionID = Questions.QuestionID
 
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
+
         WHERE
             Questions.TopicID=ANY($1::int[]) AND
             Questions.PaperID=ANY($2::int[]) AND
@@ -587,6 +635,18 @@ async function Get_Saved_Questions_Filtered(Email, Categories) {
             SavedQuestions.Email=$6 AND
 
             Questions.isActive=TRUE
+        
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools, Email]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
@@ -652,6 +712,9 @@ async function Get_Completed_Questions_Filtered(Email, Categories) {
         JOIN CompletedQuestions
             ON CompletedQuestions.QuestionID = Questions.QuestionID
 
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
+
         WHERE
             Questions.TopicID=ANY($1::int[]) AND
             Questions.PaperID=ANY($2::int[]) AND
@@ -662,6 +725,18 @@ async function Get_Completed_Questions_Filtered(Email, Categories) {
             CompletedQuestions.Email=$6 AND
 
             Questions.isActive=TRUE
+
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
         `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools, Email]) //Get all Questions for the Categories queried
         const Questions = result.rows
         console.log(Questions)
