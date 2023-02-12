@@ -49,6 +49,7 @@ function PostAnswer(props) {
         temp.splice(index, 1)
 
         setANSImages(temp)
+        props.onAnswerIMGChange(temp)
     }
 
     function MoveImageUp(index) {

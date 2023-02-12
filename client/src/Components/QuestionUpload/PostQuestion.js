@@ -49,6 +49,7 @@ function PostQuestion(props) {
         temp.splice(index, 1)
 
         setQNImages(temp)
+        props.onQuestionIMGChange(temp)
     }
 
     function MoveImageUp(index) {
