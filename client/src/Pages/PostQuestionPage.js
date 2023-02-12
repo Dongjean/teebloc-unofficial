@@ -193,7 +193,7 @@ function PostQuestionPage(props) {
         console.log(TopicSelection)
         console.log(PaperSelection)
         console.log(SchoolSelection)
-        console.log("submitted!") //will change this later to API call to submit the post
+        console.log("submitted!")
         Post()
     }
 
@@ -262,7 +262,7 @@ function PostQuestionPage(props) {
                 <br />
                 <div style={{display: QuestionsDisplay}}>
                     Question(s):
-                    <PostQuestion onQuestionIMGChange={onQuestionIMGChange} style={{display: 'none'}} />
+                    <PostQuestion onQuestionIMGChange={onQuestionIMGChange} />
                 </div>
 
                 <div style={{display: AnswersDispay}}>
