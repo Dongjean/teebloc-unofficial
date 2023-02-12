@@ -22,7 +22,7 @@ function QuestionIMGUploader(props) {
     }, [props.QNImage])
 
     function ChangeImage(file, index) {
-        const temp = {File: file, OriginalIMGData: URL.createObjectURL(file)}
+        const temp = {FileName: file.name, OriginalIMGData: URL.createObjectURL(file)}
         setisCropping(true)
         setQNImage(temp)
         props.onQuestionIMGChange(temp, index)
@@ -56,7 +56,7 @@ function QuestionIMGUploader(props) {
 
     return (
         <div>
-            {QNImage.File.name}{console.log(QNImage)}<br />
+            {QNImage.FileName}<br />
             {isCropping ?
                 <div>
                     <Cropper

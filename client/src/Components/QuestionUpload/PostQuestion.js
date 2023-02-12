@@ -11,7 +11,7 @@ function PostQuestion(props) {
     function AddImage(file) {
         console.log(file)
         var temp = [...QNImages]
-        temp.push({File: file, OriginalIMGData: URL.createObjectURL(file)})
+        temp.push({FileName: file.name, OriginalIMGData: URL.createObjectURL(file)})
         setQNImages(temp)
         props.onQuestionIMGChange(temp)
     }

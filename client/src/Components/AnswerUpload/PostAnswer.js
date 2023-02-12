@@ -12,7 +12,7 @@ function PostAnswer(props) {
     function AddImage(file) {
         console.log(file)
         var temp = [...ANSImages]
-        temp.push({File: file, OriginalIMGData: URL.createObjectURL(file)})
+        temp.push({FileName: file.name, OriginalIMGData: URL.createObjectURL(file)})
         setANSImages(temp)
         props.onAnswerIMGChange(temp)
     }

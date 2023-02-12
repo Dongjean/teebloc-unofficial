@@ -22,7 +22,7 @@ function AnswerIMGUploader(props) {
     }, [props.ANSImage])
 
     function ChangeImage(file, index) {
-        const temp = {File: file, OriginalIMGData: URL.createObjectURL(file)}
+        const temp = {FileName: file.name, OriginalIMGData: URL.createObjectURL(file)}
         setisCropping(true)
         setANSImage(temp)
         props.onAnswerIMGChange(temp, index)
@@ -53,7 +53,7 @@ function AnswerIMGUploader(props) {
 
     return (
         <div>
-            {ANSImage.File.name}<br />
+            {ANSImage.FileName}<br />
             {isCropping ?
                 <div>
                     <Cropper
