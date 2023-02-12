@@ -32,7 +32,6 @@ function OpenedQuestionPage(props) {
 
     //runs only on mount
     useEffect(() => {
-        console.log(props.LoginData)
         if (props.LoginData.AccType == 'Admin') {
             GetQuestion(QuestionID) //Get Question data if accessor is an admin
         } else {
@@ -207,6 +206,11 @@ function OpenedQuestionPage(props) {
         }
     }
 
+    function EditQuestion(QuestionID) {
+        //navigate to Question Edit Page
+        navigate('/Question/Edit?QuestionID=' + QuestionID)
+    }
+
     return (
         <div>
             {isLoading ?
@@ -261,7 +265,10 @@ function OpenedQuestionPage(props) {
 
                     {/* only show option to delete question if logged in user is the author */}
                     {props.LoginData.Email == Question.Question.email ?
-                        <button onClick={() => DeleteQuestion(Question.Question.questionid)}>Delete</button>
+                        <span>
+                            <button onClick={() => DeleteQuestion(Question.Question.questionid)}>Delete</button>
+                            <button onClick={() => EditQuestion(Question.Question.questionid)}>Edit</button>
+                        </span>
                     :
                         null
                     }

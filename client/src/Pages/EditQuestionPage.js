@@ -1,12 +1,16 @@
 import {useState, useEffect, useRef} from "react";
+import useQuery from "../utils/useQuery.js";
+import API from '../utils/API.js';
 
 //Component imports
 import PostQuestion from "../Components/QuestionUpload/PostQuestion.js";
 import PostAnswer from "../Components/AnswerUpload/PostAnswer.js";
 
-import API from '../utils/API.js';
+function EditQuestionPage(props) {
+    const query = useQuery();
 
-function PostQuestionPage(props) {
+    const QuestionID = query.get('QuestionID')
+
     const [AllSubjects, setAllSubjects] = useState([])
     const [Levels, setLevels] = useState([])
     const [Assessments, setAssessments] = useState([])
@@ -28,10 +32,52 @@ function PostQuestionPage(props) {
     const [QuestionsDisplay, setQuestionsDisplay] = useState('inline') //by default start with Question Uploading
     const [AnswersDispay, setAnswersDisplay] = useState('none') //by default start with Answer Upload component hidden
     
+    const OriginalQNImageIDsRef = useRef([])
+    const OriginalANSImageIDsRef = useRef([])
+
     //runs only once on mount
     useEffect(() => {
-        getAllSubjects()
+        if (props.LoginData.AccType == 'Admin') {
+            getQuestionData(QuestionID)
+            getAllSubjects()
+        } else {
+            CheckQuestionAuthor(QuestionID)
+        }
     }, [])
+
+    async function CheckQuestionAuthor() {
+        try {
+            const result = await API.get('/Questions/Get/Author/' + QuestionID)
+            if (result.data == props.LoginData.Email) {
+                getQuestionData(QuestionID)
+                getAllSubjects()
+            }
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function getQuestionData(QuestionID) {
+        try {
+            const result = await API.get('/Questions/Get/QuestionData/' + QuestionID)
+            await onSubjectSelected(result.data.Categories.subjectid)
+            await onLevelSelected(result.data.Categories.levelid)
+            await onAssessmentSelected(result.data.Categories.assessmentid)
+            await onTopicSelected(result.data.Categories.topicid)
+            await onPaperSelected(result.data.Categories.paperid)
+            await onSchoolSelected(result.data.Categories.schoolid)
+
+            setQNImages(result.data.QuestionImages)
+            setANSImages(result.data.AnswerImages)
+
+            OriginalQNImageIDsRef.current = result.data.QuestionImages.map(QuestionImage => QuestionImage.QuestionIMGID)
+            OriginalANSImageIDsRef.current = result.data.AnswerImages.map(AnswerImage => AnswerImage.AnswerIMGID)
+            console.log(OriginalQNImageIDsRef.current, 'h')
+            console.log(OriginalANSImageIDsRef.current, 'bruh')
+        } catch(err) {
+            console.log(err)
+        }
+    }
 
     async function getAllSubjects() { //get all Subjects initially to display
         try {
@@ -45,6 +91,7 @@ function PostQuestionPage(props) {
     //get the Levels that offer this subject
     async function getLevels(Subject) {
         try {
+            console.log(Subject)
             const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + Subject)
             setLevels(result.data)
         } catch(err) {
@@ -92,7 +139,7 @@ function PostQuestionPage(props) {
         }
     }
 
-    async function Post() {
+    async function Edit() {
         try {
             var FDQNImages = [];
             for (var i=0; i<QNImages.length; i++) {
@@ -110,6 +157,7 @@ function PostQuestionPage(props) {
                 })
             }
             const FD = new FormData()
+            //append new Editted Question Data
             FD.append('QNImages', JSON.stringify(FDQNImages))
             FD.append('ANSImages', JSON.stringify(FDANSImages))
             FD.append('SubjectID', SubjectSelection)
@@ -118,44 +166,48 @@ function PostQuestionPage(props) {
             FD.append('TopicID', TopicSelection)
             FD.append('PaperID', PaperSelection)
             FD.append('SchoolID', SchoolSelection)
-            FD.append('Email', props.UserEmail)
+            FD.append('Email', props.LoginData.Email)
             
-            await API.post('/Questions/PostQuestion', FD)
+            //append data about old Images
+            FD.append('OriginalQNImageIDs', JSON.stringify(OriginalQNImageIDsRef.current))
+            FD.append('OriginalANSImageIDs', JSON.stringify(OriginalANSImageIDsRef.current))
+            
+            await API.post('/Questions/Edit/Question/' + QuestionID, FD)
         } catch(err) {
             console.log(err)
         }
     }
 
-    function onSubjectSelected(event) {
-        setSubjectSelection(event.target.value)
-        getLevels(event.target.value) //get the levels that offer this subject if a subject was selected
-        getTopics(event.target.value) //get the Topics tested in this Subject
-        getPapers(event.target.value) //get the Papers that exist for this Subject
-        getSchools(event.target.value) //get the Schools that offer this Subject
+    async function onSubjectSelected(SubjectID) {
+        setSubjectSelection(SubjectID)
+        await getLevels(SubjectID) //get the levels that offer this subject if a subject was selected
+        await getTopics(SubjectID) //get the Topics tested in this Subject
+        await getPapers(SubjectID) //get the Papers that exist for this Subject
+        await getSchools(SubjectID) //get the Schools that offer this Subject
     }
     
-    function onLevelSelected(event) {
-        setLevelSelection(event.target.value)
-        getAssessments(event.target.value) //get the Assessments that occurs at this level
+    async function onLevelSelected(LevelID) {
+        setLevelSelection(LevelID)
+        await getAssessments(LevelID) //get the Assessments that occurs at this level
     }
 
-    function onAssessmentSelected(event) {
-        setAssessmentSelection(event.target.value)
+    async function onAssessmentSelected(AssessmentID) {
+        setAssessmentSelection(AssessmentID)
     }
 
-    function onTopicSelected(event) {
-        setTopicSelection(event.target.value)
+    async function onTopicSelected(TopicID) {
+        setTopicSelection(TopicID)
     }
 
-    function onPaperSelected(event) {
-        setPaperSelection(event.target.value)
+    async function onPaperSelected(PaperID) {
+        setPaperSelection(PaperID)
     }
 
-    function onSchoolSelected(event) {
-        setSchoolSelection(event.target.value)
+    async function onSchoolSelected(SchoolID) {
+        setSchoolSelection(SchoolID)
     }
 
-    function SubmitPost(event) {
+    function SubmitEdit(event) {
         event.preventDefault();
         if (QNImages.length == 0 || ANSImages.length == 0) {
             console.log('Please include both answers and questions')
@@ -194,7 +246,7 @@ function PostQuestionPage(props) {
         console.log(PaperSelection)
         console.log(SchoolSelection)
         console.log("submitted!")
-        Post()
+        Edit()
     }
 
     function onQuestionIMGChange(QNImages) {
@@ -205,12 +257,12 @@ function PostQuestionPage(props) {
         setANSImages(ANSImages)
     }
 
-    function UploadQuestion() {
+    function EditQuestion() {
         setQuestionsDisplay('inline')
         setAnswersDisplay('none')
     }
 
-    function UploadAnswer() {
+    function EditAnswer() {
         setAnswersDisplay('inline')
         setQuestionsDisplay('none')
     }
@@ -218,56 +270,56 @@ function PostQuestionPage(props) {
     return (
         AllSubjects.length !== 0 ?
         <div>
-            <form onSubmit={SubmitPost}>
+            <form onSubmit={SubmitEdit}>
                 Post Subject: 
-                <select defaultValue={0} onChange={onSubjectSelected} >
+                <select value={SubjectSelection} onChange={event => onSubjectSelected(event.target.value)} >
                     <option value={0}>Please Select a Subject</option>
                     {AllSubjects.map(Subject => <option key={Subject.subjectid} value={Subject.subjectid}>{Subject.subject}</option>)}
                 </select>
 
                 Level:
-                <select defaultValue={0} onChange={onLevelSelected}>
+                <select value={LevelSelection} onChange={event => onLevelSelected(event.target.value)}>
                     <option value={0}>Please Select a Level</option>
                     {Levels.map(Level => <option key={Level.levelid} value={Level.levelid}>{Level.level}</option>)}
                 </select>
 
                 Assessment:
-                <select defaultValue={0} onChange={onAssessmentSelected}>
+                <select value={AssessmentSelection} onChange={event => onAssessmentSelected(event.target.value)}>
                     <option value={0}>Please Select an Assessment</option>
                     {Assessments.map(Assessment => <option key={Assessment.assessmentid} value={Assessment.assessmentid}>{Assessment.assessmentname}</option>)}
                 </select>
 
                 Topics:
-                <select defaultValue={0} onChange={onTopicSelected}>
+                <select value={TopicSelection} onChange={event => onTopicSelected(event.target.value)}>
                     <option value={0}>Please Select a Topic</option>
                     {Topics.map(Topic => <option key={Topic.topicid} value={Topic.topicid}>{Topic.topicname}</option>)}
                 </select>
 
                 Paper Number:
-                <select defaultValue={0} onChange={onPaperSelected}>
+                <select value={PaperSelection} onChange={event => onPaperSelected(event.target.value)}>
                     <option value={0}>Please Select a Paper Number</option>
                     {Papers.map(Paper => <option key={Paper.paperid} value={Paper.paperid}>{Paper.paper}</option>)}
                 </select>
 
                 School Name:
-                <select defaultValue={0} onChange={onSchoolSelected}>
+                <select value={SchoolSelection} onChange={event => onSchoolSelected(event.target.value)}>
                     <option value={0}>Please Select a School</option>
                     {Schools.map(School => <option key={School.schoolid} value={School.schoolid}>{School.schoolname}</option>)}
                 </select>
 
                 <br />
-                <a onClick={UploadQuestion}>Upload Question</a> /
-                <a onClick={UploadAnswer}> Upload Answer</a>
+                <a onClick={EditQuestion}>Edit Question</a> /
+                <a onClick={EditAnswer}> Edit Answer</a>
 
                 <br />
                 <div style={{display: QuestionsDisplay}}>
                     Question(s):
-                    <PostQuestion onQuestionIMGChange={onQuestionIMGChange} />
+                    <PostQuestion onQuestionIMGChange={onQuestionIMGChange} QNImages={QNImages} />
                 </div>
 
                 <div style={{display: AnswersDispay}}>
                     Answer(s): 
-                    <PostAnswer onAnswerIMGChange={onAnswerIMGChange} />
+                    <PostAnswer onAnswerIMGChange={onAnswerIMGChange} ANSImages={ANSImages} />
                 </div>
                 <input type='submit' value='Upload' />
             </form>
@@ -276,4 +328,4 @@ function PostQuestionPage(props) {
     )
 }
 
-export default PostQuestionPage;
+export default EditQuestionPage;

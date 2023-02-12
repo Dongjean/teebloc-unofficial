@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 //component imports
 import QuestionIMGUploader from './QuestionIMGUploader.js';
@@ -6,7 +6,17 @@ import UploadModal from '../Upload/UploadModal.js';
 
 function PostQuestion(props) {
     const [QNImages, setQNImages] = useState([])
+
     const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
+
+    const isMounted = useRef(false)
+    useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true
+        } else {
+            setQNImages(props.QNImages)
+        }
+    }, [props.QNImages])
 
     function AddImage(file) {
         console.log(file)

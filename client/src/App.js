@@ -18,6 +18,7 @@ import CompletedQuestionsPage from './Pages/CompletedQuestionsPage.js';
 import EditCategoryPage from './Pages/EditCategoryPage.js';
 import ReportsPage from './Pages/ReportsPage.js';
 import PayCreatorsPage from './Pages/PayCreatorsPage.js';
+import EditQuestionPage from './Pages/EditQuestionPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
@@ -119,6 +120,7 @@ function App() {
 				<Route path='/Account/:Email/Completed' exact element={<CompletedQuestionsPage LoginData={LoginData} OpenQuestion={OpenQuestion} />} />
 
 				<Route path='/OpenedQuestion' exact element={<OpenedQuestionPage LoginData={LoginData} />} />
+				<Route path='/Question/Edit' exact element={<EditQuestionPage LoginData={LoginData} />} />
 			</Routes>
     	</div>
   	);

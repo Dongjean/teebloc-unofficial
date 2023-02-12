@@ -407,6 +407,12 @@ async function DeleteQuestion(QuestionID) {
         DELETE FROM CompletedQuestions WHERE QuestionID=$1
         `, [QuestionID])
         await pool.query(`
+        DELETE FROM Upvotes WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
+        DELETE FROM PendingPayments WHERE QuestionID=$1
+        `, [QuestionID])
+        await pool.query(`
         DELETE FROM Questions WHERE QuestionID=$1
         `, [QuestionID])
     } catch(err) {
@@ -927,4 +933,167 @@ async function Check_Upvoted(QuestionID, Email) {
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted};
+async function Get_Question_Author(QuestionID) {
+    try {
+        const result = await pool.query(`
+        SELECT Users.Email
+        FROM Questions JOIN Users
+        ON Questions.Email = Users.Email
+        WHERE Questions.QuestionID=$1
+        `, [QuestionID])
+
+        if (result.rows[0]) {
+            return result.rows[0].email
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Question_Data(QuestionID) {
+    try {
+        const CategoriesResult = await pool.query(`
+        SELECT
+            Subjects.SubjectID,
+            Questions.TopicID,
+            Questions.PaperID,
+            Questions.LevelID,
+            Questions.AssessmentID,
+            Questions.SchoolID
+
+        FROM Questions JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        
+        JOIN Subjects
+            ON Subjects.SubjectID = Topics.SubjectID
+
+        WHERE
+            Questions.QuestionID=$1
+        `, [QuestionID])
+
+        const QNImagesResult = await pool.query(`
+        SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR
+        FROM QuestionIMGs
+        WHERE QuestionID=$1
+        `, [QuestionID])
+        const QuestionImagesRows = QNImagesResult.rows
+
+        const ANSImagesResult = await pool.query(`
+        SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR
+        FROM AnswerIMGs
+        WHERE QuestionID=$1
+        `, [QuestionID])
+        const AnswerImagesRows = ANSImagesResult.rows
+
+        var QuestionImages = []
+        for (var i=0; i<QuestionImagesRows.length; i++) {
+            //get Image Data from the Image Directory for the Question Images for this Question
+            const QNIMGData = (await fs.promises.readFile(QuestionImagesRows[i].questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QuestionImagesRows[i].questionimgid,
+                FileName: QuestionImagesRows[i].questionimgname,
+                OriginalIMGData: 'data:image/png;base64,' + QNIMGData
+            })
+        }
+
+        var AnswerImages = []
+        for (var i=0; i<AnswerImagesRows.length; i++) {
+            //get Image Data from the Image Directory for the Answer Images for this Question
+            const ANSIMGData = (await fs.promises.readFile(AnswerImagesRows[i].answerimgdir)).toString('base64')
+            AnswerImages.push({
+                AnswerIMGID: AnswerImagesRows[i].answerimgid,
+                FileName: AnswerImagesRows[i].answerimgname,
+                OriginalIMGData: 'data:image/png;base64,' + ANSIMGData
+            })
+        }
+
+        return {
+            Categories: CategoriesResult.rows[0],
+            QuestionImages: QuestionImages,
+            AnswerImages: AnswerImages
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function EditQuestion(QuestionID, FormData) { //First Edit the entry in Questions in the DB with new Editted Data, then Add the new Question and Answer Images as if they were new Questions, then delete the old Question and Answer Images
+    try {
+        //get Data about Images
+        const QNImages = JSON.parse(FormData.QNImages)
+        const ANSImages = JSON.parse(FormData.ANSImages)
+
+        //Save Images
+        const QNIMGDIRs = await SaveImages(QNImages, 'QN')
+        const ANSIMGDIRs = await SaveImages(ANSImages, 'ANS')
+        
+        //Save Data in DB
+
+        //Update the entry in Questions Table with newly editted Categories
+        await pool.query(`
+        UPDATE Questions
+        SET
+            TopicID=$1,
+            PaperID=$2,
+            LevelID=$3,
+            AssessmentID=$4,
+            SchoolID=$5
+
+        WHERE QuestionID=$6
+        `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID, FormData.SchoolID, QuestionID])
+
+
+        //Save the New Images
+
+        //Save QNImages in DB
+        for (var i=0; i<QNImages.length; i++) {
+            const QNImage = QNImages[i]
+
+            await pool.query(`
+            INSERT INTO QuestionIMGs(QuestionIMGName, QuestionIMGDIR, QuestionID)
+            VALUES($1, $2, $3)
+            `, [QNImage.name, QNIMGDIRs[i], QuestionID])
+        }
+
+        //Save ANSImages in DB
+        for (var i=0; i<ANSImages.length; i++) {
+            const ANSImage = ANSImages[i]
+
+            await pool.query(`
+            INSERT INTO AnswerIMGs(AnswerIMGName, AnswerIMGDIR, QuestionID)
+            VALUES($1, $2, $3)
+            `, [ANSImage.name, ANSIMGDIRs[i], QuestionID])
+        }
+
+
+        //Delete the Old Images
+
+        const temp1 = JSON.parse(FormData.OriginalQNImageIDs).map(QNImage => parseInt(QNImage))
+        //Delete QNImages in DB
+        const DeletedQNIMGsDIR = (await pool.query(`
+        DELETE FROM QuestionIMGs WHERE QuestionIMGID=ANY($1::int[])
+        RETURNING QuestionIMGDIR
+        `, [JSON.parse(FormData.OriginalQNImageIDs)])).rows
+
+        const temp2 = JSON.parse(FormData.OriginalANSImageIDs).map(ANSImage => parseInt(ANSImage))
+        //Delete ANSImages in DB
+        const DeletedANSIMGsDIR = (await pool.query(`
+        DELETE FROM AnswerIMGs WHERE AnswerIMGID=ANY($1::int[])
+        RETURNING AnswerIMGDIR
+        `, [JSON.parse(FormData.OriginalANSImageIDs)])).rows
+
+        //Delete QNImages in Images Directory
+        for (var i=0; i<DeletedQNIMGsDIR.length; i++) {
+            fs.promises.unlink(DeletedQNIMGsDIR[i].questionimgdir)
+        }
+
+        //Delete ANSImages in Images Directory
+        for (var i=0; i<DeletedANSIMGsDIR.length; i++) {
+            fs.promises.unlink(DeletedANSIMGsDIR[i].answerimgdir)
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion};

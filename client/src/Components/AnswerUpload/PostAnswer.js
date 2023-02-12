@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 //component imports
 import AnswerIMGUploader from './AnswerIMGUploader.js';
@@ -8,6 +8,15 @@ function PostAnswer(props) {
     const [ANSImages, setANSImages] = useState([])
 
     const [isUploadModalOpen, setisUploadModalOpen] = useState(false)
+
+    const isMounted = useRef(false)
+    useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true
+        } else {
+            setANSImages(props.ANSImages)
+        }
+    }, [props.ANSImages])
 
     function AddImage(file) {
         console.log(file)
