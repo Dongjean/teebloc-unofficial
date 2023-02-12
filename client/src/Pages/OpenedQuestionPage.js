@@ -24,6 +24,9 @@ function OpenedQuestionPage(props) {
 
     const [isSaved, setisSaved] = useState(false)
     const [isCompleted, setisCompleted] = useState(false)
+    const [isUpvoted, setisUpvoted] = useState(false)
+
+    const [UpvoteCount, setUpvoteCount] = useState(0)
 
     const [isReporting, setisReporting] = useState(false)
     const ReportTextRef = useRef('')
@@ -46,8 +49,50 @@ function OpenedQuestionPage(props) {
             setQuestion(result.data)
             CheckSaved(result.data.Question.questionid, props.LoginData.Email)
             CheckCompleted(result.data.Question.questionid, props.LoginData.Email)
+            CheckUpvoted(result.data.Question.questionid, props.LoginData.Email)
+            GetUpvoteCount(result.data.Question.questionid)
             setisQuestionActive(result.data.Question.isactive)
             setisLoading(false)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function GetUpvoteCount(QuestionID) {
+        try {
+            const result = await API.get('/Questions/Get/Upvotes/Count/' + QuestionID)
+            setUpvoteCount(result.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UnupvoteQuestion(QuestionID, Email) {
+        try {
+            console.log('hi')
+            await API.post('/Questions/Upvotes/Unupvote/' + QuestionID + '/' + Email)
+            setisUpvoted(false)
+            setUpvoteCount(current => current - 1)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function UpvoteQuestion(QuestionID, Email) {
+        try {
+            await API.post('/Questions/Upvotes/Upvote/' + QuestionID + '/' + Email)
+            setisUpvoted(true)
+            setUpvoteCount(current => current + 1)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function CheckUpvoted(QuestionID, Email) {
+        try {
+            const result = await API.get('/Questions/Upvotes/CheckUpvoted/' + QuestionID + '/' + Email)
+
+            setisUpvoted(result.data)
         } catch(err) {
             console.log(err)
         }
@@ -243,25 +288,31 @@ function OpenedQuestionPage(props) {
 
                     {/* only show option to save question if logged in */}
                     {props.LoginData.Email ?
-                        isSaved ?
-                            <button onClick={() => UnsaveQuestion(Question.Question.questionid, props.LoginData.Email)}>UnSave</button>
-                        :
-                            <button onClick={() => SaveQuestion(Question.Question.questionid, props.LoginData.Email)}>Save</button>
+                        <span>
+                            {isSaved ?
+                                <button onClick={() => UnsaveQuestion(Question.Question.questionid, props.LoginData.Email)}>UnSave</button>
+                            :
+                                <button onClick={() => SaveQuestion(Question.Question.questionid, props.LoginData.Email)}>Save</button>
+                            }
+
+                            {isCompleted ?
+                                <button onClick={() => UncompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Uncomplete</button>
+                            :
+                                <button onClick={() => CompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Complete</button>
+                            }
+                            
+                            {isUpvoted ?
+                                <a onClick={() => UnupvoteQuestion(Question.Question.questionid, props.LoginData.Email)}>⬆</a>
+                            :
+                                <a onClick={() => UpvoteQuestion(Question.Question.questionid, props.LoginData.Email)}>⇧</a>
+                            }
+                        </span>
                         
                     :
                         null
                     }
 
-                    {/* only show option to complete question if logged in */}
-                    {props.LoginData.Email ?
-                        isCompleted ?
-                            <button onClick={() => UncompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Uncomplete</button>
-                        :
-                            <button onClick={() => CompleteQuestion(Question.Question.questionid, props.LoginData.Email)}>Complete</button>
-                        
-                    :
-                        null
-                    }
+                    Upvotes: {UpvoteCount}
 
                     {/* only show option to delete question if logged in user is the author */}
                     {props.LoginData.Email == Question.Question.email ?
