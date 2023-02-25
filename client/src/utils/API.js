@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:3001',
-    withCredentials: true
+    baseURL: 'http://localhost:3001', //to delete before building
+    withCredentials: true //to delete before building
 });
 
 API.interceptors.response.use(
