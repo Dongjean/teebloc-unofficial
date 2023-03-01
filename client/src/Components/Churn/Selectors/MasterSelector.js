@@ -8,6 +8,7 @@ import SchoolSelector from "./SchoolSelector.js";
 
 import {useMemo, useState, useRef} from 'react';
 import {useLocation} from "react-router-dom";
+import Cookies from '../../../utils/Cookies.js';
 
 function useQuery() {
     const { search } = useLocation();
@@ -89,30 +90,53 @@ function MasterSelector(props) {
     const PageRef = useRef(Pageno)
 
     function Churn() {
-        if (
-            SubjectSelection !== 0 &&
-            TopicsSelection.length !== 0 &&
-            LevelsSelection.length !== 0 &&
-            PapersSelection.length !== 0 &&
-            AssessmentsSelection.length !== 0 &&
-            SchoolsSelection.length !== 0
-        ) {
-            isChurnedRef.current = true
-            PageRef.current = 1
-            props.setSelection({
-                isFiltered: true,
-                Subject: SubjectSelection,
-                Topics: TopicsSelection,
-                Levels: LevelsSelection,
-                Papers: PapersSelection,
-                Assessments: AssessmentsSelection,
-                Schools: SchoolsSelection,
-                QNsperPage: QNsperPageRef.current,
-                isChurned: isChurnedRef.current,
-                initialPage: PageRef.current
-            })
+        var isAllowChurn = false
+        if (!props.LoginData.Email) { //if user is a guest,
+            const NumberofChurns = Cookies.get('ChurnCount')
+            if (!NumberofChurns) { //if there is no cookie for number of churns, create one
+                Cookies.set('ChurnCount', 0)
+            } else {
+                if (parseInt(NumberofChurns) < 5) { //only allow a maximum of 5 churns for guests
+                    //Increment the ChurnCount Cookie
+                    Cookies.set('ChurnCount', parseInt(NumberofChurns) + 1)
+
+                    //Allow Churning for this guest
+                    isAllowChurn = true
+                }
+            }
+        } else { //if user is logged in,
+            //Allow Churning for logged in users
+            isAllowChurn = true
+        }
+
+        if (isAllowChurn) {
+            if (
+                SubjectSelection !== 0 &&
+                TopicsSelection.length !== 0 &&
+                LevelsSelection.length !== 0 &&
+                PapersSelection.length !== 0 &&
+                AssessmentsSelection.length !== 0 &&
+                SchoolsSelection.length !== 0
+            ) {
+                    isChurnedRef.current = true
+                    PageRef.current = 1
+                    props.setSelection({
+                        isFiltered: true,
+                        Subject: SubjectSelection,
+                        Topics: TopicsSelection,
+                        Levels: LevelsSelection,
+                        Papers: PapersSelection,
+                        Assessments: AssessmentsSelection,
+                        Schools: SchoolsSelection,
+                        QNsperPage: QNsperPageRef.current,
+                        isChurned: isChurnedRef.current,
+                        initialPage: PageRef.current
+                    })
+            } else {
+                console.log('Please Select All Categories')
+            }
         } else {
-            console.log('Please Select All Categories')
+                console.log('Please Log in to Churn more')
         }
     }
 
