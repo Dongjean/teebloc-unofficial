@@ -1096,4 +1096,166 @@ async function EditQuestion(QuestionID, FormData) { //First Edit the entry in Qu
     }
 }
 
-module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion};
+async function GetDeactivatedQuestions() {
+    try {
+        const result = await pool.query(`
+        SELECT
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+
+        FROM Questions JOIN Users
+            ON Questions.Email = Users.Email
+        JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        JOIN Papers
+            ON Papers.PaperID = Questions.PaperID
+        JOIN Levels
+            ON Levels.LevelID = Questions.LevelID
+        JOIN Assessments
+            ON Assessments.AssessmentID = Questions.AssessmentID
+        JOIN Schools
+            ON Schools.SchoolID = Questions.SchoolID
+
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
+            
+        WHERE
+            Questions.isActive=FALSE
+        
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
+        `)
+        const Questions = result.rows
+
+        var QuestionImages = [];
+        for (var i=0; i<Questions.length; i++) {
+            const Question = Questions[i]
+
+            //get the first Question Image only related to this Question from DB
+            const QNresult = (await pool.query(`
+            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            FROM QuestionIMGs
+            WHERE QuestionID=$1
+            LIMIT 1
+            `, [Question.questionid])).rows[0]
+
+            //get Image Data from the Image Directory for the first Image for this Question
+            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.questionid
+            })
+        }
+
+        const Data = {
+            Questions: Questions,
+            QuestionImages: QuestionImages
+        }
+        
+        return Data
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Get_Deactivated_Questions_Filtered(Categories) {
+    try {
+        const result = await pool.query(`
+        SELECT
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+
+        FROM Questions JOIN Users
+            ON Users.Email = Questions.Email
+        JOIN Topics
+            ON Topics.TopicID = Questions.TopicID
+        JOIN Papers
+            ON Papers.PaperID = Questions.PaperID
+        JOIN Levels
+            ON Levels.LevelID = Questions.LevelID
+        JOIN Assessments
+            ON Assessments.AssessmentID = Questions.AssessmentID
+        JOIN Schools
+            ON Schools.SchoolID = Questions.SchoolID
+
+        LEFT JOIN Upvotes
+            ON Upvotes.QuestionID = Questions.QuestionID
+
+        WHERE
+            Questions.TopicID=ANY($1::int[]) AND
+            Questions.PaperID=ANY($2::int[]) AND
+            Questions.LevelID=ANY($3::int[]) AND
+            Questions.AssessmentID=ANY($4::int[]) AND
+            Questions.SchoolID=ANY($5::int[]) AND
+
+            Questions.isActive=FALSE
+
+        GROUP BY
+            Upvotes.QuestionID,
+            Questions.QuestionID,
+            Users.FirstName, Users.LastName,
+            Topics.TopicID, Topics.TopicName,
+            Papers.PaperID, Papers.Paper,
+            Levels.LevelID, Levels.Level,
+            Assessments.AssessmentID, Assessments.AssessmentName,
+            Schools.SchoolID, Schools.SchoolName
+        
+        ORDER BY Count(Upvotes.Email) DESC
+        `, [Categories.Topics, Categories.Papers, Categories.Levels, Categories.Assessments, Categories.Schools]) //Get all Questions for the Categories queried
+        const Questions = result.rows
+        console.log(Questions)
+
+        var QuestionImages = [];
+        for (var i=0; i<Questions.length; i++) {
+            const Question = Questions[i]
+
+             //get the first Question Image only related to this Question from DB
+            const QNresult = (await pool.query(`
+            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            FROM QuestionIMGs
+            WHERE QuestionID=$1
+            LIMIT 1
+            `, [Question.questionid])).rows[0]
+
+            //get Image Data from the Image Directory for the first Image for this Question
+            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            QuestionImages.push({
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
+                QuestionIMGData: QNIMGData,
+                QuestionID: QNresult.questionid
+            })
+        }
+
+        const Data = {
+            Questions: Questions,
+            QuestionImages: QuestionImages
+        }
+        return Data
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion, GetDeactivatedQuestions, Get_Deactivated_Questions_Filtered};

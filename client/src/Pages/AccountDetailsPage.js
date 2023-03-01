@@ -46,12 +46,13 @@ function AccountDetailsPage(props) {
                                 null
                             }
 
-                            {/* for Admin accounts, have Add Category, Edit Category, Open Reports and Pay Creators button */}
+                            {/* for Admin accounts, have Add Category, Edit Category, Open Reports, Deactivated Questions and Pay Creators button */}
                             {props.LoginData.AccType == 'Admin' ?
                                 <span>
                                     <button onClick={() => props.PostCategory()}>Add Category</button> <br />
                                     <button onClick={() => props.EditCategory()}>Edit Category</button> <br />
                                     <button onClick={() => props.OpenReports()}>Open Reports</button> <br />
+                                    <button onClick={() => props.OpenDeactivatedQuestions()}>Deactivated Questions</button>
                                     <button onClick={() => props.OpenPayCreators()}>Pay Creators</button>
                                 </span>
                             :

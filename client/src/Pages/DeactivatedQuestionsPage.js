@@ -1,4 +1,4 @@
-import {useParams, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useState, useEffect, useRef} from 'react';
 import API from '../utils/API';
 import useQuery from '../utils/useQuery';
@@ -7,16 +7,15 @@ import useQuery from '../utils/useQuery';
 import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
-function SavedQuestionsPage(props) {
-    let {Email} = useParams();
+function DeactivatedQuestionsPage(props) {
     const query = useQuery();
     const navigate = useNavigate();
-    
+
     const [isLoading, setisLoading] = useState(true)
-    const [SavedQuestions, setSavedQuestions] = useState()
+    const [DeactivatedQuestions, setDeactivatedQuestions] = useState()
 
     const [isFiltering, setisFiltering] = useState(false)
-
+    
     const [Selection, setSelection] = useState({
         isChurned: query.get('isChurned') == 'true' || false,
         isFiltered: query.get('isFiltered') == 'true' || false,
@@ -30,12 +29,11 @@ function SavedQuestionsPage(props) {
         Assessments: JSON.parse(query.get('Assessments')) || null,
         Schools: JSON.parse(query.get('Schools')) || null
     })
-    
-    const [CurrURL, setCurrURL] = useState('/Account/' + Email + '/Saved')
+
+    const [CurrURL, setCurrURL] = useState('/Admin/Questions/Deactivated')
 
     function navigator(Queries) {
-        console.log('/Account/' + Email + '/Saved/' + Queries)
-        setCurrURL('/Account/' + Email + '/Saved/' + Queries)
+        setCurrURL('/Admin/Questions/Deactivated' + Queries)
     }
 
     const isFirstMountRef = useRef(true)
@@ -50,31 +48,32 @@ function SavedQuestionsPage(props) {
 
     useEffect(() => {
         if (Selection.isFiltered) {
-            GetQueriedSavedQuestions(Email, Selection)
+            GetQueriedDeactivatedQuestions(Selection)
         } else {
-            GetAllSavedQuestions(Email)
+            GetAllDeactivatedQuestions()
         }
     }, [Selection])
 
-    async function GetAllSavedQuestions(Email) {
+    async function GetAllDeactivatedQuestions() {
         try {
-            const result = await API.get('/Questions/Get/Saved/All/' + Email)
+            const result = await API.get('/Questions/Get/Deactivated/All')
             console.log(result.data)
-            setSavedQuestions(result.data)
-            
+            setDeactivatedQuestions(result.data)
+
             const temp = Selection
             temp.isChurned = true
             console.log(temp.Page)
             temp.Page = temp.Page || 1
             setSelection(temp)
-            
+            console.log(temp)
             setisLoading(false)
         } catch(err) {
             console.log(err)
         }
     }
-console.log(Selection)
-    async function GetQueriedSavedQuestions(Email, Selection) {
+
+    async function GetQueriedDeactivatedQuestions(Selection) {
+        console.log('hello')
         try {
             const Queries = '?' +
             'Topics=' + JSON.stringify(Selection.Topics) + '&' +
@@ -83,15 +82,16 @@ console.log(Selection)
             'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
             'Schools=' + JSON.stringify(Selection.Schools)
 
-            const result = await API.get('/Questions/Get/Saved/Filtered/' + Email + Queries)
+            const result = await API.get('/Questions/Get/Deactivated/Filtered' + Queries)
             console.log(result.data)
-            setSavedQuestions(result.data)
+            setDeactivatedQuestions(result.data)
             
             const temp = Selection
             temp.isChurned = true
             console.log(temp.Page)
             temp.Page = temp.Page || 1
             setSelection(temp)
+            console.log(temp)
             
             setisLoading(false)
         } catch(err) {
@@ -117,7 +117,7 @@ console.log(Selection)
                     }
 
                     <ChurnedQuestions
-                        Churned={SavedQuestions}
+                        Churned={DeactivatedQuestions}
                         OpenQuestion={(QuestionID) => props.OpenQuestion(QuestionID)}
                         Selection={Selection}
                         LoginData={props.LoginData}
@@ -129,4 +129,4 @@ console.log(Selection)
     )
 }
 
-export default SavedQuestionsPage;
+export default DeactivatedQuestionsPage;

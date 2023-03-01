@@ -34,6 +34,7 @@ function ChurnedQuestions(props) {
     }
 
     function FilteredChurnURLQueriesINIT(Selection) {
+        console.log(Selection.Page)
         props.navigator(
             '?isFiltered=' + true + '&' +
             'Subject=' + Selection.Subject + '&' +

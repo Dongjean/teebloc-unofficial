@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion} = require('../../Servicers/QuestionServices.js');
+const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion, GetDeactivatedQuestions, Get_Deactivated_Questions_Filtered} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -210,6 +210,23 @@ router.post('/Questions/Edit/Question/:QuestionID', fileUpload({createParentPath
     const FormData = req.body
 
     EditQuestion(QuestionID, FormData).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Deactivated/All', authAdminJWT, (req, res) => {
+    GetDeactivatedQuestions().then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Deactivated/Filtered', authAdminJWT, (req, res) => {
+    //parses through the Categories query string
+    const Categories = {
+        Topics: JSON.parse(req.query.Topics),
+        Levels: JSON.parse(req.query.Levels),
+        Papers: JSON.parse(req.query.Papers),
+        Assessments: JSON.parse(req.query.Assessments),
+        Schools: JSON.parse(req.query.Schools)
+    }
+    
+    Get_Deactivated_Questions_Filtered(Categories).then(response => res.json(response))
 })
 
 module.exports = router;
