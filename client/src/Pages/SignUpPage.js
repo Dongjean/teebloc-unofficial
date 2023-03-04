@@ -1,9 +1,12 @@
 import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 //import the API
 import API from '../utils/API.js';
 
 function SignUpPage() {
+    const navigate = useNavigate();
+
     const [isPWValid, setPWValidity] = useState(true); //initially dont display the error message
     const [isEmailValid, setEmailValidity] = useState(true); //initially dont display the error message
 
@@ -25,12 +28,20 @@ function SignUpPage() {
         var isEmailValid;
 
         isPWValid = await GetPWValidity(NewPW, RepeatPW)
-        isEmailValid = await GetEmailValidity(Email)
-
-        if (isPWValid && isEmailValid) {
-            CreateAccount(FirstName, LastName, Email, NewPW, AccType)
+        if (isPWValid) {
+            isEmailValid = await GetEmailValidity(Email)
         }
         
+        if (isEmailValid) {
+            const WasEmailSent = await Send_OTP(Email, NewPW, FirstName, LastName)
+            console.log(WasEmailSent)
+            if (WasEmailSent) {
+                navigate('/SignUp/Verify/Email')
+            } else {
+                isEmailValid = false
+            }
+        }
+
         setPWValidity(isPWValid)
         setEmailValidity(isEmailValid)
     }
@@ -49,27 +60,30 @@ function SignUpPage() {
         //call the API to check if Email already exists
         try {
             const response = await API.get('/SignUp/CheckEmail/' + Email)
-            //response.data is whether or not the Email exists
-            //Email entered is valid if it doesnt already exists, thus return opposite of response.data
-            return !response.data
+            //response.data is whether or not the Email exists in the DB
+
+            if (response.data) {
+                return false //email is invalid if it already exists in the DB
+            } else {
+                return true //email is valid if it doenst yet exist in the DB
+            }
         } catch(err) {
             console.log(err)
         }
     }
 
-    async function CreateAccount(FirstName, LastName, Email, NewPW, AccType) {
-        //call the API for a POST request to add account to Users table
+    async function Send_OTP(Email, NewPW, FirstName, LastName) {
         try {
-            const data = {
-                FirstName: FirstName,
-                LastName: LastName,
+            const response = await API.post('/SignUp/Send_OTP', {
                 Email: Email,
                 NewPW: NewPW,
-                Type: AccType
-            }
-            await API.post('/SignUp/CreateAccount', data)
+                FirstName: FirstName,
+                LastName: LastName
+            })
+
+            return response.data
         } catch(err) {
-            console.log(err)
+
         }
     }
 
@@ -79,7 +93,7 @@ function SignUpPage() {
                 First Name: <input type='text' required value={FirstName} onChange={(event) => {setFirstName(event.target.value)}} />
                 Last Name: <input type='text' required value={LastName} onChange={(event) => {setLastName(event.target.value)}} /> <br />
                 Email: <input type='text' required value={Email} onChange={(event) => {setEmail(event.target.value)}} /> <br />
-                {isEmailValid ? null : <div>The Email is already Taken. Please use another Email.<br /></div>}
+                {isEmailValid ? null : <div>The Email is invalid.<br /></div>}
                 New Password: <input type='text' required value={NewPW} onChange={(event) => {setNewPW(event.target.value)}} /> <br />
                 Repeat Password: <input type='text' required value={RepeatPW} onChange={(event) => {setRepeatPW(event.target.value)}} /> <br />
                 {isPWValid ? null : <div>The Passwords didnt match. Please try again.<br /></div> } {/* Error msg for PW */}

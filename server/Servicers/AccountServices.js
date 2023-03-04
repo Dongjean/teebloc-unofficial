@@ -1,4 +1,5 @@
 const pool = require('../DB.js');
+const transporter = require('../EMail.js');
 
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
@@ -69,4 +70,104 @@ async function GetAccInfo(Email) {
     }
 }
 
-module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo};
+async function Send_OTP(New_User_Data) {
+    const OTP = await Get_OTP()
+
+    let mailOptions = {
+        from: process.env.EMailUser,
+        to: New_User_Data.Email,
+        subject: 'Test Mail',
+        text: OTP
+    }
+
+    try {
+        await transporter.sendMail(mailOptions)
+        console.log("Email sent successfully")
+        Remember_OTP_Temp(60000, OTP, New_User_Data) //remember the OTP for only 60 seconds
+        return true
+    } catch(err) {
+        console.log(err)
+        return false
+    }
+}
+
+async function Get_OTP() {
+    //Get all OTPs currently valid from DB
+    try {
+        const result = await pool.query(`
+        SELECT OTP
+        FROM OTPs
+        `)
+
+        //Generate the OTP
+        while (true) {
+            var OTP = ''
+            //OTP is 6 characters long
+            for (var i=0; i<6; i++) {
+                OTP += String.fromCharCode(RNG(33, 126))
+            }
+
+            if (!result.rows.includes(OTP)) {
+                break
+            }
+        }
+        console.log(OTP)
+        return OTP
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Remember_OTP_Temp(ms, OTP, New_User_Data) {
+    try {
+        await pool.query(`
+        INSERT INTO OTPs VALUES($1, $2, $3, $4, $5)
+        `, [OTP, New_User_Data.Email, New_User_Data.NewPW, New_User_Data.FirstName, New_User_Data.LastName])
+        
+        await wait(ms)
+
+        await pool.query(`
+        DELETE FROM OTPs WHERE OTP=$1
+        `, [OTP])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+function wait(ms) {
+    console.log(ms)
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+function RNG(min, max) {
+    return Math.floor(
+        Math.random() * (max - min + 1) + min
+    )
+}
+
+async function Verify_Email(OTP) {
+    try {
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1 FROM OTPs WHERE OTP=$1
+        )`, [OTP])
+        
+        if (result.rows[0].exists) {
+            const result_userinfo = await pool.query(`
+            SELECT Email, Password, FirstName, LastName FROM OTPs WHERE OTP=$1
+            `, [OTP])
+            
+            var Data = result_userinfo.rows[0]
+            Data.isVerified = true
+            return Data
+        } else {
+            return {isVerified: false}
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email};

@@ -14,6 +14,4 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-console.log('bruh')
-
 module.exports = transporter;

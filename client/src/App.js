@@ -20,6 +20,7 @@ import ReportsPage from './Pages/ReportsPage.js';
 import PayCreatorsPage from './Pages/PayCreatorsPage.js';
 import EditQuestionPage from './Pages/EditQuestionPage.js';
 import DeactivatedQuestionsPage from './Pages/DeactivatedQuestionsPage.js';
+import VerifyEmailPage from './Pages/VerifyEmailPage.js';
 
 import {Routes, Route, useNavigate} from 'react-router-dom';
 import {useState} from 'react';
@@ -112,6 +113,7 @@ function App() {
 				<Route path='/' exact element={<HomePage OpenQuestion={OpenQuestion} LoginData={LoginData} />}/>
 				<Route path='/Login' exact element={<LoginPage Login={Login} />} />
 				<Route path='/SignUp' exact element={<SignUpPage />} />
+				<Route path='/SignUp/Verify/Email' exact element={<VerifyEmailPage Login={Login} />} />
 				<Route path='/Post/Question' exact element={<PostQuestionPage UserEmail={LoginData.Email} />} />
 				<Route path='/Post/Category' exact element={<PostCategoryPage />} />
 
