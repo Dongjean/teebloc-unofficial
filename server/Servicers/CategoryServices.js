@@ -399,7 +399,7 @@ async function AddNewLevel(Data) {
             for (var i=0; i<Data.Assessments.length; i++) {
                 await pool.query(`
                 INSERT INTO Assessment_Level VALUES($1, $2)
-                `, [NewLevelID, Data.Assessments[i]])
+                `, [Data.Assessments[i], NewLevelID])
             }
         }
 
