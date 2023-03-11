@@ -43,7 +43,8 @@ const {
     Delete_Subject,
     Delete_Topic,
     Delete_Level,
-    Delete_Paper
+    Delete_Paper,
+    Delete_Assessment
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -281,6 +282,12 @@ router.post('/Categories/Delete/Paper/:PaperID', (req, res) => {
     const PaperID = req.params.PaperID
 
     Delete_Paper(PaperID).then(response => res.json(response))
+})
+
+router.post('/Categories/Delete/Assessment/:AssessmentID', (req, res) => {
+    const AssessmentID = req.params.AssessmentID
+
+    Delete_Assessment(AssessmentID).then(response => res.json(response))
 })
 
 module.exports = router;

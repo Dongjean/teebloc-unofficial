@@ -658,6 +658,25 @@ async function Delete_Paper(PaperID) {
     }
 }
 
+async function Delete_Assessment(AssessmentID) {
+    try {
+        //Delete relations
+        
+        //Delete Level Relations
+        pool.query(`
+        DELETE FROM Assessment_Level WHERE AssessmentID=$1
+        `, [AssessmentID])
+
+        
+        //Delete the Assessment
+        pool.query(`
+        DELETE FROM Assessments WHERE AssessmentID=$1
+        `, [AssessmentID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -700,5 +719,6 @@ module.exports = {
     Delete_Subject,
     Delete_Topic,
     Delete_Level,
-    Delete_Paper
+    Delete_Paper,
+    Delete_Assessment
 };
