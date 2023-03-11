@@ -616,6 +616,29 @@ async function Delete_Topic(TopicID) {
     }
 }
 
+async function Delete_Level(LevelID) {
+    try {
+        //Delete relations
+        
+        //Delete Subject Relations
+        pool.query(`
+        DELETE FROM Subject_Level WHERE LevelID=$1
+        `, [LevelID])
+        //Delete Assessment Relations
+        pool.query(`
+        DELETE FROM Assessment_Level WHERE LevelID=$1
+        `, [LevelID])
+
+        
+        //Delete the Level
+        pool.query(`
+        DELETE FROM Levels WHERE LevelID=$1
+        `, [LevelID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -656,5 +679,6 @@ module.exports = {
     Link_Assessment_Level,
 
     Delete_Subject,
-    Delete_Topic
+    Delete_Topic,
+    Delete_Level
 };

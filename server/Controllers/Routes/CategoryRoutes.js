@@ -41,7 +41,8 @@ const {
     Link_Assessment_Level,
 
     Delete_Subject,
-    Delete_Topic
+    Delete_Topic,
+    Delete_Level
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -267,6 +268,12 @@ router.post('/Categories/Delete/Topic/:TopicID', (req, res) => {
     const TopicID = req.params.TopicID
 
     Delete_Topic(TopicID).then(response => res.json(response))
+})
+
+router.post('/Categories/Delete/Level/:LevelID', (req, res) => {
+    const LevelID = req.params.LevelID
+
+    Delete_Level(LevelID).then(response => res.json(response))
 })
 
 module.exports = router;

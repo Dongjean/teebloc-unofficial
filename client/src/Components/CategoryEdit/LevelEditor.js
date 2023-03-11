@@ -145,6 +145,18 @@ function LevelEditor() {
         }
     }
 
+    async function Delete() {
+        try {
+            //Delete the Category
+            await API.post('/Categories/Delete/Level/' + EditLevel)
+            
+            //reload page
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditLevel(event.target.value)}>
@@ -250,6 +262,9 @@ function LevelEditor() {
 
 
             <button onClick={Commit_Changes}>Commit Edits</button>
+
+            {/* For Deleting the Catgeory */}
+            <button onClick={Delete}>Delete</button>
             
         </div>
     )
