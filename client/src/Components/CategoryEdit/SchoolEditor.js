@@ -96,6 +96,18 @@ function SchoolEditor() {
         }
     }
 
+    async function Delete() {
+        try {
+            //Delete the Category
+            await API.post('/Categories/Delete/School/' + EditSchool)
+            
+            //reload page
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditSchool(event.target.value)}>
@@ -160,6 +172,9 @@ function SchoolEditor() {
 
 
             <button onClick={Commit_Changes}>Commit Edits</button>
+
+            {/* For Deleting the Catgeory */}
+            <button onClick={Delete}>Delete</button>
 
         </div>
     )

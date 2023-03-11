@@ -44,7 +44,8 @@ const {
     Delete_Topic,
     Delete_Level,
     Delete_Paper,
-    Delete_Assessment
+    Delete_Assessment,
+    Delete_School
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -288,6 +289,12 @@ router.post('/Categories/Delete/Assessment/:AssessmentID', (req, res) => {
     const AssessmentID = req.params.AssessmentID
 
     Delete_Assessment(AssessmentID).then(response => res.json(response))
+})
+
+router.post('/Categories/Delete/School/:SchoolID', (req, res) => {
+    const SchoolID = req.params.SchoolID
+
+    Delete_School(SchoolID).then(response => res.json(response))
 })
 
 module.exports = router;
