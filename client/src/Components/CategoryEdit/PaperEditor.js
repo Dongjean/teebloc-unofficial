@@ -96,6 +96,18 @@ function PaperEditor() {
         }
     }
 
+    async function Delete() {
+        try {
+            //Delete the Category
+            await API.post('/Categories/Delete/Paper/' + EditPaper)
+            
+            //reload page
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditPaper(event.target.value)}>
@@ -160,6 +172,9 @@ function PaperEditor() {
 
 
             <button onClick={Commit_Changes}>Commit Edits</button>
+
+            {/* For Deleting the Catgeory */}
+            <button onClick={Delete}>Delete</button>
 
         </div>
     )
