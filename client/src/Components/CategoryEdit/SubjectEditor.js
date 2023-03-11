@@ -190,6 +190,19 @@ function SubjectEditor() {
                 LinkSchool(EditSubject, LinkedSchools[i])
             }
 
+            //reload page
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+    
+    async function Delete() {
+        try {
+            //Delete the Category
+            await API.post('/Categories/Delete/Subject/' + EditSubject)
+            
+            //reload page
             window.location.reload(false);
         } catch(err) {
             console.log(err)
@@ -342,6 +355,9 @@ function SubjectEditor() {
 
 
             <button onClick={Commit_Changes}>Commit Edits</button>
+
+            {/* For Deleting the Catgeory */}
+            <button onClick={Delete}>Delete</button>
 
         </div>
     )

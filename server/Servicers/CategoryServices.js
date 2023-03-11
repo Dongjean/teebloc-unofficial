@@ -575,6 +575,36 @@ async function Link_Assessment_Level(AssessmentID, LevelID) {
     }
 }
 
+
+//Delete
+
+async function Delete_Subject(SubjectID) {
+    try {
+        //Delete relations
+        
+        //Delete Levels Relations
+        pool.query(`
+        DELETE FROM Subject_Level WHERE SubjectID=$1
+        `, [SubjectID])
+        //Delete Papers Relations
+        pool.query(`
+        DELETE FROM Subject_Paper WHERE SubjectID=$1
+        `, [SubjectID])
+        //Delete Schools Relations
+        pool.query(`
+        DELETE FROM School_Subject WHERE SubjectID=$1
+        `, [SubjectID])
+
+        
+        //Delete the Subject
+        pool.query(`
+        DELETE FROM Subjects WHERE SubjectID=$1
+        `, [SubjectID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -612,5 +642,7 @@ module.exports = {
     Link_Subject_Level,
     Link_Subject_Paper,
     Link_School_Subject,
-    Link_Assessment_Level
+    Link_Assessment_Level,
+
+    Delete_Subject
 };

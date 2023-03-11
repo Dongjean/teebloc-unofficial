@@ -38,7 +38,9 @@ const {
     Link_Subject_Level,
     Link_Subject_Paper,
     Link_School_Subject,
-    Link_Assessment_Level
+    Link_Assessment_Level,
+
+    Delete_Subject
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -249,6 +251,15 @@ router.post('/Categories/Link/Assessment/:AssessmentID/Level/:LevelID', (req, re
     const LevelID = req.params.LevelID
     
     Link_Assessment_Level(AssessmentID, LevelID).then(response => res.json(response))
+})
+
+
+//Delete
+
+router.post('/Categories/Delete/Subject/:SubjectID', (req, res) => {
+    const SubjectID = req.params.SubjectID
+
+    Delete_Subject(SubjectID).then(response => res.json(response))
 })
 
 module.exports = router;
