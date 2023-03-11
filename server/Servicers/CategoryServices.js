@@ -605,6 +605,17 @@ async function Delete_Subject(SubjectID) {
     }
 }
 
+async function Delete_Topic(TopicID) {
+    try {
+        //Delete the Topic
+        pool.query(`
+        DELETE FROM Topics WHERE TopicID=$1
+        `, [TopicID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -644,5 +655,6 @@ module.exports = {
     Link_School_Subject,
     Link_Assessment_Level,
 
-    Delete_Subject
+    Delete_Subject,
+    Delete_Topic
 };

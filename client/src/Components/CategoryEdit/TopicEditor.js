@@ -65,6 +65,18 @@ function TopicEditor() {
         }
     }
 
+    async function Delete() {
+        try {
+            //Delete the Category
+            await API.post('/Categories/Delete/Topic/' + EditTopic)
+            
+            //reload page
+            window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditTopic(event.target.value)}>
@@ -109,6 +121,9 @@ function TopicEditor() {
                     <button onClick={() => setisRelinking(true)}>Start Relinking</button>
                 </div>
             }
+
+            {/* For Deleting the Catgeory */}
+            <button onClick={Delete}>Delete</button>
 
         </div>
     )
