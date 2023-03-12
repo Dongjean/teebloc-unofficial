@@ -709,6 +709,16 @@ async function Rename_Subject(SubjectID, New_SubjectName) {
     }
 }
 
+async function Rename_Topic(TopicID, New_TopicName) {
+    try {
+        await pool.query(`
+        UPDATE Topics SET TopicName=$1 WHERE TopicID=$2
+        `, [New_TopicName, TopicID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -755,5 +765,6 @@ module.exports = {
     Delete_Assessment,
     Delete_School,
 
-    Rename_Subject
+    Rename_Subject,
+    Rename_Topic
 };

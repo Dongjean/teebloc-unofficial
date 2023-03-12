@@ -16,6 +16,9 @@ function TopicEditor() {
 
     const [isRelinking, setisRelinking] = useState(false)
 
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_TopicName = useRef('')
+
     useEffect(() => {
         GetAllTopics()
     }, [])
@@ -77,6 +80,16 @@ function TopicEditor() {
         }
     }
 
+    async function Rename() {
+        try {
+            await API.post('/Categories/Rename/Topic/' + EditTopic, {
+                New_TopicName: New_TopicName.current
+            })
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
             <select onChange={event => setEditTopic(event.target.value)}>
@@ -118,8 +131,21 @@ function TopicEditor() {
                 </div>
             :
                 <div>
-                    <button onClick={() => setisRelinking(true)}>Start Relinking</button>
+                    <button onClick={() => {setisRelinking(true); setisRenaming(false);}}>Start Relinking</button>
                 </div>
+            }
+
+            {/* Get New Topic Name */}
+            {isRenaming ?
+                <span>
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                    New Topic Name: <input type='text' onChange={event => New_TopicName.current = event.target.value} />
+                    <button onClick={Rename}>Rename</button> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => {setisRenaming(true); setisRelinking(false);}}>Start Renaming</button> <br />
+                </span>
             }
 
             {/* For Deleting the Catgeory */}
