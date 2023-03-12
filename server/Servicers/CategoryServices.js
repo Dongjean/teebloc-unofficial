@@ -696,6 +696,19 @@ async function Delete_School(SchoolID) {
     }
 }
 
+
+//Rename
+
+async function Rename_Subject(SubjectID, New_SubjectName) {
+    try {
+        await pool.query(`
+        UPDATE Subjects SET Subject=$1 WHERE SubjectID=$2
+        `, [New_SubjectName, SubjectID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -740,5 +753,7 @@ module.exports = {
     Delete_Level,
     Delete_Paper,
     Delete_Assessment,
-    Delete_School
+    Delete_School,
+
+    Rename_Subject
 };

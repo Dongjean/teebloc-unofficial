@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 import API from '../../utils/API.js';
 
@@ -31,6 +31,9 @@ function SubjectEditor() {
     const [LinkedLevels, setLinkedLevels] = useState([])
     const [LinkedPapers, setLinkedPapers] = useState([])
     const [LinkedSchools, setLinkedSchools] = useState([])
+
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_SubjectName = useRef('')
 
     useEffect(() => {
         GetAllSubjects()
@@ -190,6 +193,12 @@ function SubjectEditor() {
                 LinkSchool(EditSubject, LinkedSchools[i])
             }
 
+            //Renaming if needed
+            
+            if (isRenaming) {
+                Rename(New_SubjectName)
+            }
+
             //reload page
             window.location.reload(false);
         } catch(err) {
@@ -204,6 +213,16 @@ function SubjectEditor() {
             
             //reload page
             window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function Rename(New_SubjectName) {
+        try {
+            await API.post('/Categories/Rename/Subject/' + EditSubject, {
+                New_SubjectName: New_SubjectName.current
+            })
         } catch(err) {
             console.log(err)
         }
@@ -353,6 +372,17 @@ function SubjectEditor() {
                 </div>
             }
 
+            {/* Get New Subject Name */}
+            {isRenaming ?
+                <span>
+                    New Subject Name: <input type='text' onChange={event => New_SubjectName.current = event.target.value} /> <br />
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => setisRenaming(true)}>Start Renaming</button> <br />
+                </span>
+            }
 
             <button onClick={Commit_Changes}>Commit Edits</button>
 
