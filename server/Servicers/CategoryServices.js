@@ -739,6 +739,16 @@ async function Rename_Paper(PaperID, New_PaperName) {
     }
 }
 
+async function Rename_Assessment(AssessmentID, New_AssessmentName) {
+    try {
+        await pool.query(`
+        UPDATE Assessments SET AssessmentName=$1 WHERE AssessmentID=$2
+        `, [New_AssessmentName, AssessmentID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -788,5 +798,6 @@ module.exports = {
     Rename_Subject,
     Rename_Topic,
     Rename_Level,
-    Rename_Paper
+    Rename_Paper,
+    Rename_Assessment
 };

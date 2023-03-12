@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 import API from '../../utils/API.js';
 
@@ -19,6 +19,9 @@ function AssessmentEditor() {
     const [UnlinkedLevels, setUnlinkedLevels] = useState([])
 
     const [LinkedLevels, setLinkedLevels] = useState([])
+
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_AssessmentName = useRef('')
 
     useEffect(() => {
         GetAllAssessments()
@@ -90,6 +93,13 @@ function AssessmentEditor() {
                 LinkLevel(EditAssessment, LinkedLevels[i])
             }
 
+            //Renaming if needed
+            
+            if (isRenaming) {
+                Rename(New_AssessmentName)
+            }
+
+            //reload page
             window.location.reload(false);
         } catch(err) {
             console.log(err)
@@ -103,6 +113,16 @@ function AssessmentEditor() {
             
             //reload page
             window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function Rename(New_AssessmentName) {
+        try {
+            await API.post('/Categories/Rename/Assessment/' + EditAssessment, {
+                New_AssessmentName: New_AssessmentName.current
+            })
         } catch(err) {
             console.log(err)
         }
@@ -170,6 +190,17 @@ function AssessmentEditor() {
                 </div>
             }
 
+            {/* Get New Assessment Name */}
+            {isRenaming ?
+                <span>
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                    New Assessment Name: <input type='text' onChange={event => New_AssessmentName.current = event.target.value} /> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => setisRenaming(true)}>Start Renaming</button> <br />
+                </span>
+            }
 
             <button onClick={Commit_Changes}>Commit Edits</button>
 

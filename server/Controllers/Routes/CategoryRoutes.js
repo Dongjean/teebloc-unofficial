@@ -50,7 +50,8 @@ const {
     Rename_Subject,
     Rename_Topic,
     Rename_Level,
-    Rename_Paper
+    Rename_Paper,
+    Rename_Assessment
 } = require('../../Servicers/CategoryServices.js');
 
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
@@ -331,6 +332,13 @@ router.post('/Categories/Rename/Paper/:PaperID', (req, res) => {
     const New_PaperName = req.body.New_PaperName
 
     Rename_Paper(PaperID, New_PaperName).then(response => res.json(response))
+})
+
+router.post('/Categories/Rename/Assessment/:AssessmentID', (req, res) => {
+    const AssessmentID = req.params.AssessmentID
+    const New_AssessmentName = req.body.New_AssessmentName
+
+    Rename_Assessment(AssessmentID, New_AssessmentName).then(response => res.json(response))
 })
 
 module.exports = router;
