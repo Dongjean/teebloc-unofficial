@@ -749,6 +749,16 @@ async function Rename_Assessment(AssessmentID, New_AssessmentName) {
     }
 }
 
+async function Rename_School(SchoolID, New_SchoolName) {
+    try {
+        await pool.query(`
+        UPDATE Schools SET SchoolName=$1 WHERE SchoolID=$2
+        `, [New_SchoolName, SchoolID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -799,5 +809,6 @@ module.exports = {
     Rename_Topic,
     Rename_Level,
     Rename_Paper,
-    Rename_Assessment
+    Rename_Assessment,
+    Rename_School
 };

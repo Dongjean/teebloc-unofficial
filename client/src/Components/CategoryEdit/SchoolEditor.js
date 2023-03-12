@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 import API from '../../utils/API.js';
 
@@ -19,6 +19,9 @@ function SchoolEditor() {
     const [UnlinkedSubjects, setUnlinkedSubjects] = useState([])
 
     const [LinkedSubjects, setLinkedSubjects] = useState([])
+
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_SchoolName = useRef('')
 
     useEffect(() => {
         GetAllSchools()
@@ -90,6 +93,13 @@ function SchoolEditor() {
                 LinkSubject(EditSchool, LinkedSubjects[i])
             }
 
+            //Renaming if needed
+            
+            if (isRenaming) {
+                Rename(New_SchoolName)
+            }
+
+            //reload page
             window.location.reload(false);
         } catch(err) {
             console.log(err)
@@ -103,6 +113,16 @@ function SchoolEditor() {
             
             //reload page
             window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function Rename(New_SchoolName) {
+        try {
+            await API.post('/Categories/Rename/School/' + EditSchool, {
+                New_SchoolName: New_SchoolName.current
+            })
         } catch(err) {
             console.log(err)
         }
@@ -170,6 +190,17 @@ function SchoolEditor() {
                 </div>
             }
 
+            {/* Get New School Name */}
+            {isRenaming ?
+                <span>
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                    New School Name: <input type='text' onChange={event => New_SchoolName.current = event.target.value} /> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => setisRenaming(true)}>Start Renaming</button> <br />
+                </span>
+            }
 
             <button onClick={Commit_Changes}>Commit Edits</button>
 
