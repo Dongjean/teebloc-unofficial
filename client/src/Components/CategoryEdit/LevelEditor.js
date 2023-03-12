@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 import API from '../../utils/API.js';
 
@@ -25,6 +25,9 @@ function LevelEditor() {
 
     const [LinkedSubjects, setLinkedSubjects] = useState([])
     const [LinkedAssessments, setLinkedAssessments] = useState([])
+
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_LevelName = useRef('')
 
     useEffect(() => {
         GetAllLevels()
@@ -139,6 +142,13 @@ function LevelEditor() {
                 LinkAssessment(EditLevel, LinkedAssessments[i])
             }
 
+            //Renaming if needed
+
+            if (isRenaming) {
+                Rename(New_LevelName)
+            }
+
+            //Reload Page
             window.location.reload(false);
         } catch(err) {
             console.log(err)
@@ -152,6 +162,16 @@ function LevelEditor() {
             
             //reload page
             window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function Rename(New_LevelName) {
+        try {
+            await API.post('/Categories/Rename/Level/' + EditLevel, {
+                New_LevelName: New_LevelName.current
+            })
         } catch(err) {
             console.log(err)
         }
@@ -260,6 +280,17 @@ function LevelEditor() {
                 </div>
             }
 
+            {/* Get New Level Name */}
+            {isRenaming ?
+                <span>
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                    New Level Name: <input type='text' onChange={event => New_LevelName.current = event.target.value} /> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => setisRenaming(true)}>Start Renaming</button> <br />
+                </span>
+            }
 
             <button onClick={Commit_Changes}>Commit Edits</button>
 
