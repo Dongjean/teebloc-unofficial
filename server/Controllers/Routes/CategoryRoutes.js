@@ -196,28 +196,28 @@ router.post('/Categories/New/School', authAdminJWT, (req, res) => {
 
 //Unlink
 
-router.post('/Categories/Unlink/Subject/:SubjectID/Level/:LevelID', (req, res) => {
+router.post('/Categories/Unlink/Subject/:SubjectID/Level/:LevelID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
     const LevelID = req.params.LevelID
     
     Unlink_Subject_Level(SubjectID, LevelID).then(response => res.json(response))
 })
 
-router.post('/Categories/Unlink/Subject/:SubjectID/Paper/:PaperID', (req, res) => {
+router.post('/Categories/Unlink/Subject/:SubjectID/Paper/:PaperID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
     const PaperID = req.params.PaperID
     
     Unlink_Subject_Paper(SubjectID, PaperID).then(response => res.json(response))
 })
 
-router.post('/Categories/Unlink/School/:SchoolID/Subject/:SubjectID', (req, res) => {
+router.post('/Categories/Unlink/School/:SchoolID/Subject/:SubjectID', authAdminJWT, (req, res) => {
     const SchoolID = req.params.SchoolID
     const SubjectID = req.params.SubjectID
     
     Unlink_School_Subject(SchoolID, SubjectID).then(response => res.json(response))
 })
 
-router.post('/Categories/Unlink/Assessment/:AssessmentID/Level/:LevelID', (req, res) => {
+router.post('/Categories/Unlink/Assessment/:AssessmentID/Level/:LevelID', authAdminJWT, (req, res) => {
     const AssessmentID = req.params.AssessmentID
     const LevelID = req.params.LevelID
     
@@ -227,7 +227,7 @@ router.post('/Categories/Unlink/Assessment/:AssessmentID/Level/:LevelID', (req, 
 
 //Relink
 
-router.post('/Categories/Relink/Topic/:TopicID/Subject/:SubjectID', (req, res) => {
+router.post('/Categories/Relink/Topic/:TopicID/Subject/:SubjectID', authAdminJWT, (req, res) => {
     const TopicID = req.params.TopicID
     const SubjectID = req.params.SubjectID
 
@@ -237,28 +237,28 @@ router.post('/Categories/Relink/Topic/:TopicID/Subject/:SubjectID', (req, res) =
 
 //Link
 
-router.post('/Categories/Link/Subject/:SubjectID/Level/:LevelID', (req, res) => {
+router.post('/Categories/Link/Subject/:SubjectID/Level/:LevelID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
     const LevelID = req.params.LevelID
 
     Link_Subject_Level(SubjectID, LevelID).then(response => res.json(response))
 })
 
-router.post('/Categories/Link/Subject/:SubjectID/Paper/:PaperID', (req, res) => {
+router.post('/Categories/Link/Subject/:SubjectID/Paper/:PaperID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
     const PaperID = req.params.PaperID
 
     Link_Subject_Paper(SubjectID, PaperID).then(response => res.json(response))
 })
 
-router.post('/Categories/Link/School/:SchoolID/Subject/:SubjectID', (req, res) => {
+router.post('/Categories/Link/School/:SchoolID/Subject/:SubjectID', authAdminJWT, (req, res) => {
     const SchoolID = req.params.SchoolID
     const SubjectID = req.params.SubjectID
 
     Link_School_Subject(SchoolID, SubjectID).then(response => res.json(response))
 })
 
-router.post('/Categories/Link/Assessment/:AssessmentID/Level/:LevelID', (req, res) => {
+router.post('/Categories/Link/Assessment/:AssessmentID/Level/:LevelID', authAdminJWT, (req, res) => {
     const AssessmentID = req.params.AssessmentID
     const LevelID = req.params.LevelID
     
@@ -268,37 +268,37 @@ router.post('/Categories/Link/Assessment/:AssessmentID/Level/:LevelID', (req, re
 
 //Delete
 
-router.post('/Categories/Delete/Subject/:SubjectID', (req, res) => {
+router.post('/Categories/Delete/Subject/:SubjectID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
 
     Delete_Subject(SubjectID).then(response => res.json(response))
 })
 
-router.post('/Categories/Delete/Topic/:TopicID', (req, res) => {
+router.post('/Categories/Delete/Topic/:TopicID', authAdminJWT, (req, res) => {
     const TopicID = req.params.TopicID
 
     Delete_Topic(TopicID).then(response => res.json(response))
 })
 
-router.post('/Categories/Delete/Level/:LevelID', (req, res) => {
+router.post('/Categories/Delete/Level/:LevelID', authAdminJWT, (req, res) => {
     const LevelID = req.params.LevelID
 
     Delete_Level(LevelID).then(response => res.json(response))
 })
 
-router.post('/Categories/Delete/Paper/:PaperID', (req, res) => {
+router.post('/Categories/Delete/Paper/:PaperID', authAdminJWT, (req, res) => {
     const PaperID = req.params.PaperID
 
     Delete_Paper(PaperID).then(response => res.json(response))
 })
 
-router.post('/Categories/Delete/Assessment/:AssessmentID', (req, res) => {
+router.post('/Categories/Delete/Assessment/:AssessmentID', authAdminJWT, (req, res) => {
     const AssessmentID = req.params.AssessmentID
 
     Delete_Assessment(AssessmentID).then(response => res.json(response))
 })
 
-router.post('/Categories/Delete/School/:SchoolID', (req, res) => {
+router.post('/Categories/Delete/School/:SchoolID', authAdminJWT, (req, res) => {
     const SchoolID = req.params.SchoolID
 
     Delete_School(SchoolID).then(response => res.json(response))
@@ -307,42 +307,42 @@ router.post('/Categories/Delete/School/:SchoolID', (req, res) => {
 
 //Rename
 
-router.post('/Categories/Rename/Subject/:SubjectID', (req, res) => {
+router.post('/Categories/Rename/Subject/:SubjectID', authAdminJWT, (req, res) => {
     const SubjectID = req.params.SubjectID
     const New_SubjectName = req.body.New_SubjectName
 
     Rename_Subject(SubjectID, New_SubjectName).then(response => res.json(response))
 })
 
-router.post('/Categories/Rename/Topic/:TopicID', (req, res) => {
+router.post('/Categories/Rename/Topic/:TopicID', authAdminJWT, (req, res) => {
     const TopicID = req.params.TopicID
     const New_TopicName = req.body.New_TopicName
 
     Rename_Topic(TopicID, New_TopicName).then(response => res.json(response))
 })
 
-router.post('/Categories/Rename/Level/:LevelID', (req, res) => {
+router.post('/Categories/Rename/Level/:LevelID', authAdminJWT, (req, res) => {
     const LevelID = req.params.LevelID
     const New_LevelName = req.body.New_LevelName
 
     Rename_Level(LevelID, New_LevelName).then(response => res.json(response))
 })
 
-router.post('/Categories/Rename/Paper/:PaperID', (req, res) => {
+router.post('/Categories/Rename/Paper/:PaperID', authAdminJWT, (req, res) => {
     const PaperID = req.params.PaperID
     const New_PaperName = req.body.New_PaperName
 
     Rename_Paper(PaperID, New_PaperName).then(response => res.json(response))
 })
 
-router.post('/Categories/Rename/Assessment/:AssessmentID', (req, res) => {
+router.post('/Categories/Rename/Assessment/:AssessmentID', authAdminJWT, (req, res) => {
     const AssessmentID = req.params.AssessmentID
     const New_AssessmentName = req.body.New_AssessmentName
 
     Rename_Assessment(AssessmentID, New_AssessmentName).then(response => res.json(response))
 })
 
-router.post('/Categories/Rename/School/:SchoolID', (req, res) => {
+router.post('/Categories/Rename/School/:SchoolID', authAdminJWT, (req, res) => {
     const SchoolID = req.params.SchoolID
     const New_SchoolName = req.body.New_SchoolName
 
