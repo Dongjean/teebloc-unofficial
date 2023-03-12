@@ -729,6 +729,16 @@ async function Rename_Level(LevelID, New_LevelName) {
     }
 }
 
+async function Rename_Paper(PaperID, New_PaperName) {
+    try {
+        await pool.query(`
+        UPDATE Papers SET Paper=$1 WHERE PaperID=$2
+        `, [New_PaperName, PaperID])
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 module.exports = {
     Get_Levels_fromSubjectID,
     Get_Levels_fromAssessmentID,
@@ -777,5 +787,6 @@ module.exports = {
 
     Rename_Subject,
     Rename_Topic,
-    Rename_Level
+    Rename_Level,
+    Rename_Paper
 };

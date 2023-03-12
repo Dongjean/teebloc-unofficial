@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 import API from '../../utils/API.js';
 
@@ -19,6 +19,9 @@ function PaperEditor() {
     const [UnlinkedSubjects, setUnlinkedSubjects] = useState([])
 
     const [LinkedSubjects, setLinkedSubjects] = useState([])
+
+    const [isRenaming, setisRenaming] = useState(false)
+    const New_PaperName = useRef('')
 
     useEffect(() => {
         GetAllPapers()
@@ -90,6 +93,13 @@ function PaperEditor() {
                 LinkSubject(EditPaper, LinkedSubjects[i])
             }
 
+            //Renaming if needed
+            
+            if (isRenaming) {
+                Rename(New_PaperName)
+            }
+
+            //reload page
             window.location.reload(false);
         } catch(err) {
             console.log(err)
@@ -103,6 +113,16 @@ function PaperEditor() {
             
             //reload page
             window.location.reload(false);
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    async function Rename(New_PaperName) {
+        try {
+            await API.post('/Categories/Rename/Paper/' + EditPaper, {
+                New_PaperName: New_PaperName.current
+            })
         } catch(err) {
             console.log(err)
         }
@@ -170,6 +190,17 @@ function PaperEditor() {
                 </div>
             }
 
+            {/* Get New Paper Name */}
+            {isRenaming ?
+                <span>
+                    <button onClick={() => setisRenaming(false)}>Stop Renaming</button> <br />
+                    New Paper Name: <input type='text' onChange={event => New_PaperName.current = event.target.value} /> <br />
+                </span>
+            :
+                <span>
+                    <button onClick={() => setisRenaming(true)}>Start Renaming</button> <br />
+                </span>
+            }
 
             <button onClick={Commit_Changes}>Commit Edits</button>
 
