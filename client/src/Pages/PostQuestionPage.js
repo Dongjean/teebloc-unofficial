@@ -121,6 +121,9 @@ function PostQuestionPage(props) {
             FD.append('Email', props.UserEmail)
             
             await API.post('/Questions/PostQuestion', FD)
+
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
