@@ -28,6 +28,8 @@ function PostCategoryPage() {
         
         try {
             await API.post('/Categories/New/Subject', {Levels: Levels, Papers: Papers, Schools: Schools, NewSubject: NewSubject})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
@@ -48,6 +50,8 @@ function PostCategoryPage() {
 
         try {
             await API.post('/Categories/New/Topic', {Subject: Subject, NewTopic:NewTopic})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
@@ -63,6 +67,8 @@ function PostCategoryPage() {
 
         try {
             await API.post('/Categories/New/Level', {Subjects: Subjects, Assessments: Assessments, NewLevel: NewLevel})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
@@ -78,6 +84,8 @@ function PostCategoryPage() {
 
         try {
             await API.post('/Categories/New/Assessment', {Levels: Levels, NewAssessment: NewAssessment})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
@@ -93,6 +101,8 @@ function PostCategoryPage() {
 
         try {
             await API.post('/Categories/New/School', {Subjects: Subjects, NewSchool: NewSchool})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
@@ -108,6 +118,8 @@ function PostCategoryPage() {
 
         try {
             await API.post('/Categories/New/Paper', {Subjects: Subjects, NewPaper: NewPaper})
+            //Reload Page
+            window.location.reload(false);
         } catch(err) {
             console.log(err)
         }
