@@ -1,11 +1,22 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 function School(props) {
     const [isChecked, setisChecked] = useState(props.isSchoolSelected)
 
+    useEffect(() => {
+        if (props.isAllSelected) {
+            setisChecked(true)
+            props.SchoolSelected(props.School.schoolid)
+        } else if (props.isAllDeselected) {
+            setisChecked(false)
+            props.SchoolDeselected(props.School.schoolid)
+        }
+    }, [props.isAllSelected, props.isAllDeselected])
+
     function onClick() {
         setisChecked(!isChecked)
 
+        props.setAllSelectors(false)
         if (!isChecked == true) {
             props.SchoolSelected(props.School.schoolid)
         } else {

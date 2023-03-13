@@ -6,7 +6,7 @@ import PaperSelector from "./PaperSelector.js";
 import AssessmentSelector from "./AssessmentSelector.js";
 import SchoolSelector from "./SchoolSelector.js";
 
-import {useMemo, useState, useRef, useEffect} from 'react';
+import {useMemo, useState, useRef} from 'react';
 import {useLocation} from "react-router-dom";
 import Cookies from '../../../utils/Cookies.js';
 
@@ -270,7 +270,23 @@ function MasterSelector(props) {
                 <a onClick={() => setSchoolsDiplay('none')}>▲ Schools</a>
             }
             <span style={{display: SchoolsDiplay}}>
-                <SchoolSelector SubjectSelection={SubjectSelection} SchoolChanged={(Schools) => setSchoolsSelection(Schools)} SchoolsSelection={SchoolsSelection} />
+                <SchoolSelector SubjectSelection={SubjectSelection} SchoolChanged={(SchoolID, ChangeType) => {
+                    //ChangeType = true if the Category is to be added
+                    //ChangeType = false if the Category is to be removed
+                    if (ChangeType) {
+                        setSchoolsSelection(current => {
+                            if (current.includes(parseInt(SchoolID))) {
+                                return current
+                            } else {
+                                var temp = [...current]
+                                temp.push(parseInt(SchoolID))
+                                return temp
+                            }
+                        })
+                    } else {
+                        setSchoolsSelection(current => current.filter(schoolid => schoolid !== parseInt(SchoolID)))
+                    }
+                }} SchoolsSelection={SchoolsSelection} />
             </span>
 
             {/* by default have 5 Questions per page if not specified by URL query params */}
