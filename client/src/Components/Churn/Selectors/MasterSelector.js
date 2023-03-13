@@ -139,7 +139,7 @@ function MasterSelector(props) {
                 console.log('Please Log in to Churn more')
         }
     }
-    
+
     return(
         <div>
             <SubjectSelector onSubjectSelected={(Subject) => setSubjectSelection(Subject)} SubjectSelection={SubjectSelection} />
@@ -225,7 +225,23 @@ function MasterSelector(props) {
                 <a onClick={() => setAssessmentsDisplay('none')}>▲ Assessments:</a>
             }
             <span style={{display: AssessmentsDisplay}}>
-                <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(Assessments) => setAssessmentsSelection(Assessments)} AssessmentsSelection={AssessmentsSelection} />
+                <AssessmentSelector LevelsSelection={LevelsSelection} AssessmentChanged={(AssessmentID, ChangeType) => {
+                    //ChangeType = true if the Category is to be added
+                    //ChangeType = false if the Category is to be removed
+                    if (ChangeType) {
+                        setAssessmentsSelection(current => {
+                            if (current.includes(parseInt(AssessmentID))) {
+                                return current
+                            } else {
+                                var temp = [...current]
+                                temp.push(parseInt(AssessmentID))
+                                return temp
+                            }
+                        })
+                    } else {
+                        setAssessmentsSelection(current => current.filter(assessmentid => assessmentid !== parseInt(AssessmentID)))
+                    }
+                }} AssessmentsSelection={AssessmentsSelection} />
             </span>
 
             {/* For Displaying Schools */}

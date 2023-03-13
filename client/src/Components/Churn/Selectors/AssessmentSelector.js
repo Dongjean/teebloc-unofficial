@@ -9,6 +9,12 @@ function AssessmentSelector(props) {
     const [Assessments, setAssessments] = useState([])
     const [AssessmentsSelection, setAssessmentsSelection] = useState(props.AssessmentsSelection)
 
+    //isAllSelected and isAllDeselected do not store whether or not all the assessments are selected/deselected
+    //instead, it stores whether the Select All or Deselect All buttons have been clicked
+    const [isAllSelected, setisAllSelected] = useState(false)
+    const [isAllDeselected, setisAllDeselected] = useState(false)
+
+
     //calls everytime new Levels are selected
     useEffect(() => {
         getAssessments(props.LevelsSelection)
@@ -20,38 +26,59 @@ function AssessmentSelector(props) {
             const result = await API.get('/Categories/Get/Assessments/fromLevels/' + LevelIDs)
             setAssessments(result.data)
             
-            var temp = AssessmentsSelection;
             const AssessmentIDs = result.data.map(Assessment => parseInt(Assessment.assessmentid))
             for (var i=0; i<AssessmentsSelection.length; i++) {
                 if (!AssessmentIDs.includes(AssessmentsSelection[i])) {
-                    temp = temp.filter(AssessmentID => AssessmentID !== AssessmentsSelection[i])
+                    setAssessmentsSelection(current => current.filter(assessmentid => assessmentid !== AssessmentsSelection[i]))
+                    props.AssessmentChanged(AssessmentsSelection[i], false)
                 }
             }
-            setAssessmentsSelection(temp)
-            props.AssessmentChanged(temp)
         } catch(err) {
             console.log(err)
         }
     }
 
     function AssessmentSelected(AssessmentID) {
-        var temp = [...AssessmentsSelection]
-        temp.push(parseInt(AssessmentID))
-        setAssessmentsSelection(temp)
-        props.AssessmentChanged(temp)
+        setAssessmentsSelection(current => {
+            if (current.includes(parseInt(AssessmentID))) {
+                return current
+            } else {
+                current.push(parseInt(AssessmentID))
+                return current
+            }
+        })
+
+        props.AssessmentChanged(AssessmentID, true)
     }
 
     function AssessmentDeselected(AssessmentID) {
-        const temp = AssessmentsSelection.filter(assessmentid => assessmentid !== parseInt(AssessmentID))
-        setAssessmentsSelection(temp)
-        props.AssessmentChanged(temp)
+        setAssessmentsSelection(current => current.filter(assessmentid => assessmentid !== parseInt(AssessmentID)))
+        props.AssessmentChanged(AssessmentID, false)
+    }
+
+    function Select_All() {
+        setisAllSelected(true)
+
+        setisAllDeselected(false)
+    }
+
+    function Deselect_All() {
+        setisAllDeselected(true)
+
+        setisAllSelected(false)
     }
 
     return (
         <div>
             {Assessments.map(assessment =>
-                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} isAssessmentSelected={AssessmentsSelection.includes(parseInt(assessment.assessmentid))} />
-            )}          
+                <Assessment key={assessment.assessmentid} Assessment={assessment} AssessmentSelected={AssessmentSelected} AssessmentDeselected={AssessmentDeselected} isAssessmentSelected={AssessmentsSelection.includes(parseInt(assessment.assessmentid))} isAllSelected={isAllSelected} isAllDeselected={isAllDeselected} setAllSelectors={bool => {setisAllSelected(bool); setisAllDeselected(bool)}} />
+            )}
+
+            {/* Button to select all */}
+            <button onClick={Select_All}>Select All Assessments</button>
+
+            {/* Button to deselect all */}
+            <button onClick={Deselect_All}>Deselect All Assessments</button>
         </div>
     )
 }
