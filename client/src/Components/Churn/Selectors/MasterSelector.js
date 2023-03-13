@@ -6,7 +6,7 @@ import PaperSelector from "./PaperSelector.js";
 import AssessmentSelector from "./AssessmentSelector.js";
 import SchoolSelector from "./SchoolSelector.js";
 
-import {useMemo, useState, useRef} from 'react';
+import {useMemo, useState, useRef, useEffect} from 'react';
 import {useLocation} from "react-router-dom";
 import Cookies from '../../../utils/Cookies.js';
 
@@ -182,7 +182,23 @@ function MasterSelector(props) {
                 <a onClick={() => setLevelsDisplay('none')}>▲ Levels:</a>
             }
             <span style={{display: LevelsDisplay}}>
-                <LevelSelector SubjectSelection={SubjectSelection} LevelChanged={(Levels) => setLevelsSelection(Levels)} LevelsSelection={LevelsSelection} />
+                <LevelSelector SubjectSelection={SubjectSelection} LevelChanged={(LevelID, ChangeType) => {
+                    //ChangeType = true if the Category is to be added
+                    //ChangeType = false if the Category is to be removed
+                    if (ChangeType) {
+                        setLevelsSelection(current => {
+                            if (current.includes(parseInt(LevelID))) {
+                                return current
+                            } else {
+                                var temp = [...current]
+                                temp.push(parseInt(LevelID))
+                                return temp
+                            }
+                        })
+                    } else {
+                        setLevelsSelection(current => current.filter(levelid => levelid !== parseInt(LevelID)))
+                    }
+                }} LevelsSelection={LevelsSelection} />
             </span>
 
             {/* For Displaying Papers */}
