@@ -212,7 +212,23 @@ function MasterSelector(props) {
                 <a onClick={() => setPapersDisplay('none')}>▲ Papers:</a>
             }
             <span style={{display: PapersDisplay}}>
-                <PaperSelector SubjectSelection={SubjectSelection} PaperChanged={(Papers) => setPapersSelection(Papers)} PapersSelection={PapersSelection} />
+                <PaperSelector SubjectSelection={SubjectSelection} PaperChanged={(PaperID, ChangeType) => {
+                    //ChangeType = true if the Category is to be added
+                    //ChangeType = false if the Category is to be removed
+                    if (ChangeType) {
+                        setPapersSelection(current => {
+                            if (current.includes(parseInt(PaperID))) {
+                                return current
+                            } else {
+                                var temp = [...current]
+                                temp.push(parseInt(PaperID))
+                                return temp
+                            }
+                        })
+                    } else {
+                        setPapersSelection(current => current.filter(paperid => paperid !== parseInt(PaperID)))
+                    }
+                }} PapersSelection={PapersSelection} />
             </span>
 
             {/* For Displaying Assessments */}

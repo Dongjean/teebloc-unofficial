@@ -9,6 +9,11 @@ function PaperSelector(props) {
     const [Papers, setPapers] = useState([])
     const [PapersSelection, setPapersSelection] = useState(props.PapersSelection)
 
+    //isAllSelected and isAllDeselected do not store whether or not all the papers are selected/deselected
+    //instead, it stores whether the Select All or Deselect All buttons have been clicked
+    const [isAllSelected, setisAllSelected] = useState(false)
+    const [isAllDeselected, setisAllDeselected] = useState(false)
+
     //calls everytime a new subject is selected
     useEffect(() => {
         getPapers(props.SubjectSelection)
@@ -19,38 +24,59 @@ function PaperSelector(props) {
             const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + Subject)
             setPapers(result.data)
 
-            var temp = PapersSelection;
             const PaperIDs = result.data.map(paper => parseInt(paper.paperid))
             for (var i=0; i<PapersSelection.length; i++) {
                 if (!PaperIDs.includes(PapersSelection[i])) {
-                    temp = temp.filter(PaperID => PaperID !== PapersSelection[i])
+                    setPapersSelection(current => current.filter(paperid => paperid !== PapersSelection[i]))
+                    props.PaperChanged(PapersSelection[i], false)
                 }
             }
-            setPapersSelection(temp)
-            props.PaperChanged(temp)
         } catch(err) {
             console.log(err)
         }
     }
 
     function PaperSelected(PaperID) {
-        var temp = [...PapersSelection]
-        temp.push(parseInt(PaperID))
-        setPapersSelection(temp)
-        props.PaperChanged(temp)
+        setPapersSelection(current => {
+            if (current.includes(parseInt(PaperID))) {
+                return current
+            } else {
+                current.push(parseInt(PaperID))
+                return current
+            }
+        })
+
+        props.PaperChanged(PaperID, true)
     }
 
     function PaperDeselected(PaperID) {
-        const temp = PapersSelection.filter(paperid => paperid !== parseInt(PaperID))
-        setPapersSelection(temp)
-        props.PaperChanged(temp)
+        setPapersSelection(current => current.filter(paperid => paperid !== parseInt(PaperID)))
+        props.PaperChanged(PaperID, false)
+    }
+
+    function Select_All() {
+        setisAllSelected(true)
+
+        setisAllDeselected(false)
+    }
+
+    function Deselect_All() {
+        setisAllDeselected(true)
+
+        setisAllSelected(false)
     }
 
     return (
         <div>
             {Papers.map(paper =>
-                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} isPaperSelected={PapersSelection.includes(parseInt(paper.paperid))} />
+                <Paper key={paper.paperid} Paper={paper} PaperSelected={PaperSelected} PaperDeselected={PaperDeselected} isPaperSelected={PapersSelection.includes(parseInt(paper.paperid))} isAllSelected={isAllSelected} isAllDeselected={isAllDeselected} setAllSelectors={bool => {setisAllSelected(bool); setisAllDeselected(bool)}} />
             )}
+
+            {/* Button to select all */}
+            <button onClick={Select_All}>Select All Papers</button>
+
+            {/* Button to deselect all */}
+            <button onClick={Deselect_All}>Deselect All Papers</button>
         </div>
     )
 }
