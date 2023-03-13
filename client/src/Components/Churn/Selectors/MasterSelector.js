@@ -139,7 +139,7 @@ function MasterSelector(props) {
                 console.log('Please Log in to Churn more')
         }
     }
-
+    
     return(
         <div>
             <SubjectSelector onSubjectSelected={(Subject) => setSubjectSelection(Subject)} SubjectSelection={SubjectSelection} />
@@ -162,8 +162,9 @@ function MasterSelector(props) {
                             if (current.includes(parseInt(TopicID))) {
                                 return current
                             } else {
-                                current.push(parseInt(TopicID))
-                                return current
+                                var temp = [...current]
+                                temp.push(parseInt(TopicID))
+                                return temp
                             }
                         })
                     } else {
