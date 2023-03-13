@@ -154,7 +154,22 @@ function MasterSelector(props) {
                 <a onClick={() => setTopicsDisplay('none')}>▲ Topics:</a>
             }
             <span style={{display: TopicsDisplay}}>
-                <TopicSelector SubjectSelection={SubjectSelection} TopicChanged={(Topics) => setTopicsSelection(Topics)} TopicsSelection={TopicsSelection} />
+                <TopicSelector SubjectSelection={SubjectSelection} TopicChanged={(TopicID, ChangeType) => {
+                    //ChangeType = true if the Category is to be added
+                    //ChangeType = false if the Category is to be removed
+                    if (ChangeType) {
+                        setTopicsSelection(current => {
+                            if (current.includes(parseInt(TopicID))) {
+                                return current
+                            } else {
+                                current.push(parseInt(TopicID))
+                                return current
+                            }
+                        })
+                    } else {
+                        setTopicsSelection(current => current.filter(topicid => topicid !== parseInt(TopicID)))
+                    }
+                }} TopicsSelection={TopicsSelection} />
             </span>
 
             {/* For Displaying Levels */}
