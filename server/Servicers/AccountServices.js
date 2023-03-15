@@ -146,7 +146,7 @@ async function Get_OTP() {
             var OTP = ''
             //OTP is 6 characters long
             for (var i=0; i<6; i++) {
-                OTP += String.fromCharCode(RNG(33, 126))
+                OTP += String.fromCharCode(RNG(48, 90))
             }
 
             if (!result.rows.includes(OTP)) {
