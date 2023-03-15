@@ -161,20 +161,20 @@ function PostQuestionPage(props) {
     function SubmitPost(event) {
         event.preventDefault();
         if (QNImages.length == 0 || ANSImages.length == 0) {
-            console.log('Please include both answers and questions')
+            window.alert('Please include both answers and questions')
             return
         }
 
         for (var i=0; i<QNImages.length; i++) {
             if (!QNImages[i].CroppedIMGData) {
-                console.log('Please crop all of your images')
+                window.alert('Please crop all of your images')
                 return
             }
         }
 
         for (var i=0; i<ANSImages.length; i++) {
             if (!ANSImages[i].CroppedIMGData) {
-                console.log('Please crop all of your images')
+                window.alert('Please crop all of your images')
                 return
             }
         }
@@ -184,7 +184,7 @@ function PostQuestionPage(props) {
             AssessmentSelection == 0 ||
             TopicSelection == 0 ||
             PaperSelection == 0) {
-            console.log('Please select all of the categories about the question!')
+            window.alert('Please select all of the categories about the question!')
             return
         }
         

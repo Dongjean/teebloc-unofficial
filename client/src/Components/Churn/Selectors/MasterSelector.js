@@ -133,10 +133,10 @@ function MasterSelector(props) {
                         initialPage: PageRef.current
                     })
             } else {
-                console.log('Please Select All Categories')
+                window.alert('Please Select All Categories')
             }
         } else {
-                console.log('Please Log in to Churn more')
+                window.alert('Please Log in to Churn more')
         }
     }
 
