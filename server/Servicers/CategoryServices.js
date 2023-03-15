@@ -580,6 +580,24 @@ async function Link_Assessment_Level(AssessmentID, LevelID) {
 
 async function Delete_Subject(SubjectID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Topics
+                ON Topics.TopicID=Questions.TopicID
+            JOIN Subjects 
+                ON Topics.SubjectID=Subjects.SubjectID 
+            
+            WHERE
+                Subjects.SubjectID=$1
+        )`, [SubjectID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
         //Delete relations
         
         //Delete Levels Relations
@@ -600,6 +618,8 @@ async function Delete_Subject(SubjectID) {
         pool.query(`
         DELETE FROM Subjects WHERE SubjectID=$1
         `, [SubjectID])
+        
+        return true
     } catch(err) {
         console.log(err)
     }

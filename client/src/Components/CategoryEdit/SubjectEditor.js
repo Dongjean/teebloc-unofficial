@@ -209,10 +209,14 @@ function SubjectEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/Subject/' + EditSubject)
+            const response = await API.post('/Categories/Delete/Subject/' + EditSubject)
             
-            //reload page
-            window.location.reload(false);
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this Subject Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }
