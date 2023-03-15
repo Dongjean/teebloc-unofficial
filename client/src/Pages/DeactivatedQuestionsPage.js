@@ -8,7 +8,7 @@ import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
 //Churn Loading GIF import
-import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+import ChurnLoadingGIF from '../Images/Loading.gif';
 
 function DeactivatedQuestionsPage(props) {
     const query = useQuery();

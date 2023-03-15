@@ -6,7 +6,7 @@ import API from '../utils/API';
 import Question from '../Components/Churn/Question.js';
 
 //Churn Loading GIF import
-import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+import ChurnLoadingGIF from '../Images/Loading.gif';
 
 function MyQuestionsPage(props) {
     let {Email} = useParams();

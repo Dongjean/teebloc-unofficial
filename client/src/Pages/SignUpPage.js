@@ -4,6 +4,9 @@ import {useNavigate} from 'react-router-dom';
 //import the API
 import API from '../utils/API.js';
 
+//Loading GIF import
+import LoadingGIF from '../Images/Loading.gif';
+
 function SignUpPage() {
     const navigate = useNavigate();
 
@@ -21,11 +24,14 @@ function SignUpPage() {
     //User(only able to read posts and post things that belong to them)
     //Admin(has full access to be able to edit all posts and receives reports)
 
+    const [isLoading, setisLoading] = useState(false)
     async function Submit(event) {
         event.preventDefault();
 
         var isPWValid;
         var isEmailValid;
+
+        setisLoading(true)
 
         isPWValid = CheckPWValidity(NewPW, RepeatPW)
         isEmailValid = await CheckEmailExists(Email)
@@ -40,14 +46,16 @@ function SignUpPage() {
         //but if there was an error while sending email, make email invalid
         if (isEmailValid && isPWValid) {
             const WasEmailSent = await Send_OTP(Email, NewPW, FirstName, LastName)
-            console.log(WasEmailSent)
+            
             if (WasEmailSent) {
                 navigate('/SignUp/Verify/Email')
             } else {
                 isEmailValid = false
             }
         }
-        
+
+        setisLoading(false)
+
         setPWValidity(isPWValid)
         setEmailValidity(isEmailValid)
     }
@@ -115,6 +123,14 @@ function SignUpPage() {
                 {isPWValid ? null : <div>The Passwords didnt match. Please try again.<br /></div> } {/* Error msg for PW */}
                 <input type='submit' />
             </form>
+            
+            {/* Loading GIF for when the system is validating the User's input/sending the OTP */}
+            {isLoading ?
+                <img src={LoadingGIF} width={20} />
+            :
+                null
+            }
+
         </div>
     )
 }
