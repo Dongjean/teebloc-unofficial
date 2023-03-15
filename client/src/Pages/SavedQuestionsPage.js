@@ -7,6 +7,9 @@ import useQuery from '../utils/useQuery';
 import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
+//Churn Loading GIF import
+import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+
 function SavedQuestionsPage(props) {
     let {Email} = useParams();
     const query = useQuery();
@@ -32,6 +35,8 @@ function SavedQuestionsPage(props) {
     })
     
     const [CurrURL, setCurrURL] = useState('/Account/' + Email + '/Saved')
+
+    const [isChurnLoading, setisChurnLoading] = useState(false)
 
     function navigator(Queries) {
         console.log('/Account/' + Email + '/Saved/' + Queries)
@@ -83,7 +88,9 @@ console.log(Selection)
             'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
             'Schools=' + JSON.stringify(Selection.Schools)
 
+            setisChurnLoading(true)
             const result = await API.get('/Questions/Get/Saved/Filtered/' + Email + Queries)
+            setisChurnLoading(false)
             console.log(result.data)
             setSavedQuestions(result.data)
             
@@ -96,13 +103,17 @@ console.log(Selection)
             setisLoading(false)
         } catch(err) {
             console.log(err)
+            if (isChurnLoading) {
+                setisChurnLoading(false)
+            }
         }
     }
 
     return (
         <div>
             {isLoading ?
-                null
+                //Loading GIF for first Churn of all Saved questions
+                <img src={ChurnLoadingGIF} width={20} />
             :
                 <div>
                     {isFiltering ?
@@ -114,6 +125,13 @@ console.log(Selection)
                         <div>
                             <button onClick={() => setisFiltering(true)}>Open Filters</button>
                         </div>
+                    }
+
+                    {/* Loading GIF for subsequent filtered churns of Saved questions */}
+                    {isChurnLoading ?
+                        <img src={ChurnLoadingGIF} width={20} />
+                    :
+                        null
                     }
 
                     <ChurnedQuestions

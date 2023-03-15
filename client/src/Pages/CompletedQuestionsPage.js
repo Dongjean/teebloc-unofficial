@@ -7,6 +7,9 @@ import useQuery from '../utils/useQuery';
 import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
+//Churn Loading GIF import
+import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+
 function CompletedQuestionsPage(props) {
     let {Email} = useParams();
     const query = useQuery();
@@ -32,6 +35,8 @@ function CompletedQuestionsPage(props) {
     })
 
     const [CurrURL, setCurrURL] = useState('/Account/' + Email + '/Completed')
+
+    const [isChurnLoading, setisChurnLoading] = useState(false)
 
     function navigator(Queries) {
         console.log('/Account/' + Email + '/Completed/' + Queries)
@@ -81,7 +86,9 @@ function CompletedQuestionsPage(props) {
             'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
             'Schools=' + JSON.stringify(Selection.Schools)
 
+            setisChurnLoading(true)
             const result = await API.get('/Questions/Get/Completed/Filtered/' + Email + Queries)
+            setisChurnLoading(false)
             console.log(result.data)
             setCompletedQuestions(result.data)
             
@@ -93,12 +100,16 @@ function CompletedQuestionsPage(props) {
             setisLoading(false)
         } catch(err) {
             console.log(err)
+            if (isChurnLoading) {
+                setisChurnLoading(false)
+            }
         }
     }
     return (
         <div>
             {isLoading ?
-                null
+                //Loading GIF for first Churn of all Completed questions
+                <img src={ChurnLoadingGIF} width={20} />
             :
                 <div>
                     {isFiltering ?
@@ -110,6 +121,13 @@ function CompletedQuestionsPage(props) {
                         <div>
                             <button onClick={() => setisFiltering(true)}>Open Filters</button>
                         </div>
+                    }
+
+                    {/* Loading GIF for subsequent filtered churns of Completed questions */}
+                    {isChurnLoading ?
+                        <img src={ChurnLoadingGIF} width={20} />
+                    :
+                        null
                     }
 
                     <ChurnedQuestions

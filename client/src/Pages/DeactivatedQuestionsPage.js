@@ -7,6 +7,9 @@ import useQuery from '../utils/useQuery';
 import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
+//Churn Loading GIF import
+import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+
 function DeactivatedQuestionsPage(props) {
     const query = useQuery();
     const navigate = useNavigate();
@@ -31,6 +34,8 @@ function DeactivatedQuestionsPage(props) {
     })
 
     const [CurrURL, setCurrURL] = useState('/Admin/Questions/Deactivated')
+
+    const [isChurnLoading, setisChurnLoading] = useState(false)
 
     function navigator(Queries) {
         setCurrURL('/Admin/Questions/Deactivated' + Queries)
@@ -82,7 +87,9 @@ function DeactivatedQuestionsPage(props) {
             'Assessments=' + JSON.stringify(Selection.Assessments) + '&' +
             'Schools=' + JSON.stringify(Selection.Schools)
 
+            setisChurnLoading(true)
             const result = await API.get('/Questions/Get/Deactivated/Filtered' + Queries)
+            setisChurnLoading(false)
             console.log(result.data)
             setDeactivatedQuestions(result.data)
             
@@ -96,13 +103,17 @@ function DeactivatedQuestionsPage(props) {
             setisLoading(false)
         } catch(err) {
             console.log(err)
+            if (isChurnLoading) {
+                setisChurnLoading(false)
+            }
         }
     }
 
     return (
         <div>
             {isLoading ?
-                null
+                //Loading GIF for first Churn of all Deactivated questions
+                <img src={ChurnLoadingGIF} width={20} />
             :
                 <div>
                     {isFiltering ?
@@ -114,6 +125,13 @@ function DeactivatedQuestionsPage(props) {
                         <div>
                             <button onClick={() => setisFiltering(true)}>Open Filters</button>
                         </div>
+                    }
+
+                    {/* Loading GIF for subsequent filtered churns of Deactivated questions */}
+                    {isChurnLoading ?
+                        <img src={ChurnLoadingGIF} width={20} />
+                    :
+                        null
                     }
 
                     <ChurnedQuestions
