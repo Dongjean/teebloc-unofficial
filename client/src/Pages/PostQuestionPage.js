@@ -47,6 +47,12 @@ function PostQuestionPage(props) {
         try {
             const result = await API.get('/Categories/Get/Levels/fromSubjectID/' + Subject)
             setLevels(result.data)
+
+            //if the new set of Categories to select from does not contain the currently selected Category,
+            //turn back the Category selection to nothing, 0.
+            if (!result.data.includes(LevelSelection)) {
+                setLevelSelection(0)
+            }
         } catch(err) {
             console.log(err)
         }
@@ -57,6 +63,12 @@ function PostQuestionPage(props) {
         try {
             const result = await API.get('/Categories/Get/Assessments/fromLevelID/' + Level)
             setAssessments(result.data)
+
+            //if the new set of Categories to select from does not contain the currently selected Category,
+            //turn back the Category selection to nothing, 0.
+            if (!result.data.includes(AssessmentSelection)) {
+                setAssessmentSelection(0)
+            }
         } catch(err) {
             console.log(err)
         }
@@ -67,6 +79,12 @@ function PostQuestionPage(props) {
         try {
             const result = await API.get('/Categories/Get/Topics/fromSubjectID/' + Subject)
             setTopics(result.data)
+
+            //if the new set of Categories to select from does not contain the currently selected Category,
+            //turn back the Category selection to nothing, 0.
+            if (!result.data.includes(TopicSelection)) {
+                setTopicSelection(0)
+            }
         } catch(err) {
             console.log(err)
         }
@@ -77,6 +95,12 @@ function PostQuestionPage(props) {
         try {
             const result = await API.get('/Categories/Get/Papers/fromSubjectID/' + Subject)
             setPapers(result.data)
+
+            //if the new set of Categories to select from does not contain the currently selected Category,
+            //turn back the Category selection to nothing, 0.
+            if (!result.data.includes(PaperSelection)) {
+                setPaperSelection(0)
+            }
         } catch(err) {
             console.log(err)
         }
@@ -87,6 +111,12 @@ function PostQuestionPage(props) {
         try {
             const result = await API.get('/Categories/Get/Schools/fromSubjectID/' + Subject)
             setSchools(result.data)
+
+            //if the new set of Categories to select from does not contain the currently selected Category,
+            //turn back the Category selection to nothing, 0.
+            if (!result.data.includes(SchoolSelection)) {
+                setSchoolSelection(0)
+            }
         } catch(err) {
             console.log(err)
         }
