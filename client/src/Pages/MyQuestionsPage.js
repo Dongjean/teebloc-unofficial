@@ -5,6 +5,9 @@ import API from '../utils/API';
 //component imports
 import Question from '../Components/Churn/Question.js';
 
+//Churn Loading GIF import
+import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+
 function MyQuestionsPage(props) {
     let {Email} = useParams();
     
@@ -33,7 +36,8 @@ function MyQuestionsPage(props) {
     return (
         <div>
             {isLoading ?
-                null
+                //Loading GIF for first Churn of all of my questions
+                <img src={ChurnLoadingGIF} width={20} />
             :
                 MyQuestions.Questions.map(question =>
                     <div key={question.questionid}>
