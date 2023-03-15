@@ -612,6 +612,10 @@ async function Delete_Subject(SubjectID) {
         pool.query(`
         DELETE FROM School_Subject WHERE SubjectID=$1
         `, [SubjectID])
+        //Delete Topics Relations
+        pool.query(`
+        DELETE FROM Topics WHERE SubjectID=$1
+        `, [SubjectID])
 
         
         //Delete the Subject
