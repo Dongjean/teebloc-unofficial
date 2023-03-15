@@ -12,15 +12,15 @@ function LoginPage(props) {
 
         try {
             //GET whether or not entered Email exists in DB
-            const response = await API.get('/Login/CheckEmail/' + Email)
+            const response = await API.get('/Accounts/Check/Exists/Email/inDB/' + Email)
             if (!response.data) { //if Email doesnt exist,
                 setValid(false)
                 return
             } else { //if Email exists,
                 //proceed to check if PW is correct
-                const response2 = await API.get('/Login/CheckPW/' + Email + '/' + PW)
+                const response2 = await API.get('/Accounts/Check/PW/isCorrect/' + Email + '/' + PW)
                 if (response2.data) { //if PW is correct,
-                    await API.get('/Login/GetLoginInfo/' + Email) //get the LoginInfo as cookies with the JWT
+                    await API.get('/Accounts/Get/LoginInfo/' + Email) //get the LoginInfo as cookies with the JWT
                     
                     props.Login()
                 } else { //if PW is wrong,  

@@ -53,7 +53,7 @@ function App() {
 
 	async function Logout() {
 		//remove login info from cookies
-		await API.get('/Login/Logout')
+		await API.get('/Accounts/Logout')
 
 		//set the LoginData state to the new empty login info cookies
 		setLoginData({

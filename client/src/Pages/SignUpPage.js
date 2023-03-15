@@ -79,7 +79,7 @@ function SignUpPage() {
     async function CheckEmailExists(Email) {
         //call the API to check if Email already exists
         try {
-            const response = await API.get('/SignUp/CheckEmail/' + Email)
+            const response = await API.get('/Accounts/Check/Exists/Email/inDB/' + Email)
             //response.data is whether or not the Email exists in the DB
 
             if (response.data) {
@@ -94,7 +94,7 @@ function SignUpPage() {
 
     async function Send_OTP(Email, NewPW, FirstName, LastName) {
         try {
-            const response = await API.post('/SignUp/Send_OTP', {
+            const response = await API.post('/Accounts/Email/Send/OTP', {
                 Email: Email,
                 NewPW: NewPW,
                 FirstName: FirstName,
@@ -109,7 +109,7 @@ function SignUpPage() {
 
     async function CheckEmailValidity(Email) {
         try {
-            const response = await API.get('/SignUp/Check/Email/Valid/' + Email)
+            const response = await API.get('/Accounts/Check/Email/isValid/' + Email)
 
             return response.data
         } catch(err) {

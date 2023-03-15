@@ -8,44 +8,21 @@ dotenv.config();
 
 const {CreateJWT} = require('../utils/CreateJWT.js');
 
-async function CheckEmailExists(Email) {
-    //get the Emails on the DB to check if the requested Email exists
+
+//Get
+
+async function Get_Account_Info(Email) {
     try {
-        const result = await pool.query(`SELECT * FROM Users WHERE Email=$1`, [Email])
-        if (result.rows.length == 0) {
-            return false //if the Email doesnt yet exist, return false
-        } else {
-            return true //if the Email exists, return true
-        }
+        console.log(Email, 'hi')
+        const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
+        console.log(result.rows[0])
+        return result.rows[0]
     } catch(err) {
         console.log(err)
     }
 }
 
-async function CreateAccount(Data) {
-    //add the Account in Data to the DB
-    try {
-        await pool.query(`INSERT INTO Users VALUES($1, $2, $3, $4, $5)`, [Data.Email, Data.NewPW, Data.FirstName, Data.LastName, Data.Type])
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-async function CheckPWCorrect(Data) {
-    //check if the PW is correct
-    try {
-        const result = await pool.query(`SELECT Password FROM Users WHERE Email=$1`, [Data.Email])
-        if (result.rows[0].password == Data.PW) {
-            return true //if the PW is correct, return true
-        } else {
-            return false //if PW is wrong, return false
-        }
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-async function GetLoginInfo(Email) {
+async function Get_Login_Info(Email) {
     try {
         const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
         const user = result.rows[0]
@@ -60,16 +37,80 @@ async function GetLoginInfo(Email) {
     }
 }
 
-async function GetAccInfo(Email) {
+
+
+//Check
+
+async function Check_Exists_Email_inDB(Email) {
+    //get the Emails on the DB to check if the requested Email exists
     try {
-        console.log(Email, 'hi')
-        const result = await pool.query(`SELECT Email, FirstName, LastName, Type FROM Users WHERE Email=$1`, [Email])
-        console.log(result.rows[0])
-        return result.rows[0]
+        const result = await pool.query(`SELECT * FROM Users WHERE Email=$1`, [Email])
+        if (result.rows.length == 0) {
+            return false //if the Email doesnt yet exist, return false
+        } else {
+            return true //if the Email exists, return true
+        }
     } catch(err) {
         console.log(err)
     }
 }
+
+async function Check_PW_isCorrect(Data) {
+    //check if the PW is correct
+    try {
+        const result = await pool.query(`SELECT Password FROM Users WHERE Email=$1`, [Data.Email])
+        if (result.rows[0].password == Data.PW) {
+            return true //if the PW is correct, return true
+        } else {
+            return false //if PW is wrong, return false
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Check_Email_isValid(Email) {
+    try {
+        return (await emailValidator.validate(Email)).valid
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function Check_OTP_isCorrect(OTP) {
+    try {
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1 FROM OTPs WHERE OTP=$1
+        )`, [OTP])
+
+        console.log(result.rows[0], OTP)
+        
+        if (result.rows[0].exists) {
+            //get user info to send it back to frontend
+            const result_userinfo = await pool.query(`
+            SELECT Email, Password, FirstName, LastName FROM OTPs WHERE OTP=$1
+            `, [OTP])
+            
+            var Data = result_userinfo.rows[0]
+            Data.isVerified = true
+
+            //since the OTP is valid, delete the OTP from the DB
+            await pool.query(`
+            DELETE FROM OTPs WHERE OTP=$1
+            `, [OTP])
+
+            return Data
+        } else {
+            return {isVerified: false}
+        }
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+
+//Email/OTP
 
 async function Send_OTP(New_User_Data) {
     const OTP = await Get_OTP()
@@ -159,42 +200,28 @@ function RNG(min, max) {
     )
 }
 
-async function Verify_Email(OTP) {
+
+//Create Account
+
+async function Create_Account(Data) {
+    //add the Account in Data to the DB
     try {
-        const result = await pool.query(`
-        SELECT EXISTS(
-            SELECT 1 FROM OTPs WHERE OTP=$1
-        )`, [OTP])
-        
-        if (result.rows[0].exists) {
-            //get user info to send it back to frontend
-            const result_userinfo = await pool.query(`
-            SELECT Email, Password, FirstName, LastName FROM OTPs WHERE OTP=$1
-            `, [OTP])
-            
-            var Data = result_userinfo.rows[0]
-            Data.isVerified = true
-
-            //since the OTP is valid, delete the OTP from the DB
-            await pool.query(`
-            DELETE FROM OTPs WHERE OTP=$1
-            `, [OTP])
-
-            return Data
-        } else {
-            return {isVerified: false}
-        }
+        await pool.query(`INSERT INTO Users VALUES($1, $2, $3, $4, $5)`, [Data.Email, Data.NewPW, Data.FirstName, Data.LastName, Data.Type])
     } catch(err) {
         console.log(err)
     }
 }
 
-async function Check_Email_Validity(Email) {
-    try {
-        return (await emailValidator.validate(Email)).valid
-    } catch(err) {
-        console.log(err)
-    }
-}
+module.exports = {
+    Get_Account_Info,
+    Get_Login_Info,
 
-module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email, Check_Email_Validity};
+    Check_Exists_Email_inDB,
+    Check_PW_isCorrect,
+    Check_Email_isValid,
+    Check_OTP_isCorrect,
+
+    Send_OTP,
+
+    Create_Account
+};

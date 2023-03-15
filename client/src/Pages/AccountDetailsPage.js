@@ -14,7 +14,7 @@ function AccountDetailsPage(props) {
     //get the user's account information
     async function getUserInfo(Email) {
         try {
-            const result = await API.get('/Accounts/GetInfo/' + Email)
+            const result = await API.get('/Accounts/Get/AccountInfo/' + Email)
             setUserInfo(result.data)
             setisLoading(false)
         } catch(err) {

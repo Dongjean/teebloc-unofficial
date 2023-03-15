@@ -21,7 +21,7 @@ function VerifyEmailPage(props) {
 
         try {
             setisLoading(true)
-            const result = await API.get('/SignUp/Verify?OTP=' + OTPRef.current)
+            const result = await API.get('/Accounts/Check/OTP/isCorrect/' + OTPRef.current)
             setisLoading(false)
 
             if (result.data.isVerified) {
@@ -50,7 +50,7 @@ function VerifyEmailPage(props) {
                 NewPW: NewPW,
                 Type: AccType
             }
-            await API.post('/SignUp/CreateAccount', data)
+            await API.post('/Accounts/Create/Account', data)
         } catch(err) {
             console.log(err)
         }
@@ -59,7 +59,7 @@ function VerifyEmailPage(props) {
     async function Send_New_OTP(Email, NewPW, FirstName, LastName) {
         try {
             setisLoading(true)
-            const response = await API.post('/SignUp/Send_OTP', {
+            const response = await API.post('/Accounts/Email/Send/OTP', {
                 Email: Email,
                 NewPW: NewPW,
                 FirstName: FirstName,

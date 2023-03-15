@@ -1,31 +1,33 @@
 const express = require('express');
 const router = express.Router();
 
-const {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email, Check_Email_Validity} = require('../../Servicers/AccountServices.js');
+const {
+    Get_Account_Info,
+    Get_Login_Info,
 
-router.get('/SignUp/CheckEmail/:Email', (req, res) => {
+    Check_Exists_Email_inDB,
+    Check_PW_isCorrect,
+    Check_Email_isValid,
+    Check_OTP_isCorrect,
+
+    Send_OTP,
+
+    Create_Account
+} = require('../../Servicers/AccountServices.js');
+
+
+//Get
+
+router.get('/Accounts/Get/AccountInfo/:Email', (req, res) => {
     const Email = req.params.Email
-    CheckEmailExists(Email).then(response => res.json(response))
+    
+    Get_Account_Info(Email).then(response => res.json(response))
 })
 
-router.post('/SignUp/CreateAccount', (req, res) => {
-    const Data = req.body
-    CreateAccount(Data).then(response => res.json(response))
-})
-
-router.get('/Login/CheckEmail/:Email', (req, res) => {
+router.get('/Accounts/Get/LoginInfo/:Email', (req, res) => { //called if login is successful, create JWT here
     const Email = req.params.Email
-    CheckEmailExists(Email).then(response => res.json(response))
-})
 
-router.get('/Login/CheckPW/:Email/:PW', (req, res) => {
-    const Data = req.params
-    CheckPWCorrect(Data).then(response => res.json(response))
-})
-
-router.get('/Login/GetLoginInfo/:Email', (req, res) => { //called if login is successful, create JWT here
-    const Email = req.params.Email
-    GetLoginInfo(Email).then(response => 
+    Get_Login_Info(Email).then(response => 
         res
             .cookie('Token', response.token, {httpOnly: true})
             .cookie('LoginEmail', response.email)
@@ -37,7 +39,58 @@ router.get('/Login/GetLoginInfo/:Email', (req, res) => { //called if login is su
     )
 })
 
-router.get('/Login/Logout', (req, res) => {
+
+
+//Check
+
+router.get('/Accounts/Check/Exists/Email/inDB/:Email', (req, res) => {
+    const Email = req.params.Email
+
+    Check_Exists_Email_inDB(Email).then(response => res.json(response))
+})
+
+router.get('/Accounts/Check/PW/isCorrect/:Email/:PW', (req, res) => {
+    const Data = req.params
+
+    Check_PW_isCorrect(Data).then(response => res.json(response))
+})
+
+router.get('/Accounts/Check/Email/isValid/:Email', (req, res) => {
+    const Email = req.params.Email
+
+    Check_Email_isValid(Email).then(response => res.json(response))
+})
+
+router.get('/Accounts/Check/OTP/isCorrect/:OTP', (req, res) => {
+    const OTP = req.params.OTP
+
+    Check_OTP_isCorrect(OTP).then(response => res.json(response))
+})
+
+
+
+//Email/OTP
+
+router.post('/Accounts/Email/Send/OTP', (req, res) => {
+    const Data = req.body
+
+    Send_OTP(Data).then(response => res.json(response))
+})
+
+
+
+//Create Account
+
+router.post('/Accounts/Create/Account', (req, res) => {
+    const Data = req.body
+
+    Create_Account(Data).then(response => res.json(response))
+})
+
+
+//Logout
+
+router.get('/Accounts/Logout', (req, res) => {
     res
         .clearCookie('Token')
         .clearCookie('LoginEmail')
@@ -46,30 +99,6 @@ router.get('/Login/Logout', (req, res) => {
         .clearCookie('LoginType')
         .json('Cookies removed successfully!')
     //set all the cookies to empty
-})
-
-router.get('/Accounts/GetInfo/:Email', (req, res) => {
-    const Email = req.params.Email
-    console.log(Email)
-    GetAccInfo(Email).then(response => res.json(response))
-})
-
-router.post('/SignUp/Send_OTP', (req, res) => {
-    const Data = req.body
-
-    Send_OTP(Data).then(response => res.json(response))
-})
-
-router.get('/SignUp/Verify', (req, res) => {
-    const OTP = req.query.OTP
-
-    Verify_Email(OTP).then(response => res.json(response))
-})
-
-router.get('/SignUp/Check/Email/Valid/:Email', (req, res) => {
-    const Email = req.params.Email
-
-    Check_Email_Validity(Email).then(response => res.json(response))
 })
 
 module.exports = router;
