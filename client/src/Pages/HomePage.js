@@ -7,6 +7,9 @@ import useQuery from "../utils/useQuery.js";
 import MasterSelector from '../Components/Churn/Selectors/MasterSelector';
 import ChurnedQuestions from "../Components/Churn/ChurnedQuestions";
 
+//Churn Loading GIF import
+import ChurnLoadingGIF from '../Images/ChurnLoading.gif';
+
 function HomePage(props) {
     const query = useQuery();
     const navigate = useNavigate();
@@ -28,6 +31,8 @@ function HomePage(props) {
     const [CurrURL, setCurrURL] = useState('/')
 
     const [Churned, setChurned] = useState()
+
+    const [isChurnLoading, setisChurnLoading] = useState(false)
 
     function navigator(Queries) {
         console.log(Queries)
@@ -60,8 +65,9 @@ function HomePage(props) {
                 'Assessments=' + JSON.stringify(AssessmentsSelection) + '&' +
                 'Schools=' + JSON.stringify(SchoolsSelection)
             
+            setisChurnLoading(true)
             const result = await API.get(`/Questions/Churn` + Queries)
-
+            setisChurnLoading(false)
             console.log(result.data)
             const temp = Selection
             temp.isChurned = true
@@ -71,12 +77,22 @@ function HomePage(props) {
             setChurned(result.data)
         } catch(err) {
             console.log(err)
+            if (isChurnLoading) {
+                setisChurnLoading(false)
+            }
         }
     }
 
     return(
         <div>
             <MasterSelector LoginData={props.LoginData} OpenQuestion={props.OpenQuestion} navigator={navigator} setSelection={setSelection} />
+            
+            {/* Loading GIF */}
+            {isChurnLoading ?
+                <img src={ChurnLoadingGIF} width={20} />
+            :
+                null
+            }
 
             <ChurnedQuestions
                 Churned={Churned}
