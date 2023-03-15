@@ -109,10 +109,14 @@ function PaperEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/Paper/' + EditPaper)
-            
-            //reload page
-            window.location.reload(false);
+            const response = await API.post('/Categories/Delete/Paper/' + EditPaper)
+
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this Paper Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }

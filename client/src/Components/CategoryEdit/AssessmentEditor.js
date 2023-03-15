@@ -109,10 +109,14 @@ function AssessmentEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/Assessment/' + EditAssessment)
+            const response = await API.post('/Categories/Delete/Assessment/' + EditAssessment)
             
-            //reload page
-            window.location.reload(false);
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this Assessment Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }

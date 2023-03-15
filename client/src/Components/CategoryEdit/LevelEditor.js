@@ -158,10 +158,14 @@ function LevelEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/Level/' + EditLevel)
-            
-            //reload page
-            window.location.reload(false);
+            const response = await API.post('/Categories/Delete/Level/' + EditLevel)
+
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this Level Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }

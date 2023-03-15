@@ -661,6 +661,23 @@ async function Delete_Topic(TopicID) {
 
 async function Delete_Level(LevelID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Levels
+                ON Levels.LevelID=Questions.LevelID
+            
+            WHERE
+                Levels.LevelID=$1
+        )`, [LevelID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
+
         //Delete relations
         
         //Delete Subject Relations
@@ -677,6 +694,8 @@ async function Delete_Level(LevelID) {
         pool.query(`
         DELETE FROM Levels WHERE LevelID=$1
         `, [LevelID])
+
+        return true
     } catch(err) {
         console.log(err)
     }
@@ -684,6 +703,23 @@ async function Delete_Level(LevelID) {
 
 async function Delete_Paper(PaperID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Papers
+                ON Papers.PaperID=Questions.PaperID
+            
+            WHERE
+                Papers.PaperID=$1
+        )`, [PaperID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
+
         //Delete relations
         
         //Delete Subject Relations
@@ -696,6 +732,8 @@ async function Delete_Paper(PaperID) {
         pool.query(`
         DELETE FROM Papers WHERE PaperID=$1
         `, [PaperID])
+
+        return true
     } catch(err) {
         console.log(err)
     }
@@ -703,6 +741,23 @@ async function Delete_Paper(PaperID) {
 
 async function Delete_Assessment(AssessmentID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Assessments
+                ON Assessments.AssessmentID=Questions.AssessmentID
+            
+            WHERE
+                Assessments.AssessmentID=$1
+        )`, [AssessmentID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
+
         //Delete relations
         
         //Delete Level Relations
@@ -715,6 +770,8 @@ async function Delete_Assessment(AssessmentID) {
         pool.query(`
         DELETE FROM Assessments WHERE AssessmentID=$1
         `, [AssessmentID])
+
+        return true
     } catch(err) {
         console.log(err)
     }
@@ -722,6 +779,23 @@ async function Delete_Assessment(AssessmentID) {
 
 async function Delete_School(SchoolID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Schools
+                ON Schools.SchoolID=Questions.SchoolID
+            
+            WHERE
+                Schools.SchoolID=$1
+        )`, [SchoolID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
+
         //Delete relations
         
         //Delete Subject Relations
@@ -734,6 +808,8 @@ async function Delete_School(SchoolID) {
         pool.query(`
         DELETE FROM Schools WHERE SchoolID=$1
         `, [SchoolID])
+
+        return true
     } catch(err) {
         console.log(err)
     }

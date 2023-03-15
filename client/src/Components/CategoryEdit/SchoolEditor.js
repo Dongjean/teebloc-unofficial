@@ -109,10 +109,14 @@ function SchoolEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/School/' + EditSchool)
-            
-            //reload page
-            window.location.reload(false);
+            const response = await API.post('/Categories/Delete/School/' + EditSchool)
+
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this School Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }
