@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import Cookies from '../utils/Cookies.js';
 
 //import the API
 import API from '../utils/API.js';
@@ -25,6 +26,7 @@ function SignUpPage() {
     //Admin(has full access to be able to edit all posts and receives reports)
 
     const [isLoading, setisLoading] = useState(false)
+    
     async function Submit(event) {
         event.preventDefault();
 
@@ -49,6 +51,10 @@ function SignUpPage() {
             
             if (WasEmailSent) {
                 navigate('/SignUp/Verify/Email')
+                Cookies.set('NewEmail', Email)
+                Cookies.set('NewPW', NewPW)
+                Cookies.set('NewFirstName', FirstName)
+                Cookies.set('NewLastName', LastName)
             } else {
                 isEmailValid = false
             }

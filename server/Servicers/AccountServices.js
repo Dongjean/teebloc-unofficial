@@ -121,6 +121,17 @@ async function Get_OTP() {
 
 async function Remember_OTP_Temp(ms, OTP, New_User_Data) {
     try {
+        //first check if OTP for this email already exists
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1 FROM OTPs WHERE Email=$1
+        )`, [New_User_Data.Email])
+        if (result.rows[0].exists) {
+            //if OTP for this email aready exists, delete them
+            await pool.query('DELETE FROM OTPs WHERE Email=$1', [New_User_Data.Email])
+        }
+
+        //Remember the new OTP
         await pool.query(`
         INSERT INTO OTPs VALUES($1, $2, $3, $4, $5)
         `, [OTP, New_User_Data.Email, New_User_Data.NewPW, New_User_Data.FirstName, New_User_Data.LastName])
@@ -156,12 +167,19 @@ async function Verify_Email(OTP) {
         )`, [OTP])
         
         if (result.rows[0].exists) {
+            //get user info to send it back to frontend
             const result_userinfo = await pool.query(`
             SELECT Email, Password, FirstName, LastName FROM OTPs WHERE OTP=$1
             `, [OTP])
             
             var Data = result_userinfo.rows[0]
             Data.isVerified = true
+
+            //since the OTP is valid, delete the OTP from the DB
+            await pool.query(`
+            DELETE FROM OTPs WHERE OTP=$1
+            `, [OTP])
+
             return Data
         } else {
             return {isVerified: false}
