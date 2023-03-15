@@ -118,7 +118,7 @@ async function Send_OTP(New_User_Data) {
     let mailOptions = {
         from: process.env.EMailUser,
         to: New_User_Data.Email,
-        subject: 'Test Mail',
+        subject: 'Teebloc Account Email Verification',
         text: OTP
     }
 
