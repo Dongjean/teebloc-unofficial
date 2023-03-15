@@ -618,7 +618,7 @@ async function Delete_Subject(SubjectID) {
         pool.query(`
         DELETE FROM Subjects WHERE SubjectID=$1
         `, [SubjectID])
-        
+
         return true
     } catch(err) {
         console.log(err)
@@ -627,10 +627,29 @@ async function Delete_Subject(SubjectID) {
 
 async function Delete_Topic(TopicID) {
     try {
+        //Check if there are Questions in this Category
+        const result = await pool.query(`
+        SELECT EXISTS(
+            SELECT 1
+
+            FROM Questions JOIN Topics
+                ON Topics.TopicID=Questions.TopicID
+            
+            WHERE
+                Topics.TopicID=$1
+        )`, [TopicID])
+
+        if (result.rows[0].exists) {
+            //if Questions with this Category exists, then disallow the Deletion
+            return false
+        }
+
         //Delete the Topic
         pool.query(`
         DELETE FROM Topics WHERE TopicID=$1
         `, [TopicID])
+
+        return true
     } catch(err) {
         console.log(err)
     }

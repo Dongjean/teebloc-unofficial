@@ -71,10 +71,14 @@ function TopicEditor() {
     async function Delete() {
         try {
             //Delete the Category
-            await API.post('/Categories/Delete/Topic/' + EditTopic)
-            
-            //reload page
-            window.location.reload(false);
+            const response = await API.post('/Categories/Delete/Topic/' + EditTopic)
+
+            if (response.data) {
+                //reload page
+                window.location.reload(false);
+            } else {
+                window.alert('Questions With this Topic Already Exists! Deletion is thus not allowed.')
+            }
         } catch(err) {
             console.log(err)
         }
