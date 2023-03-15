@@ -1,4 +1,5 @@
 import {useState, useEffect, useRef} from "react";
+import {useNavigate} from 'react-router-dom';
 import useQuery from "../utils/useQuery.js";
 import API from '../utils/API.js';
 
@@ -8,6 +9,7 @@ import PostAnswer from "../Components/AnswerUpload/PostAnswer.js";
 
 function EditQuestionPage(props) {
     const query = useQuery();
+    const navigate = useNavigate();
 
     const QuestionID = query.get('QuestionID')
 
@@ -173,6 +175,9 @@ function EditQuestionPage(props) {
             FD.append('OriginalANSImageIDs', JSON.stringify(OriginalANSImageIDsRef.current))
             
             await API.post('/Questions/Edit/Question/' + QuestionID, FD)
+
+            //navigate to Opened Question Page for this Question
+            navigate('/OpenedQuestion?QuestionID=' + QuestionID)
         } catch(err) {
             console.log(err)
         }
@@ -210,30 +215,30 @@ function EditQuestionPage(props) {
     function SubmitEdit(event) {
         event.preventDefault();
         if (QNImages.length == 0 || ANSImages.length == 0) {
-            console.log('Please include both answers and questions')
+            window.alert('Please include both answers and questions')
             return
         }
 
         for (var i=0; i<QNImages.length; i++) {
             if (!QNImages[i].CroppedIMGData) {
-                console.log('Please crop all of your images')
+                window.alert('Please crop all of your images')
                 return
             }
         }
 
         for (var i=0; i<ANSImages.length; i++) {
             if (!ANSImages[i].CroppedIMGData) {
-                console.log('Please crop all of your images')
+                window.alert('Please crop all of your images')
                 return
             }
         }
-
         if (SubjectSelection == 0 ||
             LevelSelection == 0 ||
             AssessmentSelection == 0 ||
             TopicSelection == 0 ||
-            PaperSelection == 0) {
-            console.log('Please select all of the categories about the question!')
+            PaperSelection == 0 ||
+            SchoolSelection == 0) {
+            window.alert('Please select all of the categories about the question!')
             return
         }
         

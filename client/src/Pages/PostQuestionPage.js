@@ -183,7 +183,8 @@ function PostQuestionPage(props) {
             LevelSelection == 0 ||
             AssessmentSelection == 0 ||
             TopicSelection == 0 ||
-            PaperSelection == 0) {
+            PaperSelection == 0 ||
+            SchoolSelection == 0) {
             window.alert('Please select all of the categories about the question!')
             return
         }
