@@ -3,13 +3,56 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const router = express.Router();
 
-const {Churn, GetQuestionsByID, PostQuestion, SaveQuestion, unSaveQuestion, CheckSavedQuestion, GetSavedQuestions, DeleteQuestion, GetQuestionsByAuthor, CompleteQuestion, UncompleteQuestion, CheckCompletedQuestion, GetCompletedQuestions, Get_Saved_Questions_Filtered, Get_Completed_Questions_Filtered, Report_Question, Get_Reports_All, Resolve_Report, CheckisQuestionActive, DeActivateQuestion, ActivateQuestion, Pay_Creator, Get_All_PendingPayments, Get_Upvotes_Count, Unupvote_Question, Upvote_Question, Check_Upvoted, Get_Question_Author, Get_Question_Data, EditQuestion, GetDeactivatedQuestions, Get_Deactivated_Questions_Filtered} = require('../../Servicers/QuestionServices.js');
+const {
+    Get_Questions_Filtered,
+    Get_QuestionData_fromQuestionID,
+    Get_Questions_Saved_All,
+    Get_Questions_Saved_Filtered,
+    Get_Questions_fromAuthor,
+    Get_Questions_Completed_All,
+    Get_Questions_Completed_Filtered,
+    Get_Reports_All,
+    Get_Payments_Pending_All,
+    Get_Upvotes_Count_fromQuestionID,
+    Get_Author_fromQuestionID,
+    Get_QuestionData_toEdit_fromQuestionID,
+    Get_Questions_Deactivated_All,
+    Get_Questions_Deactivated_Filtered,
+
+    Check_Question_isSaved,
+    Check_Question_isCompleted,
+    Check_Question_isActive,
+    Check_Question_isUpvoted,
+
+    Save_Question,
+    unSave_Question,
+
+    Complete_Question,
+    Uncomplete_Question,
+    
+    Post_Question,
+    Delete_Question,
+    Edit_Question,
+
+    Report_Question,
+    Resolve_Report,
+
+    Deactivate_Question,
+    Activate_Question,
+
+    Pay_Creator,
+
+    Unupvote_Question,
+    Upvote_Question
+} = require('../../Servicers/QuestionServices.js');
 const {authCreatorJWT} = require('../../utils/authCreatorJWT.js');
 const {authGeneralJWT} = require('../../utils/authGeneralJWT.js');
 const {authAdminJWT} = require('../../utils/authAdminJWT.js');
 
-router.get('/Questions/Churn', (req, res) => {
-    console.log(req.query)
+
+//Get
+
+router.get('/Questions/Get/Questions/Filtered', (req, res) => {
     //parses through the Categories query string
     const Categories = {
         Topics: JSON.parse(req.query.Topics),
@@ -18,116 +61,209 @@ router.get('/Questions/Churn', (req, res) => {
         Assessments: JSON.parse(req.query.Assessments),
         Schools: JSON.parse(req.query.Schools)
     }
-    Churn(Categories).then(response => res.json(response))
+
+    Get_Questions_Filtered(Categories).then(response => res.json(response))
 })
 
-router.get('/Questions/Get/:QuestionID', (req, res) => {
+router.get('/Questions/Get/QuestionData/fromQuestionID/:QuestionID', (req, res) => {
     const QuestionID = req.params.QuestionID
-    GetQuestionsByID(QuestionID).then(response => res.json(response))
+
+    Get_QuestionData_fromQuestionID(QuestionID).then(response => res.json(response))
 })
 
-router.post('/Questions/PostQuestion', fileUpload({createParentPath: true}), authCreatorJWT, (req, res) => {
-    const FormData = req.body
+router.get('/Questions/Get/Questions/Saved/All/:Email', authGeneralJWT, (req, res) => {
+    const Email = req.params.Email
 
-    PostQuestion(FormData).then(response => res.json(response))
+    Get_Questions_Saved_All(Email).then(response => res.json(response))
 })
+
+router.get('/Questions/Get/Questions/Saved/Filtered/:Email', authGeneralJWT, (req, res) => {
+    const Email = req.params.Email
+
+    //parses through the Categories query string
+    const Categories = {
+        Topics: JSON.parse(req.query.Topics),
+        Levels: JSON.parse(req.query.Levels),
+        Papers: JSON.parse(req.query.Papers),
+        Assessments: JSON.parse(req.query.Assessments),
+        Schools: JSON.parse(req.query.Schools)
+    }
+    
+    Get_Questions_Saved_Filtered(Email, Categories).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Questions/fromAuthor/:Email', authCreatorJWT, (req, res) => {
+    const Email = req.params.Email
+
+    Get_Questions_fromAuthor(Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Questions/Completed/All/:Email', authGeneralJWT, (req, res) => {
+    const Email = req.params.Email
+
+    Get_Questions_Completed_All(Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Questions/Completed/Filtered/:Email', authGeneralJWT, (req, res) => {
+    const Email = req.params.Email
+
+    //parses through the Categories query string
+    const Categories = {
+        Topics: JSON.parse(req.query.Topics),
+        Levels: JSON.parse(req.query.Levels),
+        Papers: JSON.parse(req.query.Papers),
+        Assessments: JSON.parse(req.query.Assessments),
+        Schools: JSON.parse(req.query.Schools)
+    }
+    
+    Get_Questions_Completed_Filtered(Email, Categories).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Reports/All', authAdminJWT, (req, res) => {
+    Get_Reports_All().then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Payments/Pending/All', authAdminJWT, (req, res) => {
+    Get_Payments_Pending_All().then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Upvotes/Count/fromQuestionID/:QuestionID', (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    Get_Upvotes_Count_fromQuestionID(QuestionID).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Author/fromQuestionID/:QuestionID', (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    Get_Author_fromQuestionID(QuestionID).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/QuestionData/toEdit/fromQuestionID/:QuestionID', authCreatorJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    Get_QuestionData_toEdit_fromQuestionID(QuestionID).then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Questions/Deactivated/All', authAdminJWT, (req, res) => {
+    Get_Questions_Deactivated_All().then(response => res.json(response))
+})
+
+router.get('/Questions/Get/Questions/Deactivated/Filtered', authAdminJWT, (req, res) => {
+    //parses through the Categories query string
+    const Categories = {
+        Topics: JSON.parse(req.query.Topics),
+        Levels: JSON.parse(req.query.Levels),
+        Papers: JSON.parse(req.query.Papers),
+        Assessments: JSON.parse(req.query.Assessments),
+        Schools: JSON.parse(req.query.Schools)
+    }
+    
+    Get_Questions_Deactivated_Filtered(Categories).then(response => res.json(response))
+})
+
+
+//Check
+
+router.get('/Questions/Check/Question/isSaved/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Check_Question_isSaved(QuestionID, Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Check/Question/isCompleted/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Check_Question_isCompleted(QuestionID, Email).then(response => res.json(response))
+})
+
+router.get('/Questions/Check/Question/isActive/:QuestionID', (req, res) => {
+    const QuestionID = req.params.QuestionID
+
+    Check_Question_isActive(QuestionID).then(response => res.json(response))
+})
+
+router.get('/Questions/Check/Question/isUpvoted/:QuestionID/:Email', (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const Email = req.params.Email
+
+    Check_Question_isUpvoted(QuestionID, Email).then(response => res.json(response))
+})
+
+
+
+
+//Saved
 
 router.post('/Questions/Save/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
-    SaveQuestion(QuestionID, Email).then(response => res.json(response))
+
+    Save_Question(QuestionID, Email).then(response => res.json(response))
 })
 
 router.post('/Questions/Unsave/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
-    unSaveQuestion(QuestionID, Email).then(response => res.json(response))
+
+    unSave_Question(QuestionID, Email).then(response => res.json(response))
 })
 
-router.get('/Questions/CheckSaved/:QuestionID/:Email', authGeneralJWT, (req, res) => {
-    const QuestionID = req.params.QuestionID
-    const Email = req.params.Email
-    CheckSavedQuestion(QuestionID, Email).then(response => res.json(response))
-})
 
-router.get('/Questions/Get/Saved/All/:Email', authGeneralJWT, (req, res) => {
-    const Email = req.params.Email
-    GetSavedQuestions(Email).then(response => res.json(response))
-})
 
-router.get('/Questions/Get/Saved/Filtered/:Email', authGeneralJWT, (req, res) => {
-    const Email = req.params.Email
 
-    //parses through the Categories query string
-    const Categories = {
-        Topics: JSON.parse(req.query.Topics),
-        Levels: JSON.parse(req.query.Levels),
-        Papers: JSON.parse(req.query.Papers),
-        Assessments: JSON.parse(req.query.Assessments),
-        Schools: JSON.parse(req.query.Schools)
-    }
-    
-    Get_Saved_Questions_Filtered(Email, Categories).then(response => res.json(response))
-})
-
-router.post('/Questions/Delete/:QuestionID', authCreatorJWT, (req, res) => {
-    const QuestionID = req.params.QuestionID
-    DeleteQuestion(QuestionID).then(response => res.json(response))
-})
-
-router.get('/Questions/Get/ByAuthor/:Email', authCreatorJWT, (req, res) => {
-    const Email = req.params.Email
-    GetQuestionsByAuthor(Email).then(response => res.json(response))
-})
+//Completed
 
 router.post('/Questions/Complete/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
-    CompleteQuestion(QuestionID, Email).then(response => res.json(response))
+
+    Complete_Question(QuestionID, Email).then(response => res.json(response))
 })
 
 router.post('/Questions/Uncomplete/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
-    UncompleteQuestion(QuestionID, Email).then(response => res.json(response))
+
+    Uncomplete_Question(QuestionID, Email).then(response => res.json(response))
 })
 
-router.get('/Questions/CheckCompleted/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+
+
+//Post/Delete/Edit Question
+
+router.post('/Questions/Post/Question', fileUpload({createParentPath: true}), authCreatorJWT, (req, res) => {
+    const FormData = req.body
+
+    Post_Question(FormData).then(response => res.json(response))
+})
+
+router.post('/Questions/Delete/Question/:QuestionID', authCreatorJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
-    const Email = req.params.Email
-    CheckCompletedQuestion(QuestionID, Email).then(response => res.json(response))
+
+    Delete_Question(QuestionID).then(response => res.json(response))
 })
 
-router.get('/Questions/Get/Completed/All/:Email', authGeneralJWT, (req, res) => {
-    const Email = req.params.Email
-    GetCompletedQuestions(Email).then(response => res.json(response))
+router.post('/Questions/Edit/Question/:QuestionID', fileUpload({createParentPath: true}), authCreatorJWT, (req, res) => {
+    const QuestionID = req.params.QuestionID
+    const FormData = req.body
+
+    Edit_Question(QuestionID, FormData).then(response => res.json(response))
 })
 
-router.get('/Questions/Get/Completed/Filtered/:Email', authGeneralJWT, (req, res) => {
-    const Email = req.params.Email
 
-    //parses through the Categories query string
-    const Categories = {
-        Topics: JSON.parse(req.query.Topics),
-        Levels: JSON.parse(req.query.Levels),
-        Papers: JSON.parse(req.query.Papers),
-        Assessments: JSON.parse(req.query.Assessments),
-        Schools: JSON.parse(req.query.Schools)
-    }
-    
-    Get_Completed_Questions_Filtered(Email, Categories).then(response => res.json(response))
-})
 
-router.post('/Questions/Report/:QuestionID', authGeneralJWT, (req, res) => {
+//Reports
+
+
+router.post('/Questions/Reports/Report/:QuestionID', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.body.Email
     const ReportText = req.body.ReportText
 
     Report_Question(QuestionID, Email, ReportText).then(response => res.json(response))
-})
-
-router.get('/Questions/Get/Reports/All', authAdminJWT, (req, res) => {
-    Get_Reports_All().then(response => res.json(response))
 })
 
 router.post('/Questions/Reports/Resolve/:ReportID', authAdminJWT, (req, res) => {
@@ -136,25 +272,28 @@ router.post('/Questions/Reports/Resolve/:ReportID', authAdminJWT, (req, res) => 
     Resolve_Report(ReportID).then(response => res.json(response))
 })
 
-router.get('/Questions/Check/Question/isActive/:QuestionID', (req, res) => {
-    const QuestionID = req.params.QuestionID
 
-    CheckisQuestionActive(QuestionID).then(response => res.json(response))
-})
+
+//Activation
 
 //authorise with Creator authorisor as user must be at least creator or admin ranked in order to deactivate a question
-router.post('/Questions/DeActivateQuestion/:QuestionID', authCreatorJWT, (req, res) => {
+router.post('/Questions/DeActivate/Question/:QuestionID', authCreatorJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
 
-    DeActivateQuestion(QuestionID).then(response => res.json(response))
+    Deactivate_Question(QuestionID).then(response => res.json(response))
 })
 
 //authorise with Creator authorisor as user must be at least creator or admin ranked in order to activate a question
-router.post('/Questions/ActivateQuestion/:QuestionID', authCreatorJWT, (req, res) => {
+router.post('/Questions/Activate/Question/:QuestionID', authCreatorJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
 
-    ActivateQuestion(QuestionID).then(response => res.json(response))
+    Activate_Question(QuestionID).then(response => res.json(response))
 })
+
+
+
+
+//Payments
 
 router.post('/Questions/Payments/Pay/:Email', authAdminJWT, (req, res) => {
     const Email = req.params.Email
@@ -162,71 +301,23 @@ router.post('/Questions/Payments/Pay/:Email', authAdminJWT, (req, res) => {
     Pay_Creator(Email).then(response => res.json(response))
 })
 
-router.get('/Questions/Get/Payments/Pending/All', authAdminJWT, (req, res) => {
-    Get_All_PendingPayments().then(response => res.json(response))
-})
 
-router.get('/Questions/Get/Upvotes/Count/:QuestionID', (req, res) => {
-    const QuestionID = req.params.QuestionID
 
-    Get_Upvotes_Count(QuestionID).then(response => res.json(response))
-})
 
-router.post('/Questions/Upvotes/Unupvote/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+//Upvotes
+
+router.post('/Questions/Upvotes/Unupvote/Question/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
 
     Unupvote_Question(QuestionID, Email).then(response => res.json(response))
 })
 
-router.post('/Questions/Upvotes/Upvote/:QuestionID/:Email', authGeneralJWT, (req, res) => {
+router.post('/Questions/Upvotes/Upvote/Question/:QuestionID/:Email', authGeneralJWT, (req, res) => {
     const QuestionID = req.params.QuestionID
     const Email = req.params.Email
 
     Upvote_Question(QuestionID, Email).then(response => res.json(response))
-})
-
-router.get('/Questions/Upvotes/CheckUpvoted/:QuestionID/:Email', (req, res) => {
-    const QuestionID = req.params.QuestionID
-    const Email = req.params.Email
-
-    Check_Upvoted(QuestionID, Email).then(response => res.json(response))
-})
-
-router.get('/Questions/Get/Author/:QuestionID', (req, res) => {
-    const QuestionID = req.params.QuestionID
-
-    Get_Question_Author(QuestionID).then(response => res.json(response))
-})
-
-router.get('/Questions/Get/QuestionData/:QuestionID', authCreatorJWT, (req, res) => {
-    const QuestionID = req.params.QuestionID
-
-    Get_Question_Data(QuestionID).then(response => res.json(response))
-})
-
-router.post('/Questions/Edit/Question/:QuestionID', fileUpload({createParentPath: true}), authCreatorJWT, (req, res) => {
-    const QuestionID = req.params.QuestionID
-    const FormData = req.body
-
-    EditQuestion(QuestionID, FormData).then(response => res.json(response))
-})
-
-router.get('/Questions/Get/Deactivated/All', authAdminJWT, (req, res) => {
-    GetDeactivatedQuestions().then(response => res.json(response))
-})
-
-router.get('/Questions/Get/Deactivated/Filtered', authAdminJWT, (req, res) => {
-    //parses through the Categories query string
-    const Categories = {
-        Topics: JSON.parse(req.query.Topics),
-        Levels: JSON.parse(req.query.Levels),
-        Papers: JSON.parse(req.query.Papers),
-        Assessments: JSON.parse(req.query.Assessments),
-        Schools: JSON.parse(req.query.Schools)
-    }
-    
-    Get_Deactivated_Questions_Filtered(Categories).then(response => res.json(response))
 })
 
 module.exports = router;

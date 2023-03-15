@@ -25,7 +25,7 @@ function MyQuestionsPage(props) {
 
     async function GetMyQuestions(Email) {
         try {
-            const result = await API.get('/Questions/Get/ByAuthor/' + Email)
+            const result = await API.get('/Questions/Get/Questions/fromAuthor/' + Email)
             console.log(result.data)
             setMyQuestions(result.data)
             setisLoading(false)

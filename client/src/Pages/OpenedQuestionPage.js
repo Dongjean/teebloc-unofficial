@@ -45,7 +45,7 @@ function OpenedQuestionPage(props) {
     //gets the Question info
     async function GetQuestion(QuestionID) {
         try {
-            const result = await API.get('/Questions/Get/' + QuestionID)
+            const result = await API.get('/Questions/Get/QuestionData/fromQuestionID/' + QuestionID)
             setQuestion(result.data)
             CheckSaved(result.data.Question.questionid, props.LoginData.Email)
             CheckCompleted(result.data.Question.questionid, props.LoginData.Email)
@@ -60,7 +60,7 @@ function OpenedQuestionPage(props) {
 
     async function GetUpvoteCount(QuestionID) {
         try {
-            const result = await API.get('/Questions/Get/Upvotes/Count/' + QuestionID)
+            const result = await API.get('/Questions/Get/Upvotes/Count/fromQuestionID/' + QuestionID)
             setUpvoteCount(result.data)
         } catch(err) {
             console.log(err)
@@ -70,7 +70,7 @@ function OpenedQuestionPage(props) {
     async function UnupvoteQuestion(QuestionID, Email) {
         try {
             console.log('hi')
-            await API.post('/Questions/Upvotes/Unupvote/' + QuestionID + '/' + Email)
+            await API.post('/Questions/Upvotes/Unupvote/Question/' + QuestionID + '/' + Email)
             setisUpvoted(false)
             setUpvoteCount(current => current - 1)
         } catch(err) {
@@ -80,7 +80,7 @@ function OpenedQuestionPage(props) {
 
     async function UpvoteQuestion(QuestionID, Email) {
         try {
-            await API.post('/Questions/Upvotes/Upvote/' + QuestionID + '/' + Email)
+            await API.post('/Questions/Upvotes/Upvote/Question/' + QuestionID + '/' + Email)
             setisUpvoted(true)
             setUpvoteCount(current => current + 1)
         } catch(err) {
@@ -90,7 +90,7 @@ function OpenedQuestionPage(props) {
 
     async function CheckUpvoted(QuestionID, Email) {
         try {
-            const result = await API.get('/Questions/Upvotes/CheckUpvoted/' + QuestionID + '/' + Email)
+            const result = await API.get('/Questions/Check/Question/isUpvoted/' + QuestionID + '/' + Email)
 
             setisUpvoted(result.data)
         } catch(err) {
@@ -114,7 +114,7 @@ function OpenedQuestionPage(props) {
 
     async function CheckSaved(QuestionID, Email) {
         try {
-            const result = await API.get('/Questions/CheckSaved/' + QuestionID + '/' + Email)
+            const result = await API.get('/Questions/Check/Question/isSaved/' + QuestionID + '/' + Email)
             setisSaved(result.data)
         } catch(err) {
             console.log(err)
@@ -141,7 +141,7 @@ function OpenedQuestionPage(props) {
 
     async function CheckCompleted(QuestionID, Email) {
         try {
-            const result = await API.get('/Questions/CheckCompleted/' + QuestionID + '/' + Email)
+            const result = await API.get('/Questions/Check/Question/isCompleted/' + QuestionID + '/' + Email)
             setisCompleted(result.data)
         } catch(err) {
             console.log(err)
@@ -169,7 +169,7 @@ function OpenedQuestionPage(props) {
     async function DeleteQuestion(QuestionID) {
         try {
             //delete the question
-            await API.post('/Questions/Delete/' + QuestionID)
+            await API.post('/Questions/Delete/Question/' + QuestionID)
 
             //navigate back to home page
             navigate('/')
@@ -226,7 +226,7 @@ function OpenedQuestionPage(props) {
         event.preventDefault()
 
         try {
-            await API.post('/Questions/Report/' + QuestionID, {Email: Email, ReportText: ReportText})
+            await API.post('/Questions/Reports/Report/' + QuestionID, {Email: Email, ReportText: ReportText})
             ReportTextRef.current = ''
         } catch(err) {
             console.log(err)
@@ -235,7 +235,7 @@ function OpenedQuestionPage(props) {
 
     async function DeActivateQuestion(QuestionID) {
         try {
-            await API.post('/Questions/DeActivateQuestion/' + QuestionID)
+            await API.post('/Questions/DeActivate/Question/' + QuestionID)
             setisQuestionActive(false)
         } catch(err) {
             console.log(err)
@@ -244,7 +244,7 @@ function OpenedQuestionPage(props) {
 
     async function ActivateQuestion(QuestionID) {
         try {
-            await API.post('/Questions/ActivateQuestion/' + QuestionID)
+            await API.post('/Questions/Activate/Question/' + QuestionID)
             setisQuestionActive(true)
         } catch(err) {
             console.log(err)

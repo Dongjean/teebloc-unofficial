@@ -21,7 +21,7 @@ function Question(props) {
 
     async function CheckSaved(QuestionID, Email) {
         try {
-            const result = await API.get('/Questions/CheckSaved/' + QuestionID + '/' + Email)
+            const result = await API.get('/Questions/Check/Question/isSaved/' + QuestionID + '/' + Email)
             console.log(result.data)
             setisSaved(result.data)
         } catch(err) {
@@ -55,7 +55,7 @@ function Question(props) {
 
     async function GetUpvoteCount(QuestionID) {
         try {
-            const result = await API.get('/Questions/Get/Upvotes/Count/' + QuestionID)
+            const result = await API.get('/Questions/Get/Upvotes/Count/fromQuestionID/' + QuestionID)
             setUpvoteCount(result.data)
         } catch(err) {
             console.log(err)
@@ -66,7 +66,7 @@ function Question(props) {
         event.stopPropagation();
 
         try {
-            await API.post('/Questions/Upvotes/Unupvote/' + QuestionID + '/' + Email)
+            await API.post('/Questions/Upvotes/Unupvote/Question/' + QuestionID + '/' + Email)
             setisUpvoted(false)
             setUpvoteCount(current => current - 1)
         } catch(err) {
@@ -78,7 +78,7 @@ function Question(props) {
         event.stopPropagation();
 
         try {
-            await API.post('/Questions/Upvotes/Upvote/' + QuestionID + '/' + Email)
+            await API.post('/Questions/Upvotes/Upvote/Question/' + QuestionID + '/' + Email)
             setisUpvoted(true)
             setUpvoteCount(current => current + 1)
         } catch(err) {
@@ -88,7 +88,7 @@ function Question(props) {
 
     async function CheckUpvoted(QuestionID, Email) {
         try {
-            const result = await API.get('/Questions/Upvotes/CheckUpvoted/' + QuestionID + '/' + Email)
+            const result = await API.get('/Questions/Check/Question/isUpvoted/' + QuestionID + '/' + Email)
 
             return result.data
         } catch(err) {
@@ -99,7 +99,7 @@ function Question(props) {
     //gets the more detailed Question info for downloading PDFs
     async function GetQuestion(QuestionID) {
         try {
-            const result = await API.get('/Questions/Get/' + QuestionID)
+            const result = await API.get('/Questions/Get/QuestionData/fromQuestionID/' + QuestionID)
             return result.data
         } catch(err) {
             console.log(err)

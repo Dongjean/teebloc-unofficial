@@ -61,7 +61,7 @@ function DeactivatedQuestionsPage(props) {
 
     async function GetAllDeactivatedQuestions() {
         try {
-            const result = await API.get('/Questions/Get/Deactivated/All')
+            const result = await API.get('/Questions/Get/Questions/Deactivated/All')
             console.log(result.data)
             setDeactivatedQuestions(result.data)
 
@@ -88,7 +88,7 @@ function DeactivatedQuestionsPage(props) {
             'Schools=' + JSON.stringify(Selection.Schools)
 
             setisChurnLoading(true)
-            const result = await API.get('/Questions/Get/Deactivated/Filtered' + Queries)
+            const result = await API.get('/Questions/Get/Questions/Deactivated/Filtered' + Queries)
             setisChurnLoading(false)
             console.log(result.data)
             setDeactivatedQuestions(result.data)

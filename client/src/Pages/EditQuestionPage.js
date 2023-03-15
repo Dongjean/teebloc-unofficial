@@ -47,7 +47,7 @@ function EditQuestionPage(props) {
 
     async function CheckQuestionAuthor() {
         try {
-            const result = await API.get('/Questions/Get/Author/' + QuestionID)
+            const result = await API.get('/Questions/Get/Author/fromQuestionID/' + QuestionID)
             if (result.data == props.LoginData.Email) {
                 getQuestionData(QuestionID)
                 getAllSubjects()
@@ -59,7 +59,7 @@ function EditQuestionPage(props) {
 
     async function getQuestionData(QuestionID) {
         try {
-            const result = await API.get('/Questions/Get/QuestionData/' + QuestionID)
+            const result = await API.get('/Questions/Get/QuestionData/toEdit/fromQuestionID/' + QuestionID)
             await onSubjectSelected(result.data.Categories.subjectid)
             await onLevelSelected(result.data.Categories.levelid)
             await onAssessmentSelected(result.data.Categories.assessmentid)

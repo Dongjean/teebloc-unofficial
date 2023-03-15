@@ -63,7 +63,7 @@ function SavedQuestionsPage(props) {
 
     async function GetAllSavedQuestions(Email) {
         try {
-            const result = await API.get('/Questions/Get/Saved/All/' + Email)
+            const result = await API.get('/Questions/Get/Questions/Saved/All/' + Email)
             console.log(result.data)
             setSavedQuestions(result.data)
             
@@ -89,7 +89,7 @@ console.log(Selection)
             'Schools=' + JSON.stringify(Selection.Schools)
 
             setisChurnLoading(true)
-            const result = await API.get('/Questions/Get/Saved/Filtered/' + Email + Queries)
+            const result = await API.get('/Questions/Get/Questions/Saved/Filtered/' + Email + Queries)
             setisChurnLoading(false)
             console.log(result.data)
             setSavedQuestions(result.data)

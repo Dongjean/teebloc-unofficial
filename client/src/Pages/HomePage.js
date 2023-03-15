@@ -66,7 +66,7 @@ function HomePage(props) {
                 'Schools=' + JSON.stringify(SchoolsSelection)
             
             setisChurnLoading(true)
-            const result = await API.get(`/Questions/Churn` + Queries)
+            const result = await API.get('/Questions/Get/Questions/Filtered' + Queries)
             setisChurnLoading(false)
             console.log(result.data)
             const temp = Selection

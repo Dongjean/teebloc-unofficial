@@ -120,7 +120,7 @@ function PostQuestionPage(props) {
             FD.append('SchoolID', SchoolSelection)
             FD.append('Email', props.UserEmail)
             
-            await API.post('/Questions/PostQuestion', FD)
+            await API.post('/Questions/Post/Question', FD)
 
             //Reload Page
             window.location.reload(false);

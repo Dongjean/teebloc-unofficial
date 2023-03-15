@@ -63,7 +63,7 @@ function CompletedQuestionsPage(props) {
 
     async function GetAllCompletedQuestions(Email) {
         try {
-            const result = await API.get('/Questions/Get/Completed/All/' + Email)
+            const result = await API.get('/Questions/Get/Questions/Completed/All/' + Email)
             setCompletedQuestions(result.data)
 
             const temp = Selection
@@ -87,7 +87,7 @@ function CompletedQuestionsPage(props) {
             'Schools=' + JSON.stringify(Selection.Schools)
 
             setisChurnLoading(true)
-            const result = await API.get('/Questions/Get/Completed/Filtered/' + Email + Queries)
+            const result = await API.get('/Questions/Get/Questions/Completed/Filtered/' + Email + Queries)
             setisChurnLoading(false)
             console.log(result.data)
             setCompletedQuestions(result.data)
