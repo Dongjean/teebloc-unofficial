@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email} = require('../../Servicers/AccountServices.js');
+const {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email, Check_Email_Validity} = require('../../Servicers/AccountServices.js');
 
 router.get('/SignUp/CheckEmail/:Email', (req, res) => {
     const Email = req.params.Email
@@ -64,6 +64,12 @@ router.get('/SignUp/Verify', (req, res) => {
     const OTP = req.query.OTP
 
     Verify_Email(OTP).then(response => res.json(response))
+})
+
+router.get('/SignUp/Check/Email/Valid/:Email', (req, res) => {
+    const Email = req.params.Email
+
+    Check_Email_Validity(Email).then(response => res.json(response))
 })
 
 module.exports = router;

@@ -27,12 +27,18 @@ function SignUpPage() {
         var isPWValid;
         var isEmailValid;
 
-        isPWValid = await GetPWValidity(NewPW, RepeatPW)
-        if (isPWValid) {
-            isEmailValid = await GetEmailValidity(Email)
-        }
+        isPWValid = CheckPWValidity(NewPW, RepeatPW)
+        isEmailValid = await CheckEmailExists(Email)
         
+        //if email doesnt exist in DB already, i.e. isEmailValid=true,
+        //check if the email is a valid email address
         if (isEmailValid) {
+            isEmailValid = await CheckEmailValidity(Email)
+        }
+
+        //if both email and passwords are valid, send an OTP to the email
+        //but if there was an error while sending email, make email invalid
+        if (isEmailValid && isPWValid) {
             const WasEmailSent = await Send_OTP(Email, NewPW, FirstName, LastName)
             console.log(WasEmailSent)
             if (WasEmailSent) {
@@ -41,12 +47,12 @@ function SignUpPage() {
                 isEmailValid = false
             }
         }
-
+        
         setPWValidity(isPWValid)
         setEmailValidity(isEmailValid)
     }
 
-    function GetPWValidity(NewPW, RepeatPW) {
+    function CheckPWValidity(NewPW, RepeatPW) {
         if (NewPW !== RepeatPW) { //if PWs inputted is not the same
             setNewPW('')
             setRepeatPW('')
@@ -56,7 +62,7 @@ function SignUpPage() {
         }
     }
 
-    async function GetEmailValidity(Email) {
+    async function CheckEmailExists(Email) {
         //call the API to check if Email already exists
         try {
             const response = await API.get('/SignUp/CheckEmail/' + Email)
@@ -83,7 +89,17 @@ function SignUpPage() {
 
             return response.data
         } catch(err) {
+            console.log(err)
+        }
+    }
 
+    async function CheckEmailValidity(Email) {
+        try {
+            const response = await API.get('/SignUp/Check/Email/Valid/' + Email)
+
+            return response.data
+        } catch(err) {
+            console.log(err)
         }
     }
 

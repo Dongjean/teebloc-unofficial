@@ -1,5 +1,6 @@
 const pool = require('../DB.js');
 const transporter = require('../EMail.js');
+const emailValidator = require('deep-email-validator');
 
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
@@ -170,4 +171,12 @@ async function Verify_Email(OTP) {
     }
 }
 
-module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email};
+async function Check_Email_Validity(Email) {
+    try {
+        return (await emailValidator.validate(Email)).valid
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+module.exports = {CheckEmailExists, CreateAccount, CheckPWCorrect, GetLoginInfo, GetAccInfo, Send_OTP, Verify_Email, Check_Email_Validity};
