@@ -24,7 +24,6 @@ async function DBQuestionsINIT() {
     CREATE TABLE IF NOT EXISTS QuestionIMGs(
         QuestionIMGID BIGSERIAL PRIMARY KEY NOT NULL,
         QuestionIMGName TEXT NOT NULL,
-        QuestionIMGDIR TEXT NOT NULL,
         QuestionID INTEGER NOT NULL,
     
         FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)
@@ -34,7 +33,6 @@ async function DBQuestionsINIT() {
     CREATE TABLE IF NOT EXISTS AnswerIMGs(
         AnswerIMGID BIGSERIAL PRIMARY KEY NOT NULL,
         AnswerIMGName TEXT NOT NULL,
-        AnswerIMGDIR TEXT NOT NULL,
         QuestionID INTEGER NOT NULL,
         
         FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)

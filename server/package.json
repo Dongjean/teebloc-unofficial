@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.1377.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "deep-email-validator": "^0.1.21",

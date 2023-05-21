@@ -1,5 +1,9 @@
 const pool = require('../DB.js');
 const fs = require('fs');
+const s3 = require('../AWSs3.js');
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const {Pay} = require('../utils/PaymentHandler.js');
 
@@ -63,14 +67,18 @@ async function Get_Questions_Filtered(Categories) {
 
              //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -125,32 +133,40 @@ async function Get_QuestionData_fromQuestionID(QuestionID) {
 
         //get all Question Images related to this Question from DB
         const QNresult = await pool.query(`
-        SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+        SELECT QuestionIMGID, QuestionIMGName, QuestionID
         FROM QuestionIMGs
         WHERE QuestionID=$1
         `, [QuestionID])
 
-        //get Image Data from the Image Directory for all Images for this Question
+        //get Image Data from the AWS S3 for all Images for this Question
         for (var j=0; j<QNresult.rows.length; j++) {
-            const QNIMGData = (await fs.promises.readFile(QNresult.rows[j].questionimgdir)).toString('base64')
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.rows[j].questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
-                QuestionIMGID: QNresult.rows[j].questionimgid,
-                QuestionIMGName: QNresult.rows[j].questionimgname,
+                QuestionIMGID: QNresult.questionimgid,
+                QuestionIMGName: QNresult.questionimgname,
                 QuestionIMGData: QNIMGData,
-                QuestionID: QNresult.rows[j].questionid
+                QuestionID: QNresult.questionid
             })
         }
 
         //get all Answer Images related to this Question from DB
         const ANSresult = await pool.query(`
-        SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR, QuestionID
+        SELECT AnswerIMGID, AnswerIMGName, QuestionID
         FROM AnswerIMGs
         WHERE QuestionID=$1
         `, [QuestionID])
 
-        //get Image Data from the Image Directory for all Images for this Question
+        //get Image Data from the AWS S3 for all Images for this Question
         for (var j=0; j<ANSresult.rows.length; j++) {
-            const ANSIMGData = (await fs.promises.readFile(ANSresult.rows[j].answerimgdir)).toString('base64')
+            const ANSIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'ANS' + ANSresult.rows[j].answerimgid //key has 'ANS' at the front of the AnswerIMGID as this is a answer image
+            }).promise()).Body.toString('base64')
+
             AnswerImages.push({
                 AnswerIMGID: ANSresult.rows[j].answerimgid,
                 AnswerIMGName: ANSresult.rows[j].answerimgname,
@@ -227,15 +243,19 @@ async function Get_Questions_Saved_All(Email) {
 
             //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
             console.log(QNresult.rows)
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -318,14 +338,18 @@ async function Get_Questions_Saved_Filtered(Email, Categories) {
 
              //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -379,17 +403,21 @@ async function Get_Questions_fromAuthor(Email) {
         var QuestionImages = [];
         for (var i=0; i<Questions.length; i++) {
             const Question = Questions[i]
-
+            
             //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -466,15 +494,19 @@ async function Get_Questions_Completed_All(Email) {
 
             //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
             console.log(QNresult.rows)
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -557,14 +589,18 @@ async function Get_Questions_Completed_Filtered(Email, Categories) {
 
              //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -664,14 +700,14 @@ async function Get_QuestionData_toEdit_fromQuestionID(QuestionID) {
         `, [QuestionID])
 
         const QNImagesResult = await pool.query(`
-        SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR
+        SELECT QuestionIMGID, QuestionIMGName
         FROM QuestionIMGs
         WHERE QuestionID=$1
         `, [QuestionID])
         const QuestionImagesRows = QNImagesResult.rows
 
         const ANSImagesResult = await pool.query(`
-        SELECT AnswerIMGID, AnswerIMGName, AnswerIMGDIR
+        SELECT AnswerIMGID, AnswerIMGName
         FROM AnswerIMGs
         WHERE QuestionID=$1
         `, [QuestionID])
@@ -679,8 +715,12 @@ async function Get_QuestionData_toEdit_fromQuestionID(QuestionID) {
 
         var QuestionImages = []
         for (var i=0; i<QuestionImagesRows.length; i++) {
-            //get Image Data from the Image Directory for the Question Images for this Question
-            const QNIMGData = (await fs.promises.readFile(QuestionImagesRows[i].questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the Question Images for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QuestionImagesRows[i].questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+
             QuestionImages.push({
                 QuestionIMGID: QuestionImagesRows[i].questionimgid,
                 FileName: QuestionImagesRows[i].questionimgname,
@@ -690,8 +730,12 @@ async function Get_QuestionData_toEdit_fromQuestionID(QuestionID) {
 
         var AnswerImages = []
         for (var i=0; i<AnswerImagesRows.length; i++) {
-            //get Image Data from the Image Directory for the Answer Images for this Question
-            const ANSIMGData = (await fs.promises.readFile(AnswerImagesRows[i].answerimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the Answer Images for this Question
+            const ANSIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'ANS' + AnswerImagesRows[i].answerimgid //key has 'ANS' at the front of the AnswerIMGID as this is a answer image
+            }).promise()).Body.toString('base64')
+
             AnswerImages.push({
                 AnswerIMGID: AnswerImagesRows[i].answerimgid,
                 FileName: AnswerImagesRows[i].answerimgname,
@@ -760,14 +804,18 @@ async function Get_Questions_Deactivated_All() {
 
             //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -845,14 +893,18 @@ async function Get_Questions_Deactivated_Filtered(Categories) {
 
              //get the first Question Image only related to this Question from DB
             const QNresult = (await pool.query(`
-            SELECT QuestionIMGID, QuestionIMGName, QuestionIMGDIR, QuestionID
+            SELECT QuestionIMGID, QuestionIMGName, QuestionID
             FROM QuestionIMGs
             WHERE QuestionID=$1
             LIMIT 1
             `, [Question.questionid])).rows[0]
 
-            //get Image Data from the Image Directory for the first Image for this Question
-            const QNIMGData = (await fs.promises.readFile(QNresult.questionimgdir)).toString('base64')
+            //get Image Data from the AWS S3 for the first Image for this Question
+            const QNIMGData = (await s3.getObject({
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QNresult.questionimgid //key has 'QN' at the front of the QuestionIMGID as this is a question image
+            }).promise()).Body.toString('base64')
+            console.log(QNIMGData)
             QuestionImages.push({
                 QuestionIMGID: QNresult.questionimgid,
                 QuestionIMGName: QNresult.questionimgname,
@@ -976,13 +1028,10 @@ async function Uncomplete_Question(QuestionID, Email) {
 async function Post_Question(FormData) {
     try {
         //get Data about Images
-        const QNImages = JSON.parse(FormData.QNImages)
-        const ANSImages = JSON.parse(FormData.ANSImages)
+        var QNImages = JSON.parse(FormData.QNImages)
+        var ANSImages = JSON.parse(FormData.ANSImages)
+        console.log('hi', QNImages)
 
-        //Save Images
-        const QNIMGDIRs = await SaveImages(QNImages, 'QN')
-        const ANSIMGDIRs = await SaveImages(ANSImages, 'ANS')
-        
         //Save Data in DB
 
         //Save Data in Questions table and get the new unique QuestionID, and initially question is active
@@ -993,26 +1042,37 @@ async function Post_Question(FormData) {
         `, [FormData.TopicID, FormData.PaperID, FormData.LevelID, FormData.AssessmentID, FormData.SchoolID, FormData.Email])
 
         const QuestionID = result.rows[0].questionid
-
+        
         //Save QNImages in DB
         for (var i=0; i<QNImages.length; i++) {
             const QNImage = QNImages[i]
+            console.log()
+            const QuestionIMGID = (await pool.query(`
+            INSERT INTO QuestionIMGs(QuestionIMGName, QuestionID)
+            VALUES($1, $2)
+            RETURNING QuestionIMGID
+            `, [QNImage.name, QuestionID])).rows[0].questionimgid
+            console.log(QuestionIMGID)
 
-            await pool.query(`
-            INSERT INTO QuestionIMGs(QuestionIMGName, QuestionIMGDIR, QuestionID)
-            VALUES($1, $2, $3)
-            `, [QNImage.name, QNIMGDIRs[i], QuestionID])
+            QNImages[i].key = QuestionIMGID
         }
 
         //Save ANSImages in DB
         for (var i=0; i<ANSImages.length; i++) {
             const ANSImage = ANSImages[i]
 
-            await pool.query(`
-            INSERT INTO AnswerIMGs(AnswerIMGName, AnswerIMGDIR, QuestionID)
-            VALUES($1, $2, $3)
-            `, [ANSImage.name, ANSIMGDIRs[i], QuestionID])
+            const AnswerIMGID = (await pool.query(`
+            INSERT INTO AnswerIMGs(AnswerIMGName, QuestionID)
+            VALUES($1, $2)
+            RETURNING AnswerIMGID
+            `, [ANSImage.name, QuestionID])).rows[0].answerimgid
+            console.log(AnswerIMGID)
+            ANSImages[i].key = AnswerIMGID
         }
+
+        //Save Images in AWS S3
+        await SaveImages(QNImages, 'QN')
+        await SaveImages(ANSImages, 'ANS')
 
         //Set this Question as a pending payment under the author's name
         await pool.query(`
@@ -1026,61 +1086,46 @@ async function Post_Question(FormData) {
 
 //helper function to save all the images
 async function SaveImages(Images, ImageType) {
-    var IMGDIRs = []
     for (var i=0; i<Images.length; i++) {
-        const filenames = await fs.promises.readdir('./Images/' + ImageType) //read all file names in the QN or ANS Images directory
-        const Imageextension = Images[i].name.split('.').slice(-1)[0].toLowerCase() //get the extension in lowercase since when files are saved the extensions become lowercase
-        
-        //gets an array of all filenames in the folder with the same extension as the uploaded file
-        const sameEXTfilenames = filenames.map(filename => {
-            const filenamedata = filename.split('.')
-            if (Imageextension == filenamedata[1]) {
-                return parseInt(filenamedata[0])
-            }
-        }).filter(filename => filename)
-
-        //get the largest number and adds one to it to get a unique filename
-        var NewFilename;
-        if (sameEXTfilenames.length == 0) {
-            NewFilename = 1
-        } else {
-            NewFilename = Math.max(...sameEXTfilenames) + 1
-        }
-        console.log(NewFilename)
-        
-        //NewFilename + extension is a unique filename
-
-        //save this QNImage file as a unique file in the /Images/QN directory
         const data = Images[i].IMGData.split(',')[1]
         let buffer = Buffer.from(data, 'base64')
 
-        const IMGDIR = './Images/' + ImageType + '/' + NewFilename + '.' + Imageextension
-        fs.writeFileSync(IMGDIR, buffer);
-        IMGDIRs.push(IMGDIR)
+        const uploadParams = {
+            Bucket: process.env.AWSS3BucketName,
+            Body: buffer,
+            Key: ImageType + Images[i].key.toString()
+        }
+        await s3.upload(uploadParams).promise()
     }
-
-    return IMGDIRs //returns the array of image directories to be saved in the database
 }
 
 async function Delete_Question(QuestionID) {
     try {
         //get the directories of the question image files to delete
         const QuestionIMGs = (await pool.query(`
-        SELECT QuestionIMGDIR FROM QuestionIMGs WHERE QuestionID=$1
+        SELECT QuestionIMGID FROM QuestionIMGs WHERE QuestionID=$1
         `, [QuestionID])).rows
 
         //get the directories of the answer image files to delete
         const AnswerIMGs = (await pool.query(`
-        SELECT AnswerIMGDIR FROM AnswerIMGs WHERE QuestionID=$1
+        SELECT AnswerIMGID FROM AnswerIMGs WHERE QuestionID=$1
         `, [QuestionID])).rows
 
         console.log(QuestionIMGs, AnswerIMGs)
         for (var i=0; i<QuestionIMGs.length; i++) {
-            fs.promises.unlink(QuestionIMGs[i].questionimgdir)
+            const deleteParams = {
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + QuestionIMGs[i].questionimgid.toString()
+            }
+            await s3.deleteObject(deleteParams).promise()
         }
 
         for (var i=0; i<AnswerIMGs.length; i++) {
-            fs.promises.unlink(AnswerIMGs[i].answerimgdir)
+            const deleteParams = {
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'ANS' + AnswerIMGs[i].answerimgid.toString()
+            }
+            await s3.deleteObject(deleteParams).promise()
         }
 
         await pool.query(`
@@ -1112,12 +1157,8 @@ async function Delete_Question(QuestionID) {
 async function Edit_Question(QuestionID, FormData) { //First Edit the entry in Questions in the DB with new Editted Data, then Add the new Question and Answer Images as if they were new Questions, then delete the old Question and Answer Images
     try {
         //get Data about Images
-        const QNImages = JSON.parse(FormData.QNImages)
-        const ANSImages = JSON.parse(FormData.ANSImages)
-
-        //Save Images
-        const QNIMGDIRs = await SaveImages(QNImages, 'QN')
-        const ANSIMGDIRs = await SaveImages(ANSImages, 'ANS')
+        var QNImages = JSON.parse(FormData.QNImages)
+        var ANSImages = JSON.parse(FormData.ANSImages)
         
         //Save Data in DB
 
@@ -1141,47 +1182,61 @@ async function Edit_Question(QuestionID, FormData) { //First Edit the entry in Q
         for (var i=0; i<QNImages.length; i++) {
             const QNImage = QNImages[i]
 
-            await pool.query(`
-            INSERT INTO QuestionIMGs(QuestionIMGName, QuestionIMGDIR, QuestionID)
-            VALUES($1, $2, $3)
-            `, [QNImage.name, QNIMGDIRs[i], QuestionID])
+            const QuestionIMGID = (await pool.query(`
+            INSERT INTO QuestionIMGs(QuestionIMGName, QuestionID)
+            VALUES($1, $2)
+            RETURNING QuestionIMGID
+            `, [QNImage.name, QuestionID])).rows[0].questionimgid
+            QNImages[i].key = QuestionIMGID
         }
 
         //Save ANSImages in DB
         for (var i=0; i<ANSImages.length; i++) {
             const ANSImage = ANSImages[i]
 
-            await pool.query(`
-            INSERT INTO AnswerIMGs(AnswerIMGName, AnswerIMGDIR, QuestionID)
-            VALUES($1, $2, $3)
-            `, [ANSImage.name, ANSIMGDIRs[i], QuestionID])
+            const AnswerIMGID = (await pool.query(`
+            INSERT INTO AnswerIMGs(AnswerIMGName, QuestionID)
+            VALUES($1, $2)
+            RETURNING AnswerIMGID
+            `, [ANSImage.name, QuestionID])).rows[0].answerimgid
+            ANSImages[i].key = AnswerIMGID
         }
 
+        //Save Images
+        await SaveImages(QNImages, 'QN')
+        await SaveImages(ANSImages, 'ANS')
 
         //Delete the Old Images
 
         const temp1 = JSON.parse(FormData.OriginalQNImageIDs).map(QNImage => parseInt(QNImage))
         //Delete QNImages in DB
-        const DeletedQNIMGsDIR = (await pool.query(`
+        await pool.query(`
         DELETE FROM QuestionIMGs WHERE QuestionIMGID=ANY($1::int[])
-        RETURNING QuestionIMGDIR
-        `, [JSON.parse(FormData.OriginalQNImageIDs)])).rows
+        `, [JSON.parse(FormData.OriginalQNImageIDs)])
 
         const temp2 = JSON.parse(FormData.OriginalANSImageIDs).map(ANSImage => parseInt(ANSImage))
         //Delete ANSImages in DB
-        const DeletedANSIMGsDIR = (await pool.query(`
+        await pool.query(`
         DELETE FROM AnswerIMGs WHERE AnswerIMGID=ANY($1::int[])
-        RETURNING AnswerIMGDIR
-        `, [JSON.parse(FormData.OriginalANSImageIDs)])).rows
+        `, [JSON.parse(FormData.OriginalANSImageIDs)])
 
         //Delete QNImages in Images Directory
-        for (var i=0; i<DeletedQNIMGsDIR.length; i++) {
-            fs.promises.unlink(DeletedQNIMGsDIR[i].questionimgdir)
+        for (var i=0; i<JSON.parse(FormData.OriginalQNImageIDs).length; i++) {
+            console.log('QN' + JSON.parse(FormData.OriginalQNImageIDs)[i], 'hi', FormData.OriginalQNImageIDs, 'bruh')
+            const deleteParams = {
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'QN' + JSON.parse(FormData.OriginalQNImageIDs)[i]
+            }
+            await s3.deleteObject(deleteParams).promise()
         }
 
         //Delete ANSImages in Images Directory
-        for (var i=0; i<DeletedANSIMGsDIR.length; i++) {
-            fs.promises.unlink(DeletedANSIMGsDIR[i].answerimgdir)
+        for (var i=0; i<JSON.parse(FormData.OriginalANSImageIDs).length; i++) {
+            const deleteParams = {
+                Bucket: process.env.AWSS3BucketName,
+                Key: 'ANS' + JSON.parse(FormData.OriginalANSImageIDs)[i]
+            }
+            await s3.deleteObject(deleteParams).promise()
         }
     } catch(err) {
         console.log(err)
