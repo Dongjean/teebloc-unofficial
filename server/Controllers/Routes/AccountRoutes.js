@@ -15,7 +15,6 @@ const {
     Create_Account
 } = require('../../Servicers/AccountServices.js');
 
-console.log('testtesttest')
 //Get
 
 router.get('/Accounts/Get/AccountInfo/:Email', (req, res) => {
